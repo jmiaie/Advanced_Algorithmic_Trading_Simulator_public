@@ -1,4 +1,4 @@
-# Advanced_Algorithmic_Trading_Simulator_public
+## Advanced_Algorithmic_Trading_Simulator_public
 PUBLIC - Advanced Algorithmic Trading Simulator (Python)
 ## ============================================================
 ## PROJECT: ALGORITHMIC TRADING STRATEGY SIMULATOR (EVENT-DRIVEN & VECTORIZED)
