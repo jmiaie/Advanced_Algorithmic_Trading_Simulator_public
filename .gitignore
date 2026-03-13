@@ -1,0 +1,7 @@
+.env
+*.pyc
+__pycache__/
+*.log
+.venv/
+venv/
+algo_sim_project/
