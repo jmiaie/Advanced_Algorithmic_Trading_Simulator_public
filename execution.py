@@ -1,10 +1,10 @@
 import numpy as np
 import pandas as pd
 from numba import jit
+from typing import List, Dict, Any, Tuple
 
-# 1. Numba Optimized Matching Engine
 @jit(nopython=True)
-def match_order_numba(book_prices, book_qtys, order_qty):
+def match_order_numba(book_prices: np.ndarray, book_qtys: np.ndarray, order_qty: float) -> float:
     fill_cost = 0.0
     filled_qty = 0.0
     remaining = order_qty
@@ -20,11 +20,10 @@ def match_order_numba(book_prices, book_qtys, order_qty):
     if filled_qty == 0: return 0.0
     return fill_cost / filled_qty
 
-# 2. Limit Order Book Simulator
 class LimitOrderBook:
-    def __init__(self):
-        self.bids = [] 
-        self.asks = [] 
+    def __init__(self) -> None:
+        self.bids: List[Tuple[float, float]] = [] 
+        self.asks: List[Tuple[float, float]] = [] 
 
     def update(self, bid_price, ask_price, depth_qty=1000):
         self.bids = [(bid_price, depth_qty), (bid_price - 0.01, depth_qty)]
@@ -39,11 +38,10 @@ class LimitOrderBook:
             qtys = np.array([x[1] for x in self.bids], dtype=np.float64)
         return match_order_numba(prices, qtys, quantity)
 
-# 3. Execution Handler
 class ExecutionHandler:
-    def __init__(self, lob):
+    def __init__(self, lob: LimitOrderBook) -> None:
         self.lob = lob
-        self.fills = []
+        self.fills: List[Dict[str, Any]] = []
         self.order_id_counter = 0
 
     def submit_order(self, event):

@@ -1,8 +1,9 @@
 import numpy as np
 from collections import deque
+from typing import Dict, Any, List
 
 class PairsTradingStrategy:
-    def __init__(self, ticker_a, ticker_b, hedge_ratio=1.0, window=20, entry_z=2.0, exit_z=0.5):
+    def __init__(self, ticker_a: str, ticker_b: str, hedge_ratio: float = 1.0, window: int = 20, entry_z: float = 2.0, exit_z: float = 0.5) -> None:
         self.ticker_a = ticker_a
         self.ticker_b = ticker_b
         self.hedge_ratio = hedge_ratio
@@ -13,7 +14,7 @@ class PairsTradingStrategy:
         self.spread_history = deque(maxlen=window)
         self.invested = 0 
 
-    def calculate_signals(self, event):
+    def calculate_signals(self, event: Dict[str, Any]) -> List[Dict[str, Any]]:
         if event['type'] != 'MARKET': return []
         self.prices[event['symbol']] = event['price']
         p_a = self.prices[self.ticker_a]

@@ -12,11 +12,10 @@ from typing import Optional
 from dotenv import load_dotenv
 
 import pandas as pd
-import numpy as np
 
-from live_feed import AlpacaDataFeed, PairFinder
+from live_feed import AlpacaDataFeed
+from pair_finder import PairFinder
 from strategies import PairsTradingStrategy
-from analytics import PerformanceMonitor
 
 load_dotenv()
 logger = logging.getLogger(__name__)
@@ -60,7 +59,6 @@ class LiveTradingEngine:
         self.position_size = position_size
         self.max_loss = max_loss_dollars
         self.dry_run = dry_run
-        self.pnl = 0.0
 
         self.strategy = PairsTradingStrategy(
             ticker_a=ticker_a,
@@ -87,8 +85,8 @@ class LiveTradingEngine:
                 self.ticker_b: bars_b["Close"].iloc[-1],
                 "timestamp": bars_a.index[-1],
             }
-        except Exception as e:
-            logger.error("Failed to get prices: %s", e)
+        except Exception:
+            logger.error("Failed to get prices", exc_info=True)
             return None
 
     def _warm_up(self, lookback_days: int = 60):
@@ -133,14 +131,14 @@ class LiveTradingEngine:
                     symbol=symbol,
                     qty=qty,
                     side=side,
-                    type="market",
+                    order_type="market",
                 )
                 logger.info(
                     "ORDER FILLED: %s %d %s @ market (id=%s)",
                     side.upper(), qty, symbol, result.get("id", ""),
                 )
-            except Exception as e:
-                logger.error("Order failed for %s: %s", symbol, e)
+            except Exception:
+                logger.error("Order failed for %s", symbol, exc_info=True)
 
     def run_once(self):
         """Single cycle: get prices → generate signals → execute."""
