@@ -84,8 +84,20 @@ def test_duplicate_timestamp_validation() -> None:
 def test_duplicate_timestamp_after_emitted_batch_is_rejected() -> None:
     buffer = SynchronizedMarketBuffer(["A", "B"])
     timestamp = pd.Timestamp("2024-01-01")
-    assert buffer.push({"type": "MARKET", "symbol": "A", "price": 100.0, "timestamp": timestamp}) is None
-    batch = buffer.push({"type": "MARKET", "symbol": "B", "price": 100.0, "timestamp": timestamp})
+    first = {
+        "type": "MARKET",
+        "symbol": "A",
+        "price": 100.0,
+        "timestamp": timestamp,
+    }
+    second = {
+        "type": "MARKET",
+        "symbol": "B",
+        "price": 100.0,
+        "timestamp": timestamp,
+    }
+    assert buffer.push(first) is None
+    batch = buffer.push(second)
     assert batch is not None
     with pytest.raises(ValueError, match="Duplicate synchronized timestamp"):
         buffer.push({"type": "MARKET", "symbol": "A", "price": 101.0, "timestamp": timestamp})
