@@ -24,8 +24,11 @@ class SynchronizedMarketBuffer:
 
         if symbol not in self.symbols:
             raise ValueError(f"Unexpected symbol for synchronized buffer: {symbol}")
-        if self.last_emitted_timestamp is not None and timestamp < self.last_emitted_timestamp:
-            raise ValueError("Non-monotonic market event timestamp received")
+        if self.last_emitted_timestamp is not None:
+            if timestamp < self.last_emitted_timestamp:
+                raise ValueError("Non-monotonic market event timestamp received")
+            if timestamp == self.last_emitted_timestamp:
+                raise ValueError(f"Duplicate synchronized timestamp received at {timestamp}")
 
         if self.pending_timestamp is None:
             self.pending_timestamp = timestamp

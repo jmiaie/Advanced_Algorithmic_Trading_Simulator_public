@@ -76,6 +76,36 @@ def test_flat_equity_reconciles_realized_and_costs() -> None:
     )
 
 
+def test_partial_close_tracks_cost_basis_and_net_pnl_invariant() -> None:
+    ledger = PortfolioLedger(starting_cash=10_000.0)
+    ledger.process_fill(make_fill("A", "buy", 100, 100.0))
+    ledger.process_fill(make_fill("A", "sell", 40, 110.0))
+    snapshot = ledger.mark_to_market({"A": 111.0})
+
+    assert snapshot["positions"]["A"]["quantity"] == 60.0
+    assert snapshot["positions"]["A"]["average_cost"] == 100.0
+    assert snapshot["positions"]["A"]["cost_basis"] == 6_000.0
+    assert snapshot["positions"]["A"]["market_value"] == 6_660.0
+    assert snapshot["realized_pnl"] == 400.0
+    assert snapshot["unrealized_pnl"] == 660.0
+    assert snapshot["gross_pnl"] == 1_060.0
+    assert snapshot["net_pnl"] == 1_060.0
+    assert snapshot["equity"] - ledger.starting_cash == snapshot["net_pnl"]
+
+
+def test_position_reversal_resets_average_cost_for_new_short() -> None:
+    ledger = PortfolioLedger(starting_cash=10_000.0)
+    ledger.process_fill(make_fill("A", "buy", 100, 100.0))
+    ledger.process_fill(make_fill("A", "sell", 150, 102.0))
+    snapshot = ledger.mark_to_market({"A": 101.0})
+
+    assert snapshot["positions"]["A"]["quantity"] == -50.0
+    assert snapshot["positions"]["A"]["average_cost"] == 102.0
+    assert snapshot["positions"]["A"]["cost_basis"] == -5_100.0
+    assert snapshot["realized_pnl"] == 200.0
+    assert snapshot["unrealized_pnl"] == 50.0
+    assert snapshot["equity"] - ledger.starting_cash == snapshot["net_pnl"]
+
 
 def test_positive_costs_cannot_improve_net_cash_flow() -> None:
     lob = LimitOrderBook()
