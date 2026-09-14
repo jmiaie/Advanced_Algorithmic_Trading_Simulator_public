@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from analytics import PerformanceMonitor
-from engine import DataStreamer, EventDrivenBacktester
-from execution import CostModel, ExecutionHandler, LimitOrderBook
+from stat_arb_engine.analytics import PerformanceMonitor
+from stat_arb_engine.engine import DataStreamer, EventDrivenBacktester
+from stat_arb_engine.execution import CostModel, ExecutionHandler, LimitOrderBook
 from stat_arb_engine.portfolio import PortfolioLedger
-from strategies import PairsTradingStrategy, PositionSizer
+from stat_arb_engine.strategies import PairsTradingStrategy, PositionSizer
 
 
 def generate_synthetic_data(length: int = 500):
