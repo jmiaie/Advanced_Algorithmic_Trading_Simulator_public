@@ -50,12 +50,27 @@ def test_kalman_is_sequential_and_unaffected_by_future_row() -> None:
     )
 
 
+def test_kalman_recovers_known_slope_without_future_smoothing() -> None:
+    x = pd.Series(np.linspace(1.0, 50.0, 50))
+    y = 1.0 + 2.0 * x
+    result = fit_dynamic_kalman_hedge_ratio(
+        y,
+        x,
+        process_variance=1e-6,
+        observation_variance=1e-6,
+    )
+    assert float(result.beta_path.iloc[-1]) == pytest.approx(2.0, abs=5e-3)
+    assert float(result.alpha_path.iloc[-1]) == pytest.approx(1.0, abs=5e-2)
+    assert float(result.fitted_spread.abs().max()) < 1e-2
+
 
 def test_bh_fdr_toy_example() -> None:
     result = benjamini_hochberg([0.001, 0.01, 0.04, 0.20], alpha=0.05)
     assert result.loc[0, "rejected"]
     assert result.loc[1, "rejected"]
     assert not result.loc[3, "rejected"]
+    assert result.loc[2, "adjusted_pvalue"] == pytest.approx(0.0533333333)
+    assert all(result["test_count"] == 4)
     assert all(result["qvalue"].sort_values().diff().fillna(0.0) >= 0.0)
 
 
@@ -70,6 +85,14 @@ def test_formation_validation_test_non_overlap() -> None:
     assert split.validation.index.max() < split.test.index.min()
 
 
+def test_chronological_split_rejects_non_monotonic_index() -> None:
+    frame = pd.DataFrame(
+        {"x": [1, 2, 3]},
+        index=pd.DatetimeIndex(["2024-01-03", "2024-01-01", "2024-01-02"]),
+    )
+    with pytest.raises(ValueError, match="Non-monotonic timestamps"):
+        chronological_split(frame, formation_size=1, validation_size=1, test_size=1)
+
 
 def test_walk_forward_training_excludes_future_rows() -> None:
     frame = pd.DataFrame(
@@ -82,9 +105,32 @@ def test_walk_forward_training_excludes_future_rows() -> None:
     result = run_walk_forward(frame, formation_size=5, validation_size=3, test_size=2)
     assert not result.empty
     assert all(result["trained_through"] < result["test_start"])
+    assert all(result["trained_through"] == result["formation_end"])
+    assert all(result["pair_selection_end"] == result["formation_end"])
+    assert all(result["hedge_fit_end"] == result["formation_end"])
+    assert all(result["normalization_end"] == result["formation_end"])
+    assert all(result["oos_start"] == result["test_start"])
     windows = walk_forward_windows(frame, formation_size=5, validation_size=3, test_size=2)
     assert all(window["formation"].max() < window["validation"].min() for window in windows)
 
+
+def test_walk_forward_pair_selection_ignores_future_mutation() -> None:
+    rng = np.random.default_rng(123)
+    index = pd.date_range("2024-01-01", periods=20, freq="D")
+    a = pd.Series(100.0 + np.cumsum(rng.normal(0.0, 1.0, len(index))), index=index)
+    b = 1.5 * a + 2.0 + pd.Series(rng.normal(0.0, 0.05, len(index)), index=index)
+    c = pd.Series(50.0 + np.cumsum(rng.normal(0.0, 2.0, len(index))), index=index)
+    d = pd.Series(25.0 + np.cumsum(rng.normal(0.0, 2.0, len(index))), index=index)
+    base = pd.DataFrame({"A": a, "B": b, "C": c, "D": d}, index=index)
+    mutated = base.copy()
+    mutated.loc[index[10]:, "C"] = mutated.loc[index[10]:, "A"] * 0.5 + 5.0
+    mutated.loc[index[10]:, "D"] = mutated.loc[index[10]:, "A"] * 0.5 + 5.1
+
+    baseline = run_walk_forward(base, formation_size=10, validation_size=4, test_size=2)
+    future_mutated = run_walk_forward(mutated, formation_size=10, validation_size=4, test_size=2)
+
+    assert not baseline.empty
+    assert baseline.loc[0, "selected_pair"] == future_mutated.loc[0, "selected_pair"]
 
 
 def test_trailing_max_drawdown_includes_starting_nav() -> None:

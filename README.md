@@ -11,7 +11,7 @@ The working hypothesis is transparent mean-reversion in cointegrated pairs, eval
 - **Sequential Kalman hedge estimation** as the dynamic alternative
 - **Formation / validation / test chronology** with no random splits
 - **Formation-only pair selection** with **Benjamini-Hochberg / FDR** control on Engle-Granger scan p-values
-- **Decision-time-safe trailing normalization** for z-score signals
+- **Decision-time-safe trailing normalization** for z-score signals, excluding the current spread from its own mean/std estimate
 - **Stylized cost-aware execution simulation** with commissions, spread, slippage, and impact scenarios
 - **Portfolio ledger accounting** for cash, positions, realized PnL, unrealized PnL, exposure, and NAV
 
@@ -69,7 +69,7 @@ cp .env.example .env
 3. Apply BH/FDR control to Engle-Granger scan p-values.
 4. Use residual ADF as a secondary diagnostic filter rather than double-counted evidence.
 5. Estimate the baseline **Static OLS Hedge Ratio** and compare against the sequential Kalman model.
-6. Generate z-score signals using only data available at or before decision time.
+6. Generate z-score signals from prior-window statistics only; do not let the current spread normalize itself.
 7. Evaluate on untouched validation / test windows or walk-forward slices.
 8. Report assumptions, cost scenarios, and limitations alongside results.
 
@@ -84,6 +84,10 @@ Artifact directories are reserved under:
 - `results/sensitivity/`
 
 Until reproducible OOS experiments are run, these artifacts use explicit **Results pending reproducible OOS run** placeholders rather than fabricated metrics.
+
+## Consolidation note
+
+This repository is the maintained recruiter-facing stat-arb research surface. A read-only audit of `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` found broader unsupported public claims around institutional realism, factor-isolated alpha, and dynamic/OOS evidence. Consolidate future public claims here unless that overlapping repository is narrowed and brought to the same validation standard.
 
 ## Live trading safety
 

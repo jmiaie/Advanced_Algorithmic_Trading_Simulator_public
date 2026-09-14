@@ -71,13 +71,16 @@ class PortfolioLedger:
     ) -> Dict[str, Any]:
         self.market_prices.update({symbol: float(price) for symbol, price in prices.items()})
         position_market_values: Dict[str, float] = {}
+        position_cost_bases: Dict[str, float] = {}
         unrealized = 0.0
         for symbol, position in self.positions.items():
             price = self.market_prices.get(symbol)
             if price is None:
                 continue
             market_value = position.quantity * price
+            cost_basis = position.quantity * position.average_cost
             position_market_values[symbol] = market_value
+            position_cost_bases[symbol] = cost_basis
             if position.quantity > 0:
                 unrealized += (price - position.average_cost) * position.quantity
             elif position.quantity < 0:
@@ -86,6 +89,10 @@ class PortfolioLedger:
         self.unrealized_pnl = unrealized
         net_market_value = sum(position_market_values.values())
         gross_market_value = sum(abs(value) for value in position_market_values.values())
+        net_cost_basis = sum(position_cost_bases.values())
+        gross_cost_basis = sum(abs(value) for value in position_cost_bases.values())
+        gross_pnl = self.realized_pnl + self.unrealized_pnl
+        net_pnl = gross_pnl - self.commissions - self.transaction_costs
         equity = self.cash + net_market_value
         snapshot = {
             "timestamp": (
@@ -96,14 +103,20 @@ class PortfolioLedger:
                 symbol: {
                     "quantity": state.quantity,
                     "average_cost": state.average_cost,
+                    "cost_basis": position_cost_bases.get(symbol, 0.0),
+                    "market_value": position_market_values.get(symbol, 0.0),
                 }
                 for symbol, state in self.positions.items()
             },
             "market_prices": dict(self.market_prices),
             "realized_pnl": self.realized_pnl,
             "unrealized_pnl": self.unrealized_pnl,
+            "gross_pnl": gross_pnl,
+            "net_pnl": net_pnl,
             "commissions": self.commissions,
             "transaction_costs": self.transaction_costs,
+            "gross_cost_basis": gross_cost_basis,
+            "net_cost_basis": net_cost_basis,
             "gross_market_value": gross_market_value,
             "net_market_value": net_market_value,
             "gross_exposure": gross_market_value,

@@ -106,8 +106,13 @@ class PairFinder:
         dynamic_result = fit_dynamic_kalman_hedge_ratio(prices[sym_a], prices[sym_b])
         comparison = compare_hedge_models(prices[sym_a], prices[sym_b], test_index=prices.index)
         spread = static_result.residual_spread
-        spread_mean = float(spread.mean())
-        spread_std = float(spread.std(ddof=1)) if len(spread) > 1 else 0.0
+        trailing_spread = spread.iloc[:-1]
+        spread_mean = float(trailing_spread.mean()) if not trailing_spread.empty else 0.0
+        spread_std = (
+            float(trailing_spread.std(ddof=1))
+            if len(trailing_spread) > 1
+            else 0.0
+        )
         z_score_current = 0.0
         if spread_std > 0:
             z_score_current = (float(spread.iloc[-1]) - spread_mean) / spread_std

@@ -38,6 +38,13 @@ class ChronologicalSplit:
     test: pd.DataFrame
 
 
+def _validate_chronological_index(index: pd.Index) -> None:
+    if index.has_duplicates:
+        raise ValueError("Duplicate timestamps detected for chronological research input")
+    if not index.is_monotonic_increasing:
+        raise ValueError("Non-monotonic timestamps detected for chronological research input")
+
+
 
 def _coerce_pair_inputs(
     y: Sequence[float] | pd.Series,
@@ -142,7 +149,14 @@ def benjamini_hochberg(p_values: Sequence[float], alpha: float = 0.05) -> pd.Dat
     series = pd.Series(list(p_values), dtype=float)
     if series.empty:
         return pd.DataFrame(
-            columns=["raw_pvalue", "qvalue", "rejected", "hypotheses_count"]
+            columns=[
+                "raw_pvalue",
+                "adjusted_pvalue",
+                "qvalue",
+                "rejected",
+                "test_count",
+                "hypotheses_count",
+            ]
         )
     ordered = series.sort_values()
     m = len(ordered)
@@ -152,8 +166,10 @@ def benjamini_hochberg(p_values: Sequence[float], alpha: float = 0.05) -> pd.Dat
     result = pd.DataFrame(
         {
             "raw_pvalue": ordered,
+            "adjusted_pvalue": adjusted,
             "qvalue": adjusted,
             "rejected": rejected,
+            "test_count": m,
             "hypotheses_count": m,
         }
     )
@@ -167,6 +183,7 @@ def chronological_split(
     validation_size: int,
     test_size: int,
 ) -> ChronologicalSplit:
+    _validate_chronological_index(data.index)
     if formation_size <= 0 or validation_size <= 0 or test_size <= 0:
         raise ValueError("All split sizes must be positive")
     total = formation_size + validation_size + test_size
@@ -186,6 +203,7 @@ def walk_forward_windows(
     test_size: int,
     step_size: int | None = None,
 ) -> List[Dict[str, pd.Index]]:
+    _validate_chronological_index(data.index)
     if step_size is None:
         step_size = test_size
     windows: List[Dict[str, pd.Index]] = []
@@ -209,6 +227,7 @@ def select_pairs(
     adf_alpha: float = 0.05,
 ) -> pd.DataFrame:
     frame = price_frame.copy()
+    _validate_chronological_index(frame.index)
     if universe is not None:
         frame = frame.loc[:, list(universe)]
     frame = frame.dropna(axis=0, how="any")
@@ -239,10 +258,12 @@ def select_pairs(
         return result_frame
     bh = benjamini_hochberg(result_frame["engle_granger_pvalue"], alpha=fdr_alpha)
     result_frame["raw_pvalue"] = bh["raw_pvalue"].values
+    result_frame["adjusted_pvalue"] = bh["adjusted_pvalue"].values
     result_frame["qvalue"] = bh["qvalue"].values
     result_frame["rejected"] = bh["rejected"].values & (
         result_frame["adf_pvalue"] < adf_alpha
     )
+    result_frame["test_count"] = bh["test_count"].values
     result_frame["hypotheses_count"] = bh["hypotheses_count"].values
     result_frame["selection_logic"] = (
         "BH on Engle-Granger p-values; residual ADF as secondary diagnostic filter"
@@ -279,7 +300,12 @@ def run_walk_forward(
                 "validation_end": validation.index.max(),
                 "test_start": test.index.min(),
                 "test_end": test.index.max(),
-                "trained_through": validation.index.max(),
+                "trained_through": formation.index.max(),
+                "pair_selection_end": formation.index.max(),
+                "hedge_fit_end": formation.index.max(),
+                "normalization_end": formation.index.max(),
+                "validation_reserved_for_tuning": True,
+                "oos_start": test.index.min(),
                 "model": model,
                 "selected_pair": (
                     None

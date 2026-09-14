@@ -142,15 +142,15 @@ class PairsTradingStrategy:
 
         prices = batch["prices"]
         spread = float(prices[self.ticker_a] - (self.hedge_ratio * prices[self.ticker_b]))
-        self.spread_history.append(spread)
+        timestamp = pd.Timestamp(batch["timestamp"])
         if len(self.spread_history) < self.window:
+            self.spread_history.append(spread)
             return []
 
         history = np.array(self.spread_history, dtype=float)
         spread_mean = float(history.mean())
         spread_std = float(history.std())
         z_score = (spread - spread_mean) / spread_std if spread_std > 0 else 0.0
-        timestamp = pd.Timestamp(batch["timestamp"])
         orders: List[Dict[str, Any]] = []
 
         if self.invested != 0:
@@ -196,4 +196,5 @@ class PairsTradingStrategy:
                 "invested": self.invested,
             }
         )
+        self.spread_history.append(spread)
         return orders
