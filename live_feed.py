@@ -1,17 +1,13 @@
 """
 Live Data Feed — Alpaca Markets Integration
 Fetches real market data and streams it into the event-driven engine.
-Also includes a cointegration-based pair finder.
 """
-import logging
-import pandas as pd
-import numpy as np
-from datetime import datetime, timedelta
-from typing import Dict, List, Tuple, Optional
-from itertools import combinations
 
+import logging
+from typing import Dict, List, Optional
+
+import pandas as pd
 import requests
-from statsmodels.tsa.stattools import coint, adfuller
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +30,6 @@ class AlpacaDataFeed:
         }
 
     def get_account(self) -> Dict:
-        """Get account info."""
         resp = requests.get(f"{self.base_url}/v2/account", headers=self.headers)
         resp.raise_for_status()
         return resp.json()
@@ -47,7 +42,6 @@ class AlpacaDataFeed:
         end: Optional[str] = None,
         limit: int = 1000,
     ) -> pd.DataFrame:
-        """Fetch historical bars for a symbol."""
         params = {"timeframe": timeframe, "limit": limit}
         if start:
             params["start"] = start
@@ -69,7 +63,15 @@ class AlpacaDataFeed:
         df = pd.DataFrame(bars)
         df["t"] = pd.to_datetime(df["t"])
         df = df.set_index("t")
-        df = df.rename(columns={"o": "Open", "h": "High", "l": "Low", "c": "Close", "v": "Volume"})
+        df = df.rename(
+            columns={
+                "o": "Open",
+                "h": "High",
+                "l": "Low",
+                "c": "Close",
+                "v": "Volume",
+            }
+        )
         return df[["Open", "High", "Low", "Close", "Volume"]]
 
     def get_multi_bars(
@@ -79,7 +81,6 @@ class AlpacaDataFeed:
         start: Optional[str] = None,
         limit: int = 1000,
     ) -> Dict[str, pd.DataFrame]:
-        """Fetch bars for multiple symbols."""
         result = {}
         for sym in symbols:
             try:
@@ -87,8 +88,8 @@ class AlpacaDataFeed:
                 if not df.empty:
                     result[sym] = df
                     logger.info("Fetched %d bars for %s", len(df), sym)
-            except requests.RequestException as e:
-                logger.warning("Network error fetching %s: %s", sym, e)
+            except requests.RequestException as exc:
+                logger.warning("Network error fetching %s: %s", sym, exc)
             except Exception:
                 logger.error("Failed to fetch %s", sym, exc_info=True)
         return result
@@ -101,7 +102,6 @@ class AlpacaDataFeed:
         order_type: str = "market",
         time_in_force: str = "day",
     ) -> Dict:
-        """Submit an order."""
         order = {
             "symbol": symbol,
             "qty": str(qty),
@@ -118,13 +118,11 @@ class AlpacaDataFeed:
         return resp.json()
 
     def get_positions(self) -> List[Dict]:
-        """Get current positions."""
         resp = requests.get(f"{self.base_url}/v2/positions", headers=self.headers)
         resp.raise_for_status()
         return resp.json()
 
     def close_all_positions(self) -> Dict:
-        """Liquidate all positions."""
         resp = requests.delete(f"{self.base_url}/v2/positions", headers=self.headers)
         resp.raise_for_status()
         return resp.json()

@@ -5,3 +5,6 @@ __pycache__/
 .venv/
 venv/
 algo_sim_project/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
