@@ -8,6 +8,7 @@ from .engine import DataStreamer, EventDrivenBacktester, SynchronizedMarketBuffe
 from .execution import CostModel, ExecutionHandler, LimitOrderBook
 from .portfolio import PortfolioLedger
 from .research import (
+    as_of_frame,
     benjamini_hochberg,
     chronological_split,
     compare_hedge_models,
@@ -30,6 +31,7 @@ __all__ = [
     "ExecutionHandler",
     "LimitOrderBook",
     "PortfolioLedger",
+    "as_of_frame",
     "benjamini_hochberg",
     "chronological_split",
     "compare_hedge_models",
