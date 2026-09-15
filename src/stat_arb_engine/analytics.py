@@ -55,9 +55,10 @@ def compute_strategy_analytics(
     exposure_series = _as_series(gross_exposure)
     cost_series = _as_series(transaction_costs)
 
-    total_return = 0.0
+    # Equity/NAV path is treated as post-cost marked-to-market wealth.
+    net_return = 0.0
     if len(equity) > 1 and equity.iloc[0] != 0:
-        total_return = float((equity.iloc[-1] / equity.iloc[0]) - 1.0)
+        net_return = float((equity.iloc[-1] / equity.iloc[0]) - 1.0)
 
     ann_return = float((1.0 + ret.mean()) ** periods_per_year - 1.0) if not ret.empty else 0.0
     ann_vol = float(ret.std(ddof=1) * np.sqrt(periods_per_year)) if len(ret) > 1 else 0.0
@@ -68,9 +69,16 @@ def compute_strategy_analytics(
     average_gross_exposure = float(exposure_series.mean()) if not exposure_series.empty else 0.0
     cost_drag = float(cost_series.sum()) if not cost_series.empty else 0.0
 
+    # Dollar cost add-back is a qualified proxy for gross terminal wealth, not a
+    # pathwise pre-cost equity curve. When cost_drag is zero, gross == net.
+    if cost_drag > 0.0 and len(equity) > 1 and equity.iloc[0] != 0:
+        gross_return = float(((equity.iloc[-1] + cost_drag) / equity.iloc[0]) - 1.0)
+    else:
+        gross_return = net_return
+
     return {
-        "gross_return": total_return,
-        "net_return": total_return,
+        "gross_return": gross_return,
+        "net_return": net_return,
         "annualized_return": ann_return,
         "annualized_volatility": ann_vol,
         "sharpe_ratio": sharpe,
