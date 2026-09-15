@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 from live_feed import AlpacaDataFeed
 from pair_finder import PairFinder
-from strategies import PairsTradingStrategy, PositionSizer
+from stat_arb_engine.strategies import PairsTradingStrategy, PositionSizer
 
 load_dotenv()
 logger = logging.getLogger(__name__)

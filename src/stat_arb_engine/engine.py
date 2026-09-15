@@ -41,7 +41,7 @@ class SynchronizedMarketBuffer:
                     raise ValueError(
                         f"Missing synchronized bar(s) {missing} at {self.pending_timestamp}"
                     )
-                if self.missing_bar_policy not in {"drop", "skip"}:
+                if self.missing_bar_policy != "drop":
                     raise ValueError(f"Unsupported missing_bar_policy: {self.missing_bar_policy}")
             self.pending_timestamp = timestamp
             self.pending_prices = {}
@@ -111,18 +111,6 @@ class DataStreamer:
             batch = self.buffer.push(event)
             if batch is not None:
                 yield batch
-
-    def stream_next(self) -> Generator[List[Dict[str, Any]], None, None]:
-        for batch in self.stream_batches():
-            yield [
-                {
-                    "type": "MARKET",
-                    "symbol": symbol,
-                    "price": price,
-                    "timestamp": batch["timestamp"],
-                }
-                for symbol, price in batch["prices"].items()
-            ]
 
 
 class EventDrivenBacktester:

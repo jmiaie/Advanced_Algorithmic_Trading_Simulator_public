@@ -6,18 +6,8 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 import pandas as pd
 
-try:
-    from numba import jit
-except Exception:  # pragma: no cover - optional acceleration only
-    def jit(*_args: Any, **_kwargs: Any):
-        def decorator(func: Any) -> Any:
-            return func
 
-        return decorator
-
-
-@jit(nopython=True)
-def match_order_numba(
+def match_order(
     book_prices: np.ndarray,
     book_qtys: np.ndarray,
     order_qty: float,
@@ -92,7 +82,7 @@ class LimitOrderBook:
         else:
             prices = np.array([x[0] for x in self.bids], dtype=np.float64)
             qtys = np.array([x[1] for x in self.bids], dtype=np.float64)
-        average_price, filled_qty = match_order_numba(prices, qtys, float(quantity))
+        average_price, filled_qty = match_order(prices, qtys, float(quantity))
         return {
             "average_price": float(average_price),
             "filled_qty": float(filled_qty),
