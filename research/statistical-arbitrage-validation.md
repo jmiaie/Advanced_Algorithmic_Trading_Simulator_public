@@ -48,3 +48,15 @@ Harden the repository into a recruiter-facing **Statistical Arbitrage & Executio
 - The public universe examples are still static and therefore susceptible to survivorship / convenience bias.
 - Walk-forward helpers are present, but the repository does not yet ship precomputed public OOS result packs.
 - Read-only audit note: `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` currently makes broader public claims than this validated engine supports; recommended path is consolidation or claim narrowing rather than parallel divergence.
+
+## Directive #3 release-gate verification
+
+Regression coverage for the D3 gate lives in `tests/test_directive3_gates.py`:
+
+1. **Same-timestamp pair signals** — strategy waits for both legs; incomplete `MARKET_BATCH` payloads are rejected.
+2. **Marked-to-market NAV** — ledger `nav` equals cash + net market value and moves with marks without new fills.
+3. **Decision-time pair research** — `as_of_frame` / walk-forward cutoffs keep selection and hedge fit on formation-only data.
+4. **Static-vs-sequential-Kalman distinction** — explicit `estimation_mode` labels (`static_batch_ols` vs `sequential_filtered_kalman`) plus causal Kalman prefix checks.
+5. **Correct analytics** — conventional Sharpe and trailing max-drawdown formulas; NAV-based net return with qualified cost add-back for gross return.
+
+Qualified claim: this verifies research-engine invariants on synthetic/unit fixtures. It does **not** assert empirical out-of-sample trading performance.
