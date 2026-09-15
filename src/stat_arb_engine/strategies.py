@@ -116,13 +116,24 @@ class PairsTradingStrategy:
 
     def _to_batch(self, event: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if event.get("type") == "MARKET_BATCH":
+            prices = {
+                key: float(value)
+                for key, value in event["prices"].items()
+            }
+            missing = [
+                symbol
+                for symbol in (self.ticker_a, self.ticker_b)
+                if symbol not in prices
+            ]
+            if missing:
+                raise ValueError(
+                    "MARKET_BATCH missing same-timestamp pair legs: "
+                    + ", ".join(missing)
+                )
             return {
                 "type": "MARKET_BATCH",
                 "timestamp": pd.Timestamp(event["timestamp"]),
-                "prices": {
-                    key: float(value)
-                    for key, value in event["prices"].items()
-                },
+                "prices": prices,
             }
         return self.sync_buffer.push(event)
 

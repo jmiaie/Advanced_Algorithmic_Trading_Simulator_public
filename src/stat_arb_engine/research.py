@@ -20,6 +20,7 @@ class StaticOLSHedgeResult:
     engle_granger_pvalue: float
     half_life: float
     formation_sample_count: int
+    estimation_mode: str = "static_batch_ols"
 
 
 @dataclass(frozen=True)
@@ -29,6 +30,7 @@ class DynamicKalmanResult:
     fitted_spread: pd.Series
     observation_variance: float
     process_variance: float
+    estimation_mode: str = "sequential_filtered_kalman"
 
 
 @dataclass(frozen=True)
@@ -196,6 +198,21 @@ def chronological_split(
 
 
 
+def as_of_frame(data: pd.DataFrame, as_of: Any) -> pd.DataFrame:
+    """Return rows with timestamp <= as_of for decision-time research.
+
+    Pair selection, hedge fitting, and normalization statistics should call this
+    (or an equivalent formation slice) so future bars cannot affect decisions.
+    """
+    _validate_chronological_index(data.index)
+    cutoff = pd.Timestamp(as_of)
+    sliced = data.loc[data.index <= cutoff].copy()
+    if sliced.empty:
+        raise ValueError(f"No rows available at decision time {cutoff}")
+    return sliced
+
+
+
 def walk_forward_windows(
     data: pd.DataFrame,
     formation_size: int,
@@ -289,8 +306,16 @@ def run_walk_forward(
         formation = price_frame.loc[window["formation"]]
         validation = price_frame.loc[window["validation"]]
         test = price_frame.loc[window["test"]]
-        selected = select_pairs(formation, fdr_alpha=fdr_alpha)
+        # Decision-time invariant: selection and hedge fit see formation only.
+        decision_frame = as_of_frame(price_frame, formation.index.max())
+        selected = select_pairs(decision_frame.loc[window["formation"]], fdr_alpha=fdr_alpha)
         top_pair = selected.iloc[0] if not selected.empty else None
+        formation_hedge_ratio = None if top_pair is None else float(top_pair["hedge_ratio"])
+        formation_estimation_mode = (
+            None
+            if top_pair is None
+            else ("static_batch_ols" if model == "static_ols" else model)
+        )
         rows.append(
             {
                 "window": idx,
@@ -307,12 +332,15 @@ def run_walk_forward(
                 "validation_reserved_for_tuning": True,
                 "oos_start": test.index.min(),
                 "model": model,
+                "estimation_mode": formation_estimation_mode,
                 "selected_pair": (
                     None
                     if top_pair is None
                     else f"{top_pair['symbol_a']}/{top_pair['symbol_b']}"
                 ),
+                "formation_hedge_ratio": formation_hedge_ratio,
                 "selection_from_formation_only": True,
+                "decision_time_as_of": formation.index.max(),
                 "test_rows": len(test),
             }
         )
@@ -327,6 +355,12 @@ def compare_hedge_models(
     process_variance: float = 1e-4,
     observation_variance: float = 1e-2,
 ) -> pd.DataFrame:
+    """Compare static batch OLS vs sequential filtered Kalman on the same sample.
+
+    Callers must pass formation-only series for decision-time research. The
+    optional test_index must match the fitted sample length; it does not slice
+    away unseen rows after the fact.
+    """
     static_result = fit_static_ols_hedge_ratio(y, x)
     dynamic_result = fit_dynamic_kalman_hedge_ratio(
         y,
@@ -334,13 +368,24 @@ def compare_hedge_models(
         process_variance=process_variance,
         observation_variance=observation_variance,
     )
-    index = pd.Series(y).index if test_index is None else pd.Index(test_index)
+    n_obs = len(static_result.residual_spread)
+    if test_index is None:
+        index = static_result.residual_spread.index
+    else:
+        index = pd.Index(test_index)
+        if len(index) != n_obs:
+            raise ValueError(
+                "test_index length must match the fitted sample; "
+                "slice inputs with as_of_frame before fitting"
+            )
     return pd.DataFrame(
         {
             "static_spread": static_result.residual_spread.values,
             "dynamic_spread": dynamic_result.fitted_spread.values,
             "dynamic_beta": dynamic_result.beta_path.values,
             "dynamic_alpha": dynamic_result.alpha_path.values,
+            "static_estimation_mode": static_result.estimation_mode,
+            "dynamic_estimation_mode": dynamic_result.estimation_mode,
         },
         index=index,
     )
