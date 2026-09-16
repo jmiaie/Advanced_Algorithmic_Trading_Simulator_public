@@ -49,4 +49,4 @@ Documented convenience universe from `pair_finder.PairFinder.SECTOR_PAIRS` (liqu
 
 ## Post-freeze holdout execution
 
-After **FINAL CONFIGURATION FROZEN** was recorded on Issue #3 for this workstream, calendar-2025 evaluation was run once under frozen config `statarb_hist_oos_v1` (experiment `statarb_hist_oos_v1_holdout_2025`). Formation-time BH/FDR still selected **0** pairs, so holdout trading metrics are **null** (reported honestly). No retune after freeze.
+YAML status was set to `frozen-for-holdout` after formation+validation; calendar-2025 evaluation was then run once under frozen config `statarb_hist_oos_v1` (experiment `statarb_hist_oos_v1_holdout_2025`). Tracker confirmation: **FINAL CONFIGURATION FROZEN — Stat-Arb D9-B** on Issue #3 (https://github.com/jmiaie/quant-research-portfolio/issues/3#issuecomment-5691711387). Formation-time BH/FDR still selected **0** pairs, so holdout trading metrics are **null** (reported honestly). No retune after freeze.
