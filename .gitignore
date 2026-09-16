@@ -11,3 +11,6 @@ algo_sim_project/
 
 # Directive #9: raw vendor snapshots stay local / gitignored
 data/raw/
+
+# Keep research ledger tracked even if CSV patterns appear later
+!research/experiment-ledger.csv
