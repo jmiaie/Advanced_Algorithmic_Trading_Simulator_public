@@ -1,3 +1,5 @@
+# SUPERSEDED / EXPLORATORY — wrong universe (SECTOR_PAIRS equities).
+# Conforming study: configs/experiments/statarb_historical_etf_wf_v2.yaml
 # Stat-Arb historical OOS study — FROZEN FOR HOLDOUT
 # Status: frozen-for-holdout
 # FINAL CONFIGURATION FROZEN after formation (2015-2023) + validation (2024).
@@ -13,8 +15,6 @@ universe:
   source: pair_finder.PairFinder.SECTOR_PAIRS
   interval: 1d
   pair_constraint: within_sector_only
-  # Frozen symbol list locked in dataset manifest after acquisition; no mid-study expansion.
-  # Exclusion at freeze: DELL (coverage_gate incomplete 2015 history).
 
 periods:
   requested_data_start: "2015-01-01"
@@ -72,16 +72,6 @@ walk_forward:
   test_size: 126
 
 evaluation:
-  metrics_from_engine:
-    - gross_return
-    - net_return
-    - annualized_return
-    - annualized_volatility
-    - sharpe_ratio
-    - max_drawdown
-    - turnover
-    - average_gross_exposure
-    - cost_drag
   invent_metrics: false
   report_nulls_exactly: true
 
@@ -91,15 +81,5 @@ constraints:
   no_universe_change_after_dataset_freeze: true
   no_ci_network_fetch: true
 
-freeze_record:
-  frozen_for_holdout_utc: "2026-09-16T03:30:00Z"
-  basis: >
-    Formation (2015-2023) + validation (2024) completed under pre-registered defaults.
-    Within-sector BH/FDR (alpha=0.05) yielded 0 rejected pairs on formation
-    (140 tests; min q-value ~0.645). Trading metrics therefore null on validation.
-    No hyperparameter search; FDR alpha / z thresholds / costs unchanged.
-    No 2025 access before this freeze.
-
 notes: >
-  FINAL CONFIGURATION FROZEN. Parameters locked to pre-registered defaults.
-  Honest null: no FDR-rejected pairs under documented SECTOR_PAIRS within-sector scan.
+  SUPERSEDED exploratory. See statarb_historical_etf_wf_v2.yaml for conforming D9-B.
