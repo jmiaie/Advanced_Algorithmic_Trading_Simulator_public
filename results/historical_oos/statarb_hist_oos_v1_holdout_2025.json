@@ -1,0 +1,50 @@
+{
+  "branch": "research/historical-oos-study",
+  "config_path": "configs/experiments/statarb_historical_oos_study_v1.yaml",
+  "config_status": "frozen-for-holdout",
+  "dataset_canonical_sha256": "53341be4ff70884d348c6c12c800bda09f92be15bc1d4417d35013743c445b2e",
+  "dataset_id": "yf_statarb_sector_equities_daily_2015_2025_v1",
+  "experiment_id": "statarb_hist_oos_v1_holdout_2025",
+  "n_symbols": 56,
+  "result": {
+    "decision_time_pair_research": true,
+    "formation_end": "2023-12-31",
+    "formation_start": "2015-01-01",
+    "hedge_models": ["static_batch_ols", "sequential_filtered_kalman"],
+    "kalman_diagnostics": [],
+    "key_metrics": {
+      "mean_max_drawdown": null,
+      "mean_net_return": null,
+      "mean_sharpe": null,
+      "median_net_return": null,
+      "median_sharpe": null,
+      "n_eval_bars": 250,
+      "n_formation_bars": 2264,
+      "n_pairs_traded": 0,
+      "n_rejected_within_sector": 0,
+      "n_tests_within_sector": 140,
+      "n_top_pairs": 0,
+      "total_fills": 0
+    },
+    "notes": "Primary trading uses formation-fit static OLS hedge on eval window. Kalman reported as sequential diagnostic (estimation_mode labels), not as a separate live beta-trading path in this study.",
+    "pair_results": [],
+    "period_end": "2025-12-31",
+    "period_name": "holdout",
+    "period_start": "2025-01-01",
+    "primary_trading_model": "static_batch_ols",
+    "same_timestamp_signals": true,
+    "selection": {
+      "diagnostic_ranked_by_qvalue": [
+        {"symbol_a": "BAC", "symbol_b": "PNC", "sector": "Banks", "qvalue": 0.6449000211675894, "engle_granger_pvalue": 0.006213868400110113, "adf_pvalue": 0.001201882525948592, "rejected": false, "estimation_mode": "static_batch_ols"}
+      ],
+      "min_qvalue": 0.6449000211675894,
+      "n_raw_adf_lt_alpha": 15,
+      "n_raw_eg_lt_alpha": 7,
+      "n_rejected": 0,
+      "n_tests": 140,
+      "top_pairs": []
+    },
+    "walk_forward": {"chronology_ok": true, "n_windows": 12, "note": "Window chronology only; pair selection remains single formation-fit.", "selection_rescanned_per_window": false}
+  },
+  "universe_source": "pair_finder.PairFinder.SECTOR_PAIRS"
+}
