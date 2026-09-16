@@ -1,0 +1,67 @@
+{
+  "n_fallback_windows": 0,
+  "n_no_trade_windows": 3,
+  "n_qualifying_windows": 0,
+  "n_windows": 3,
+  "param_distribution": {
+    "entry_z": [],
+    "exit_abs_z": [],
+    "kalman_process_variance": [],
+    "trailing_z_window": []
+  },
+  "period_name": "val_2024",
+  "selected_pairs": [],
+  "windows": [
+    {
+      "formation_end": "2023-07-07",
+      "formation_start": "2021-07-07",
+      "frozen_params": null,
+      "n_candidate_tests": 55,
+      "n_fdr_survivors": 0,
+      "no_trade": true,
+      "selected_pair": null,
+      "test_end": "2024-04-08",
+      "test_start": "2024-01-08",
+      "used_fallback": false,
+      "validation_end": "2024-01-05",
+      "validation_kalman_sharpe": null,
+      "validation_ols_sharpe": null,
+      "validation_start": "2023-07-10",
+      "window_index": 26
+    },
+    {
+      "formation_end": "2023-10-05",
+      "formation_start": "2021-10-05",
+      "frozen_params": null,
+      "n_candidate_tests": 55,
+      "n_fdr_survivors": 0,
+      "no_trade": true,
+      "selected_pair": null,
+      "test_end": "2024-07-09",
+      "test_start": "2024-04-09",
+      "used_fallback": false,
+      "validation_end": "2024-04-08",
+      "validation_kalman_sharpe": null,
+      "validation_ols_sharpe": null,
+      "validation_start": "2023-10-06",
+      "window_index": 27
+    },
+    {
+      "formation_end": "2024-01-05",
+      "formation_start": "2022-01-04",
+      "frozen_params": null,
+      "n_candidate_tests": 55,
+      "n_fdr_survivors": 0,
+      "no_trade": true,
+      "selected_pair": null,
+      "test_end": "2024-10-07",
+      "test_start": "2024-07-10",
+      "used_fallback": false,
+      "validation_end": "2024-07-09",
+      "validation_kalman_sharpe": null,
+      "validation_ols_sharpe": null,
+      "validation_start": "2024-01-08",
+      "window_index": 28
+    }
+  ]
+}

@@ -1,0 +1,654 @@
+{
+  "dataset_id": "yf_stat_arb_etfs_daily_2015_2025_v1",
+  "source": "yfinance",
+  "source_version": "1.7.0",
+  "symbols": [
+    "SPY",
+    "QQQ",
+    "DIA",
+    "IWM",
+    "XLB",
+    "XLE",
+    "XLF",
+    "XLI",
+    "XLK",
+    "XLP",
+    "XLRE",
+    "XLU",
+    "XLV",
+    "XLY",
+    "SHY",
+    "IEF",
+    "TLT",
+    "GLD",
+    "SLV"
+  ],
+  "universe_source": "Directive_9_D9B_authoritative_ETF_groups_A_D",
+  "group_membership": {
+    "SPY": "GROUP_A_BROAD_EQUITY",
+    "QQQ": "GROUP_A_BROAD_EQUITY",
+    "DIA": "GROUP_A_BROAD_EQUITY",
+    "IWM": "GROUP_A_BROAD_EQUITY",
+    "XLB": "GROUP_B_US_EQUITY_SECTORS",
+    "XLE": "GROUP_B_US_EQUITY_SECTORS",
+    "XLF": "GROUP_B_US_EQUITY_SECTORS",
+    "XLI": "GROUP_B_US_EQUITY_SECTORS",
+    "XLK": "GROUP_B_US_EQUITY_SECTORS",
+    "XLP": "GROUP_B_US_EQUITY_SECTORS",
+    "XLRE": "GROUP_B_US_EQUITY_SECTORS",
+    "XLU": "GROUP_B_US_EQUITY_SECTORS",
+    "XLV": "GROUP_B_US_EQUITY_SECTORS",
+    "XLY": "GROUP_B_US_EQUITY_SECTORS",
+    "SHY": "GROUP_C_TREASURY_ETFS",
+    "IEF": "GROUP_C_TREASURY_ETFS",
+    "TLT": "GROUP_C_TREASURY_ETFS",
+    "GLD": "GROUP_D_PRECIOUS_METALS",
+    "SLV": "GROUP_D_PRECIOUS_METALS"
+  },
+  "pair_constraint": "within_group_only",
+  "interval": "1d",
+  "requested_start": "2015-01-01",
+  "requested_end_exclusive": "2026-01-01",
+  "actual_start": {
+    "SPY": "2015-01-02",
+    "QQQ": "2015-01-02",
+    "DIA": "2015-01-02",
+    "IWM": "2015-01-02",
+    "XLB": "2015-01-02",
+    "XLE": "2015-01-02",
+    "XLF": "2015-01-02",
+    "XLI": "2015-01-02",
+    "XLK": "2015-01-02",
+    "XLP": "2015-01-02",
+    "XLRE": "2015-10-08",
+    "XLU": "2015-01-02",
+    "XLV": "2015-01-02",
+    "XLY": "2015-01-02",
+    "SHY": "2015-01-02",
+    "IEF": "2015-01-02",
+    "TLT": "2015-01-02",
+    "GLD": "2015-01-02",
+    "SLV": "2015-01-02"
+  },
+  "actual_end": {
+    "SPY": "2025-12-31",
+    "QQQ": "2025-12-31",
+    "DIA": "2025-12-31",
+    "IWM": "2025-12-31",
+    "XLB": "2025-12-31",
+    "XLE": "2025-12-31",
+    "XLF": "2025-12-31",
+    "XLI": "2025-12-31",
+    "XLK": "2025-12-31",
+    "XLP": "2025-12-31",
+    "XLRE": "2025-12-31",
+    "XLU": "2025-12-31",
+    "XLV": "2025-12-31",
+    "XLY": "2025-12-31",
+    "SHY": "2025-12-31",
+    "IEF": "2025-12-31",
+    "TLT": "2025-12-31",
+    "GLD": "2025-12-31",
+    "SLV": "2025-12-31"
+  },
+  "row_counts": {
+    "SPY": 2766,
+    "QQQ": 2766,
+    "DIA": 2766,
+    "IWM": 2766,
+    "XLB": 2766,
+    "XLE": 2766,
+    "XLF": 2766,
+    "XLI": 2766,
+    "XLK": 2766,
+    "XLP": 2766,
+    "XLRE": 2573,
+    "XLU": 2766,
+    "XLV": 2766,
+    "XLY": 2766,
+    "SHY": 2766,
+    "IEF": 2766,
+    "TLT": 2766,
+    "GLD": 2766,
+    "SLV": 2766
+  },
+  "missing_counts": {
+    "SPY": 0,
+    "QQQ": 0,
+    "DIA": 0,
+    "IWM": 0,
+    "XLB": 0,
+    "XLE": 0,
+    "XLF": 0,
+    "XLI": 0,
+    "XLK": 0,
+    "XLP": 0,
+    "XLRE": 0,
+    "XLU": 0,
+    "XLV": 0,
+    "XLY": 0,
+    "SHY": 0,
+    "IEF": 0,
+    "TLT": 0,
+    "GLD": 0,
+    "SLV": 0
+  },
+  "actions": {
+    "SPY": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "QQQ": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "DIA": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 132
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "IWM": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLB": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLE": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 45
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLF": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLI": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLK": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLP": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLRE": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 41
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLU": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLV": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 45
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "XLY": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 44
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 1
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "SHY": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 132
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "IEF": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 132
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "TLT": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 132
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "GLD": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    },
+    "SLV": {
+      "dividends": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "stock_splits": {
+        "present": true,
+        "nonzero_count": 0
+      },
+      "capital_gains": {
+        "present": true,
+        "nonzero_count": 0
+      }
+    }
+  },
+  "coverage_notes": {
+    "SPY": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "QQQ": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "DIA": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "IWM": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLB": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLE": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLF": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLI": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLK": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLP": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLRE": "actual_start 2015-10-08 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLU": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLV": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "XLY": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "SHY": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "IEF": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "TLT": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "GLD": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step.",
+    "SLV": "actual_start 2015-01-02 is after requested_start 2015-01-01 (likely post-inception ETF); symbol retained in universe per spec -- walk-forward candidate selection must exclude it from windows predating this date, not this acquisition step."
+  },
+  "retrieval_timestamp_utc": "2026-09-16T17:28:49Z",
+  "freeze_timestamp_utc": "2026-09-16T17:28:59Z",
+  "status": "DATA FROZEN",
+  "sha256": {
+    "DIA.csv": "8592aab3af8d2a748dc3c61a13a036207f621a4ee5b64e5955c76c84a646ae85",
+    "GLD.csv": "3569e9f00edd0f64f504b9c2d663f4315bccea1ff21de1363d9d2635978029f4",
+    "IEF.csv": "4e95a4678a868f8dece715871f3d3489734a3ddac4c13e9ca5e7e99064f04c7b",
+    "IWM.csv": "40b8d25f2bbe84c92aeb14221d7289d2de97e50046bfc0adb0493d179acc1ebb",
+    "QQQ.csv": "aa1ad6f3f0216c8b56aa41e829b06e897ed52a445c2104b44f3afd18efd37fea",
+    "SHY.csv": "efb4b4fe28c092467060fed02a58e376b091f25e0c9e56dc5722dea7e38e0999",
+    "SLV.csv": "7659ddf201eb0035ac86e4312cd6bd2ea60e2ad039e0e3f19220da188ce1df40",
+    "SPY.csv": "0c83ab20bf76ec39b97855ac393b7bc74363bd4ff373381f0a92842a2c7c6a63",
+    "TLT.csv": "1912ade66fd29eb4fb108319f89e633e7a3f2ef8f8acd9d15b87f52d9701d445",
+    "XLB.csv": "5e1e16d18e83de1f529d69e279bda3344fe463b4a9534fb03773fa924b0da629",
+    "XLE.csv": "036c2f25703b33ae2e86de136e41a32c44f041712ed8cc961b8a9530b4733fd9",
+    "XLF.csv": "ac6c90d6430244ed42ff3a4ad2059920f06543ee67468c83c36427d3a6788811",
+    "XLI.csv": "24a7e159faa085bc1a5704cb83c44d00094f5b207896821dc1d310ac3b00aadb",
+    "XLK.csv": "7243d14b22cba5e5d7a5a23eee7de033383123ac0bbc059f160d1270a9de5b64",
+    "XLP.csv": "9e9292713f7ed58f9c8fdf84b3c4926a1e4e454c3d7ecda07161bafb2bed2a4d",
+    "XLRE.csv": "7f302b7b8830063390475b0cc660e4e8e62e325164dba106ba680af362d5ac58",
+    "XLU.csv": "d0e0b35a92f570829e27abb87c52f41d88f2856e83917772f134dd23797b6a2a",
+    "XLV.csv": "1c316c9770348aa0afcc96cbe9c1b6c00e713ee5acb81220ce5bf097c0e0a5be",
+    "XLY.csv": "bfef1ee5d2142766643e8424546c4a7b98940c4e3e6684599dcb8c51118199b7",
+    "dataset_canonical": "a4082398991400c171062ee4ff2b12dba87e84c4f0133462ed9ee2fbb13f9fa8"
+  },
+  "parameters": {
+    "start": "2015-01-01",
+    "end": "2026-01-01",
+    "interval": "1d",
+    "auto_adjust": true,
+    "actions": true,
+    "repair": false,
+    "keepna": true,
+    "threads": false,
+    "group_by": "column"
+  },
+  "per_symbol_columns": {
+    "SPY": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "QQQ": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "DIA": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "IWM": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLB": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLE": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLF": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLI": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLK": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLP": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLRE": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLU": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLV": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "XLY": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "SHY": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "IEF": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "TLT": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "GLD": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ],
+    "SLV": [
+      "Capital Gains",
+      "Close",
+      "Dividends",
+      "High",
+      "Low",
+      "Open",
+      "Stock Splits",
+      "Volume"
+    ]
+  },
+  "notes": "Frozen after local acquisition+validation. Raw CSVs remain gitignored under data/raw/. Re-acquire with the same parameters and compare dataset_canonical if regenerating. Authoritative D9-B v3 universe (Groups A-D, no cross-group pairs) -- supersedes the exploratory PairFinder.SECTOR_PAIRS dataset (yf_statarb_sector_equities_daily_2015_2025_v1, v1, non-conforming/superseded)."
+}
