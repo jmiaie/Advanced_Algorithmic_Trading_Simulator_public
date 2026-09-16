@@ -1,12 +1,14 @@
 # Data (Directive #9)
 
-- `raw/` — vendor snapshots (yfinance CSVs). **Gitignored.** Local/agent acquisition only; never fetch from CI.
-- `manifests/` — committed dataset manifests with SHA-256 after freeze.
+- Raw vendor snapshots live under `data/raw/` and are **gitignored**.
+- Manifests under `data/manifests/` are committed after **DATA FROZEN**.
 
-Dataset for Stat-Arb D9-B: `yf_statarb_sector_equities_daily_2015_2025_v1`.
+## Conforming dataset (D9-B)
 
-Acquire locally:
+- **ID:** `yf_stat_arb_etfs_daily_2015_2025_v1`
+- **Acquire:** `python scripts/acquire_yf_stat_arb_etfs_daily.py` (local/agent only; **never CI**)
+- Universe: ETF groups A–D (see manifest `universe_groups`)
 
-```bash
-python scripts/acquire_yf_statarb_sector_equities_daily.py
-```
+## Superseded exploratory dataset
+
+- `yf_statarb_sector_equities_daily_2015_2025_v1` — PairFinder.SECTOR_PAIRS equities; **non-conforming**; retain manifest only for audit trail.
