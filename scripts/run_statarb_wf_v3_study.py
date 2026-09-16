@@ -20,6 +20,7 @@ import argparse
 import csv
 import hashlib
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, List
@@ -257,7 +258,7 @@ def main(argv: list[str] | None = None) -> int:
                 "repo": "Advanced_Algorithmic_Trading_Simulator_public",
                 "branch": "research/historical-oos-study",
                 "dataset_id": dataset_id,
-                "config_path": str(config_path.relative_to(root)),
+                "config_path": os.path.relpath(config_path, root),
                 "status": status,
                 "period_name": period_name,
                 "period_start": str(windows[0].test_start.date()),
@@ -265,7 +266,7 @@ def main(argv: list[str] | None = None) -> int:
                 "horizons": "",
                 "seed": "0",
                 "primary_symbol": "",
-                "artifact_path": str(artifact_path.relative_to(root)),
+                "artifact_path": os.path.relpath(artifact_path, root),
                 "artifact_sha256": artifact_sha,
                 "key_metrics_json": json.dumps(
                     {
