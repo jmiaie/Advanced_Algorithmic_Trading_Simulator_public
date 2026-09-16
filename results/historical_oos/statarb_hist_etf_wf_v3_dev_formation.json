@@ -1,8 +1,8 @@
 {
   "n_fallback_windows": 4,
-  "n_no_trade_windows": 22,
+  "n_no_trade_windows": 21,
   "n_qualifying_windows": 4,
-  "n_windows": 26,
+  "n_windows": 25,
   "param_distribution": {
     "entry_z": [
       2.0,
@@ -809,23 +809,6 @@
       "validation_ols_sharpe": null,
       "validation_start": "2023-01-05",
       "window_index": 24
-    },
-    {
-      "formation_end": "2023-04-05",
-      "formation_start": "2021-04-07",
-      "frozen_params": null,
-      "n_candidate_tests": 55,
-      "n_fdr_survivors": 0,
-      "no_trade": true,
-      "selected_pair": null,
-      "test_end": "2024-01-05",
-      "test_start": "2023-10-06",
-      "used_fallback": false,
-      "validation_end": "2023-10-05",
-      "validation_kalman_sharpe": null,
-      "validation_ols_sharpe": null,
-      "validation_start": "2023-04-06",
-      "window_index": 25
     }
   ]
 }
