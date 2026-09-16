@@ -76,15 +76,52 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   file's header for the full corrective record (original freeze timestamp,
   invalidation timestamp, reason).
 - **v3** (`statarb_hist_etf_wf_v3`, `configs/experiments/statarb_historical_etf_wf_v3.yaml`):
-  the active conforming experiment, **status: pre-registered**. A real
-  walk-forward pipeline now backs it (`src/stat_arb_engine/wf_v3_*.py`):
-  per-window pair rediscovery (not chronology-only), a fair static-OLS-vs-
-  Kalman comparison (Kalman is traded, not diagnostics-only), fixed-gross-
-  notional sizing, and GROSS/BASE/STRESS costs with real daily-accrued
-  borrow (unlike `execution.CostModel`, whose `borrow_cost` is a stub that
-  always returns 0.0). 19 offline tests pass (`tests/test_wf_v3_pipeline.py`,
-  synthetic fixtures only). **Not yet run against real data**: dataset
-  acquisition is blocked by this session's egress policy (Yahoo Finance
-  denied with policy 403; see `scripts/acquire_yf_stat_arb_etfs_daily.py`).
-  No DEV/2024-validation results exist yet, and no 2025 evaluation of any
-  kind has occurred for v3.
+  **INVALIDATED BEFORE HOLDOUT** (2026-09-16T20:30:00Z). DEV+2024-validation
+  ran successfully against the real acquired dataset (no 2025 evaluation
+  ever occurred for v3 -- see holdout-audit.md), but independent code
+  review found two defects in `src/stat_arb_engine/wf_v3_*.py`, and a third
+  was found independently while porting the fix into v4:
+  1. **Execution timing**: a position decided using information through
+     bar t (the causal z-score/hedge-ratio computed from bar t's own
+     close) was filled AT bar t's own price -- an unrealistic same-close
+     assumption, most consequential for the sequential Kalman hedge ratio.
+  2. **Turnover tie-break omitted**: `_validation_tiebreak_metric`'s own
+     docstring said turnover was "omitted... not expected to bind,"
+     contradicting the pre-registered spec's
+     `tie_break: [lower_max_drawdown, lower_turnover]`.
+  3. **Drawdown tie-break sign inversion** (found while implementing v4's
+     fix for #2, not part of the original review): v3's tie-break
+     comparison, worked through with concrete numbers, actually preferred
+     the *deeper* of two tied-Sharpe candidates' drawdowns -- the opposite
+     of "lower max drawdown." Caught by a v4 unit test, never manifested
+     in an executed v3 run.
+  See the config file's header for the full corrective record. Superseded
+  by v4.
+- **v4** (`statarb_hist_etf_wf_v4`, `configs/experiments/statarb_historical_etf_wf_v4.yaml`):
+  the active conforming experiment, **status: pre-registered**. Identical
+  dataset/universe/grid/costs/hypotheses to v3; fixes all three defects
+  above via `src/stat_arb_engine/wf_v4_backtest.py` (execution-lag
+  enforcement: `lag_for_execution` + a lag-aware `simulate_pair_backtest`)
+  and `wf_v4_orch.py` (corrected three-level tie-break:
+  Sharpe -> drawdown -> turnover, with the correct sign on each). 29
+  offline tests pass (`tests/test_wf_v4_pipeline.py`,
+  `tests/test_wf_v4_holdout_gate.py`, plus the unaffected 21 pre-existing
+  v3 tests, all synthetic fixtures only), including dedicated causality
+  tests proving: a later price cannot change an earlier decision, a
+  decision at t cannot alter holdings at t (only from t+1 onward), and the
+  hedge ratio used to execute a t-decided trade is the estimate as of t,
+  never a later Kalman update.
+
+  **Run against the real acquired dataset** (DEV 2015-2023 + 2024
+  validation only; 2025 structurally excluded, not just status-gated --
+  see `tests/test_wf_v4_holdout_gate.py`): 25 dev_formation windows (4
+  qualifying, 21 no-trade), 1 boundary window (no-trade), 3 val_2024
+  windows (all no-trade -- a credible null result, not loosened to force a
+  trade). The no-trade windows' summaries are byte-identical to v3's for
+  the same windows (pair selection is unaffected by either defect, so this
+  is an expected and reassuring consistency check, not evidence the fix
+  did nothing); the dev_formation summary, where trades did occur, differs
+  from v3's (SHA-256 `a1b033f9...` vs v3's `c7ca93a6...`), confirming the
+  fix changed real trading behavior exactly where it should. No 2025
+  evaluation has occurred for v4; config freeze and holdout require
+  independent review sign-off first.

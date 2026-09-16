@@ -1,0 +1,243 @@
+# Stat-Arb historical walk-forward study — PRE-REGISTERED (conforming D9-B v4)
+# Status: pre-registered
+#
+# Supersedes statarb_hist_etf_wf_v3 (configs/experiments/statarb_historical_etf_wf_v3.yaml),
+# which is invalidated-before-holdout: independent review found two defects
+# in its implementation before any 2025 evaluation occurred (v3 itself never
+# reached a 2025 run -- see its own status field and this program's
+# holdout-audit.md):
+#
+#   1. Execution timing: v3 decided a position using information through
+#      bar t (the z-score/hedge-ratio computed from bar t's own close) and
+#      then filled that trade AT bar t's own price -- an unrealistic
+#      same-close assumption, most consequential for the sequential Kalman
+#      hedge ratio (whose bar-t filtered estimate itself incorporates bar
+#      t's own observation).
+#   2. Validation tie-break: v3's tie-break for the entry/exit/z-window
+#      grid stopped at (Sharpe, max drawdown) and its own docstring
+#      explicitly said turnover was "omitted... not expected to bind" --
+#      contradicting this same spec's tie_break requirement below.
+#
+# A third defect was found independently while porting the fix for #2 above
+# into v4 (not part of the original review): v3's drawdown tie-break
+# comparison used a sign convention that, worked through concretely, would
+# have preferred the DEEPER (worse) of two drawdowns on a Sharpe tie --
+# the opposite of "lower max drawdown." Caught by a v4 unit test
+# (test_drawdown_is_the_second_tiebreak_criterion_before_turnover) before
+# it could ship, not observed in an actual v3 run (v3 never reached a
+# validation tie needing this comparison in the DEV/2024-validation
+# execution already on record).
+#
+# None of this is observed-outcome-driven: all three defects are mechanical
+# implementation bugs found by code review and unit testing, not by
+# comparing candidate specs against realized 2025 (or later) results, which
+# remain untouched by both v3 and v4 to this point.
+#
+# Prior exploratory config statarb_historical_oos_study_v1.yaml (wrong
+# universe: PairFinder.SECTOR_PAIRS) remains SUPERSEDED / EXPLORATORY /
+# NON-CONFORMING, preserved unmodified in the ledger and results tree.
+# statarb_historical_etf_wf_v2.yaml remains invalidated-before-holdout
+# (never backed by any dataset/pipeline/artifacts).
+#
+# This document must NOT be changed based on observed 2025 (or later)
+# outcomes. Status only advances forward: pre-registered -> (after DEV +
+# 2024-validation) frozen-for-holdout -> (after the one-time holdout run)
+# holdout-evaluated. No retune after freeze.
+
+experiment_id: statarb_hist_etf_wf_v4
+status: pre-registered
+directive: 9
+dataset_id: yf_stat_arb_etfs_daily_2015_2025_v1
+seed: 0
+
+research_question: >
+  Do formation-period cointegration relationships in the authoritative
+  4-group ETF universe persist sufficiently out of sample to produce
+  economically meaningful relative-value behavior after implementation
+  costs, under a realistic decide-at-t/execute-at-t+1 timing convention?
+  Secondary: does sequential Kalman hedge estimation improve OOS spread
+  stability or net results relative to static OLS?
+
+universe:
+  source: Directive_9_D9B_authoritative_ETF_groups_A_D
+  interval: 1d
+  pair_constraint: within_group_only
+  groups:
+    GROUP_A_BROAD_EQUITY: [SPY, QQQ, DIA, IWM]
+    GROUP_B_US_EQUITY_SECTORS: [XLB, XLE, XLF, XLI, XLK, XLP, XLRE, XLU, XLV, XLY]
+    GROUP_C_TREASURY_ETFS: [SHY, IEF, TLT]
+    GROUP_D_PRECIOUS_METALS: [GLD, SLV]
+  # Identical to v3. A symbol whose actual coverage starts after the
+  # requested dataset start (e.g. XLRE) is retained in the universe; the
+  # walk-forward engine excludes it only from windows that predate its own
+  # inception (see wf_v4_orch.available_symbols_for_window). No
+  # substitutions from v3.
+
+periods:
+  requested_data_start: "2015-01-01"
+  requested_data_end_exclusive: "2026-01-01"
+  formation_dev: {start: "2015-01-02", end_inclusive: "2023-12-29"}
+  validation: {start: "2024-01-02", end_inclusive: "2024-12-31"}
+  holdout: {start: "2025-01-02", end_inclusive: "2025-12-31"}
+  holdout_access: allowed_after_final_configuration_frozen
+  reserved_for_freshness: "2026 onward"
+
+walk_forward:
+  formation_size: 504
+  validation_size: 126
+  test_size: 63
+  step_size: 63
+  reject_under_length_windows: true
+  pair_rediscovery_per_window: true
+
+selection:
+  method: engle_granger_within_group
+  fdr_alpha: 0.05
+  adf_alpha: 0.05
+  multiple_testing: Benjamini-Hochberg on Engle-Granger p-values (pooled within-group candidates)
+  secondary_filter: residual_ADF
+  max_pairs_traded: 1
+  ranking: lowest_BH_adjusted_EG_p then lower_residual_ADF_p then lexicographic_symbols
+  no_qualifying_pair: NO_TRADE
+
+signals:
+  entry_z_candidates: [1.5, 2.0, 2.5]
+  exit_abs_z_candidates: [0.25, 0.50, 0.75]
+  trailing_z_window_candidates: [20, 40, 60]
+  same_timestamp_batch_required: true
+  zscore_normalization: causal (rolling window shifted by one bar; the
+    current observation never contaminates its own z-score)
+
+execution_timing:
+  decision_information_cutoff: close_of_bar_t
+  earliest_execution: close_of_bar_t_plus_1
+  hedge_ratio_used_for_execution: estimate_as_of_decision_bar_t_not_any_later_update
+  applies_to: [entries, exits, reversals, static_ols, sequential_kalman]
+  rationale: >
+    v3 defect #1 (see header). Implemented via
+    wf_v4_backtest.lag_for_execution / simulate_pair_backtest, with
+    dedicated causality tests in tests/test_wf_v4_pipeline.py proving:
+    a later price cannot change an earlier decision, a decision made at t
+    cannot alter holdings at t (only at t+1 onward), and the hedge ratio
+    used to execute a t-decided trade is the estimate as of t, never a
+    later Kalman update.
+
+hedge:
+  baseline: static_ols
+  alternative: sequential_kalman_forward_filter_only
+  fair_compare: same_pair_oos_entry_exit_costs_sizing
+  kalman_is_diagnostics_only: false
+
+kalman:
+  process_variance_candidates: [1.0e-5, 1.0e-4, 1.0e-3]
+  observation_variance: 1.0e-2
+  observation_variance_note: repo-validated default; document any scale fix BEFORE final
+  alpha_random_walk: true
+  no_smoothing: true
+
+selection_objective:
+  primary: net_sharpe (BASE-cost, Static OLS on validation block)
+  min_trade_count: 10
+  tie_break: [lower_max_drawdown, lower_turnover]
+  tie_break_implementation_note: >
+    v3 defect #2 (see header) omitted lower_turnover entirely, and an
+    independently-found third defect inverted the lower_max_drawdown
+    comparison. v4 implements both criteria via
+    wf_v4_orch._select_best_by_tiebreak with the correct sign convention,
+    covered by dedicated unit tests.
+  insufficient_trades_fallback:
+    entry_z: 2.0
+    exit_abs_z: 0.5
+    trailing_z_window: 40
+    kalman_process_variance: 1.0e-4
+  kalman_q_selection: >
+    Selected separately via Kalman validation net Sharpe under the
+    already-fixed entry_z/exit_abs_z/trailing_z_window from the OLS
+    selection above (only hedge estimation may differ between models).
+
+sizing:
+  mode: fixed_gross_notional
+  gross_notional_multiple_of_allocated_nav: 1.0
+  max_leverage_gross: 1.0
+  fixed_shares_banned_for_primary: true
+
+costs:
+  scenarios: [analytical_zero, BASE, STRESS]
+  BASE:
+    commission_per_share: 0.005
+    min_commission: 1.0
+    spread_bps_per_side: 1.0
+    slip_bps_per_side: 1.0
+    impact_bps_per_side: 0.5
+    borrow_bps_annualized: 50.0
+  STRESS:
+    commission_per_share: 0.005
+    min_commission: 1.0
+    spread_bps_per_side: 3.0
+    slip_bps_per_side: 3.0
+    impact_bps_per_side: 2.0
+    borrow_bps_annualized: 200.0
+  analytical_zero:
+    commission_per_share: 0.0
+    min_commission: 0.0
+    spread_bps_per_side: 0.0
+    slip_bps_per_side: 0.0
+    impact_bps_per_side: 0.0
+    borrow_bps_annualized: 0.0
+  notes: >
+    Scenario assumptions, not measured historical execution costs. Borrow
+    accrues daily as annualized_bps/252 on the actual short market value
+    held that day (see wf_v3_costs.CostScenario.daily_borrow_cost, reused
+    unchanged by v4).
+
+evaluation:
+  invent_metrics: false
+  report_nulls_exactly: true
+  metrics_required:
+    - n_candidate_tests
+    - n_fdr_survivors
+    - n_no_pair_windows
+    - n_qualifying_windows
+    - selected_pair_per_window
+    - trades
+    - avg_holding_period
+    - gross_return
+    - base_net_return
+    - stress_net_return
+    - annualized_vol
+    - sharpe
+    - max_drawdown_incl_initial_nav
+    - turnover
+    - cost_drag
+    - gross_exposure
+    - net_exposure
+    - static_ols_vs_kalman
+
+constraints:
+  no_retune_after_freeze: true
+  no_universe_change_after_dataset_freeze: true
+  no_ci_network_fetch: true
+  no_2025_access_before_final_configuration_frozen: true
+  no_2026_use_yet: true
+
+implementation:
+  package: stat_arb_engine
+  modules:
+    - wf_v3_pairs.py       # unchanged from v3, reused directly
+    - wf_v3_sizing.py      # unchanged from v3, reused directly
+    - wf_v3_costs.py       # unchanged from v3, reused directly
+    - wf_v3_backtest.py    # SpreadSeries/build_*_spread/causal_zscore/generate_positions reused directly
+    - wf_v4_backtest.py    # NEW: lag_for_execution + execution-lag-aware simulate_pair_backtest
+    - wf_v4_orch.py        # NEW: lag-aware call sites + corrected 3-level tie-break
+  tests:
+    - tests/test_wf_v4_pipeline.py
+    - tests/test_wf_v4_holdout_gate.py
+
+notes: >
+  Corrected D9-B v4 experiment. Same dataset (already locally acquired and
+  hashed for v3; no re-acquisition needed since raw bytes are unchanged),
+  same universe/grid/costs/sizing/hypotheses as v3. DEV/2024-validation
+  rerun is required because v4 is a corrected experiment (timing +
+  tie-break fixes change which parameters validation selects and how test
+  results are computed); no 2025 evaluation until this config is frozen
+  and independent review authorizes the holdout.

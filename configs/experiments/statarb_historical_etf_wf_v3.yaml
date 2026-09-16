@@ -1,23 +1,51 @@
-# Stat-Arb historical walk-forward study — PRE-REGISTERED (conforming D9-B v3)
-# Status: pre-registered
+# Stat-Arb historical walk-forward study — INVALIDATED BEFORE HOLDOUT
+# Status: invalidated-before-holdout (was: pre-registered)
+#
+# CORRECTIVE NOTE (independent code review, see quant-research-portfolio
+# Issue #3): this config's implementation (src/stat_arb_engine/wf_v3_*.py)
+# has three verified defects, none of which were ever exercised against
+# 2025 data -- v3 never reached a 2025 evaluation; only DEV/2024-validation
+# were ever run under it.
+#   defect_1_execution_timing:
+#     v3 decided a position using information through bar t (the causal
+#     z-score/hedge-ratio computed FROM bar t's own close) and then filled
+#     that trade AT bar t's own price -- an unrealistic same-close
+#     execution assumption, most consequential for the sequential Kalman
+#     hedge ratio (whose bar-t filtered estimate itself incorporates bar
+#     t's own observation). Confirmed by direct reading of
+#     wf_v3_backtest.simulate_pair_backtest before this note was written.
+#   defect_2_turnover_tiebreak_omitted:
+#     wf_v3_orch._validation_tiebreak_metric's own docstring states
+#     "turnover tie-break omitted as a third-order refinement not expected
+#     to bind" -- contradicting this same file's
+#     selection_objective.tie_break: [lower_max_drawdown, lower_turnover]
+#     below. Confirmed by direct reading of the same function.
+#   defect_3_drawdown_tiebreak_sign_inversion (found independently, not
+#     part of the original review, while porting defect_2's fix into v4):
+#     wf_v3_orch._validation_tiebreak_metric returns -max_drawdown and
+#     compares "cand_dd > best_dd"; worked through with concrete numbers
+#     (e.g. -0.02 vs -0.10 drawdown), this comparison prefers the DEEPER
+#     (worse) of two tied-Sharpe candidates, the opposite of "lower max
+#     drawdown." Caught by a v4 unit test before shipping, not observed in
+#     an actual v3 run.
+#   invalidation_timestamp_utc: "2026-09-16T20:30:00Z"
+#   no_2025_v3_evaluation_ever_executed: true
+#   superseded_by: statarb_hist_etf_wf_v4 (configs/experiments/statarb_historical_etf_wf_v4.yaml)
+#
+# This file is preserved unmodified below except for this header and the
+# status field (git history + this header are the audit trail) -- do not
+# delete or rewrite history.
 #
 # Supersedes statarb_hist_etf_wf_v2 (configs/experiments/statarb_historical_etf_wf_v2.yaml),
-# which is invalidated-before-holdout: it was never backed by a dataset
-# manifest, executable pipeline, or DEV/2024-validation artifacts. This v3
-# pre-registration is the first version of this design with an actual
-# implementation (src/stat_arb_engine/wf_v3_*.py) behind it.
+# which is separately invalidated-before-holdout (never backed by a dataset
+# manifest, executable pipeline, or DEV/2024-validation artifacts).
 #
 # Prior exploratory config statarb_historical_oos_study_v1.yaml (wrong
 # universe: PairFinder.SECTOR_PAIRS) remains SUPERSEDED / EXPLORATORY /
 # NON-CONFORMING, preserved unmodified in the ledger and results tree.
-#
-# This document must NOT be changed based on observed 2025 (or later)
-# outcomes. Status only advances forward: pre-registered -> (after DEV +
-# 2024-validation) frozen-for-holdout -> (after the one-time holdout run)
-# holdout-evaluated. No retune after freeze.
 
 experiment_id: statarb_hist_etf_wf_v3
-status: pre-registered
+status: invalidated-before-holdout
 directive: 9
 dataset_id: yf_stat_arb_etfs_daily_2015_2025_v1
 seed: 0

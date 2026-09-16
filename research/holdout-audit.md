@@ -70,3 +70,15 @@ YAML status was set to `frozen-for-holdout` after formation+validation; calendar
 **Design/specification origin — genuinely unresolved, not just mechanically clear.** The v3 universe, walk-forward window sizes, validation grid values, fallback parameters, and cost assumptions were handed to this session as an already-written "authoritative spec," not derived here. Per the program tracker (Issue #3), FDM's 2025 SPY/QQQ/IWM/TLT/GLD holdout results were already posted **before** that authoritative D9-B spec was delivered. Whether the people or systems who authored the spec's specific design choices (this exact universe, this exact grid, this exact fallback) were influenced by having already seen those results is a real question this document cannot answer — it's outside what any code-level audit of this repository can establish. Mechanical selection at execution time does not rule out the design itself having been shaped by previously seen outcomes upstream.
 
 **Verdict for v3:** CLEAR that the *executing pipeline* never reads 2025 data and has no code-level leakage path. **Not resolved:** whether the *design* it executes was influenced by prior knowledge of FDM's 2025 results for the 5 overlapping symbols. Both statements are disclosed here for whoever authorizes the D9-B v3 holdout to weigh — neither is asserted as a blanket "clear."
+
+## D9-B v3 invalidated before holdout; v4 supersedes it (still pre-holdout)
+
+**Update date (PT):** 2026-09-16
+
+v3 was never evaluated against 2025 data (see above) and **remains** never evaluated against 2025 data — it was invalidated for unrelated reasons (execution-timing and tie-break defects; see `research/statistical-arbitrage-validation.md` and the config file's header) before any holdout freeze occurred. v4 (`statarb_hist_etf_wf_v4`) supersedes it, carrying forward the identical universe, dataset, and 2025-exclusion mechanics:
+
+- No code path in `wf_v4_*` reads, references, or was written with knowledge of 2025 values — `wf_v4_orch.py` reuses v3's unmodified pair-selection/sizing/cost modules and only changes execution-timing and tie-break logic, neither of which touches calendar-based filtering.
+- DEV/2024-validation execution used the same structural 2025-exclusion as v3 (`scripts/run_statarb_wf_v4_study.py`, panel sliced to `< 2025-01-01` before the study runs, not just a status check), verified by `tests/test_wf_v4_holdout_gate.py::test_v4_runner_dev_val_run_never_scores_2025_rows` and a refusal-gate test analogous to v3's.
+- The cross-repository exposure disclosure above (5/19 symbols also in FDM's D9-A universe, whose 2025 holdout already executed; design-origin question genuinely unresolved) applies identically to v4, since the universe is unchanged from v3.
+
+**Verdict for v4:** Same as v3's verdict above, carried forward unchanged — CLEAR on code-level execution, NOT RESOLVED on design-origin chronology. No 2025 evaluation has occurred for v4.
