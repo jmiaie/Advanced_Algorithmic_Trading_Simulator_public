@@ -1,0 +1,105 @@
+# Stat-Arb historical OOS study — FROZEN FOR HOLDOUT
+# Status: frozen-for-holdout
+# FINAL CONFIGURATION FROZEN after formation (2015-2023) + validation (2024).
+# Holdout (2025) may now be evaluated once; do not retune after this freeze.
+
+experiment_id: statarb_hist_oos_v1
+status: frozen-for-holdout
+directive: 9
+dataset_id: yf_statarb_sector_equities_daily_2015_2025_v1
+seed: 0
+
+universe:
+  source: pair_finder.PairFinder.SECTOR_PAIRS
+  interval: 1d
+  pair_constraint: within_sector_only
+  # Frozen symbol list locked in dataset manifest after acquisition; no mid-study expansion.
+  # Exclusion at freeze: DELL (coverage_gate incomplete 2015 history).
+
+periods:
+  requested_data_start: "2015-01-01"
+  requested_data_end_exclusive: "2026-01-01"
+  formation_dev: {start: "2015-01-01", end_inclusive: "2023-12-31"}
+  validation: {start: "2024-01-01", end_inclusive: "2024-12-31"}
+  holdout: {start: "2025-01-01", end_inclusive: "2025-12-31"}
+  holdout_access: allowed_after_final_configuration_frozen
+
+selection:
+  method: engle_granger_within_sector
+  fdr_alpha: 0.05
+  adf_alpha: 0.05
+  top_n_pairs: 10
+  selection_window: formation_only
+  multiple_testing: Benjamini-Hochberg on Engle-Granger p-values (pooled across within-sector tests)
+  secondary_filter: residual_ADF
+
+signals:
+  z_window: 20
+  entry_z: 2.0
+  exit_z: 0.5
+  same_timestamp_batch_required: true
+
+hedge:
+  primary_trading_model: static_batch_ols
+  diagnostic_model: sequential_filtered_kalman
+  fit_window: formation_only
+
+kalman:
+  process_variance: 1.0e-4
+  observation_variance: 1.0e-2
+  alpha_random_walk: true
+
+costs:
+  scenario_label: stylized_baseline
+  commission_per_share: 0.005
+  min_commission: 1.0
+  spread_bps: 1.0
+  slippage_bps: 1.0
+  impact_bps: 0.0
+  borrow_bps_per_day: 0.0
+  notes: Stylized CostModel — not empirical L2 microstructure.
+
+execution:
+  starting_cash: 100000.0
+  sizing_mode: fixed_shares
+  fixed_shares: 100
+  gross_notional: 10000.0
+  engine: EventDrivenBacktester + PairsTradingStrategy + PortfolioLedger
+
+walk_forward:
+  formation_size: 504
+  validation_size: 126
+  test_size: 126
+
+evaluation:
+  metrics_from_engine:
+    - gross_return
+    - net_return
+    - annualized_return
+    - annualized_volatility
+    - sharpe_ratio
+    - max_drawdown
+    - turnover
+    - average_gross_exposure
+    - cost_drag
+  invent_metrics: false
+  report_nulls_exactly: true
+
+constraints:
+  no_2025_evaluation_until_freeze: false
+  no_retune_after_freeze: true
+  no_universe_change_after_dataset_freeze: true
+  no_ci_network_fetch: true
+
+freeze_record:
+  frozen_for_holdout_utc: "2026-09-16T03:30:00Z"
+  basis: >
+    Formation (2015-2023) + validation (2024) completed under pre-registered defaults.
+    Within-sector BH/FDR (alpha=0.05) yielded 0 rejected pairs on formation
+    (140 tests; min q-value ~0.645). Trading metrics therefore null on validation.
+    No hyperparameter search; FDR alpha / z thresholds / costs unchanged.
+    No 2025 access before this freeze.
+
+notes: >
+  FINAL CONFIGURATION FROZEN. Parameters locked to pre-registered defaults.
+  Honest null: no FDR-rejected pairs under documented SECTOR_PAIRS within-sector scan.
