@@ -8,3 +8,6 @@ algo_sim_project/
 *.egg-info/
 .pytest_cache/
 .mypy_cache/
+
+# Directive #9: raw vendor snapshots stay local / gitignored
+data/raw/
