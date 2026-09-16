@@ -1,4 +1,5 @@
 """Pair backtest + Kalman diagnostics for D9 historical OOS."""
+
 from __future__ import annotations
 
 import hashlib
@@ -11,6 +12,7 @@ import pandas as pd
 from .analytics import compute_strategy_analytics
 from .engine import DataStreamer, EventDrivenBacktester
 from .execution import CostModel, ExecutionHandler, LimitOrderBook
+from .historical_oos_panel import _pair_ohlc_dict
 from .portfolio import PortfolioLedger
 from .research import (
     compare_hedge_models,
@@ -18,7 +20,7 @@ from .research import (
     fit_static_ols_hedge_ratio,
 )
 from .strategies import PairsTradingStrategy, PositionSizer
-from .historical_oos_panel import _pair_ohlc_dict
+
 
 def backtest_static_pair(
     panel: pd.DataFrame,
@@ -99,6 +101,7 @@ def backtest_static_pair(
         "cost_scenario": cost_model.scenario_label,
     }
 
+
 def summarize_selection(selection: pd.DataFrame, top_n: int) -> Dict[str, Any]:
     if selection.empty:
         return {
@@ -130,9 +133,7 @@ def summarize_selection(selection: pd.DataFrame, top_n: int) -> Dict[str, Any]:
     diagnostic = [_row_dict(row) for row in selection.head(top_n).itertuples(index=False)]
     return {
         "n_tests": (
-            int(selection["test_count"].iloc[0])
-            if "test_count" in selection
-            else len(selection)
+            int(selection["test_count"].iloc[0]) if "test_count" in selection else len(selection)
         ),
         "n_rejected": int(selection["rejected"].sum()),
         "top_pairs": top_pairs,
@@ -141,6 +142,7 @@ def summarize_selection(selection: pd.DataFrame, top_n: int) -> Dict[str, Any]:
         "n_raw_eg_lt_alpha": int((selection["engle_granger_pvalue"] < 0.05).sum()),
         "n_raw_adf_lt_alpha": int((selection["adf_pvalue"] < 0.05).sum()),
     }
+
 
 def kalman_diagnostics(
     panel: pd.DataFrame,
@@ -191,6 +193,7 @@ def kalman_diagnostics(
         )
     return rows
 
+
 def aggregate_pair_analytics(pair_results: Sequence[Mapping[str, Any]]) -> Dict[str, Any]:
     sharpes: List[float] = []
     net_returns: List[float] = []
@@ -227,8 +230,10 @@ def aggregate_pair_analytics(pair_results: Sequence[Mapping[str, Any]]) -> Dict[
         "total_fills": int(sum(int(x.get("n_fills", 0)) for x in pair_results)),
     }
 
+
 def sha256_text(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
 
 def write_json_artifact(path: Path, payload: Mapping[str, Any]) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)

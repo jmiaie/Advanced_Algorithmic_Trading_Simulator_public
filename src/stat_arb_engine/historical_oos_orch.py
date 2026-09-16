@@ -1,4 +1,5 @@
 """Period study orchestration for D9 historical OOS."""
+
 from __future__ import annotations
 
 from typing import Any, Dict, List, Mapping
@@ -6,19 +7,20 @@ from typing import Any, Dict, List, Mapping
 import pandas as pd
 
 from .execution import CostModel
-from .research import as_of_frame, walk_forward_windows
-from .strategies import PositionSizer
-from .historical_oos_panel import (
-    PeriodSpec,
-    select_pairs_within_sectors,
-    slice_period,
-)
 from .historical_oos_backtest import (
     aggregate_pair_analytics,
     backtest_static_pair,
     kalman_diagnostics,
     summarize_selection,
 )
+from .historical_oos_panel import (
+    PeriodSpec,
+    select_pairs_within_sectors,
+    slice_period,
+)
+from .research import as_of_frame, walk_forward_windows
+from .strategies import PositionSizer
+
 
 def run_period_study(
     *,
@@ -105,7 +107,8 @@ def run_period_study(
         chronology_ok = True
         for window in windows:
             if not (
-                window["formation"].max() < window["validation"].min()
+                window["formation"].max()
+                < window["validation"].min()
                 <= window["validation"].max()
                 < window["test"].min()
             ):

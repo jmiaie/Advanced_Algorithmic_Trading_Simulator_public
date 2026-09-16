@@ -315,9 +315,7 @@ def main(argv: list[str] | None = None) -> int:
     included: list[str] = []
     excluded: list[dict[str, str]] = list(failed)
     for symbol, stats in per_symbol.items():
-        if coverage_ok(
-            stats, min_start=args.coverage_min_start, min_end=args.coverage_min_end
-        ):
+        if coverage_ok(stats, min_start=args.coverage_min_start, min_end=args.coverage_min_end):
             included.append(symbol)
         else:
             excluded.append(
@@ -370,7 +368,9 @@ def main(argv: list[str] | None = None) -> int:
         requested_universe=requested,
     )
     manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(manifest, indent=2, sort_keys=False) + "\n", encoding="utf-8"
+    )
     print(f"Wrote manifest {manifest_path}")
     print(f"status={status} included={len(included)} excluded={len(excluded)}")
     if sha256 is not None:

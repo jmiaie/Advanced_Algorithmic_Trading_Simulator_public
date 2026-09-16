@@ -1,4 +1,5 @@
 """Panel load + within-sector pair selection for D9 historical OOS."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -10,11 +11,13 @@ import pandas as pd
 
 from .research import benjamini_hochberg, fit_static_ols_hedge_ratio
 
+
 @dataclass(frozen=True)
 class PeriodSpec:
     name: str
     start: str
     end_inclusive: str
+
 
 def load_close_panel(raw_dir: Path, symbols: Sequence[str]) -> pd.DataFrame:
     frames: Dict[str, pd.Series] = {}
@@ -34,11 +37,13 @@ def load_close_panel(raw_dir: Path, symbols: Sequence[str]) -> pd.DataFrame:
         raise ValueError("Panel index not monotonic increasing")
     return panel
 
+
 def slice_period(panel: pd.DataFrame, period: PeriodSpec) -> pd.DataFrame:
     start = pd.Timestamp(period.start)
     end = pd.Timestamp(period.end_inclusive)
     out = panel.loc[(panel.index >= start) & (panel.index <= end)].copy()
     return out
+
 
 def select_pairs_within_sectors(
     price_frame: pd.DataFrame,
@@ -100,6 +105,7 @@ def select_pairs_within_sectors(
         ["rejected", "qvalue", "engle_granger_pvalue"],
         ascending=[False, True, True],
     ).reset_index(drop=True)
+
 
 def _pair_ohlc_dict(panel: pd.DataFrame, sym_a: str, sym_b: str) -> Dict[str, pd.DataFrame]:
     aligned = panel[[sym_a, sym_b]].dropna(how="any")
