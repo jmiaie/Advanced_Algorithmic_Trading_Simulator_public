@@ -60,3 +60,31 @@ Regression coverage for the D3 gate lives in `tests/test_directive3_gates.py`:
 5. **Correct analytics** — conventional Sharpe and trailing max-drawdown formulas; NAV-based net return with qualified cost add-back for gross return.
 
 Qualified claim: this verifies research-engine invariants on synthetic/unit fixtures. It does **not** assert empirical out-of-sample trading performance.
+
+## Directive #9 D9-B status (corrective note)
+
+- **v1** (`statarb_hist_oos_v1_*`, `configs/experiments/statarb_historical_oos_study_v1.yaml`):
+  exploratory sector-equity study, universe = `PairFinder.SECTOR_PAIRS`.
+  **SUPERSEDED / EXPLORATORY / NON-CONFORMING** to the authoritative D9-B spec
+  (wrong universe). Preserved unmodified in the ledger and results tree.
+- **v2** (`statarb_hist_etf_wf_v2`, `configs/experiments/statarb_historical_etf_wf_v2.yaml`):
+  **INVALIDATED BEFORE HOLDOUT**. A tracker comment previously recorded this
+  as "FINAL CONFIGURATION FROZEN," but independent audit found no dataset
+  manifest, no pipeline code, and no DEV/2024-validation artifacts anywhere
+  in the repository for this config -- only the YAML specification document
+  existed. No 2025 v2 result was ever executed or exists. See the config
+  file's header for the full corrective record (original freeze timestamp,
+  invalidation timestamp, reason).
+- **v3** (`statarb_hist_etf_wf_v3`, `configs/experiments/statarb_historical_etf_wf_v3.yaml`):
+  the active conforming experiment, **status: pre-registered**. A real
+  walk-forward pipeline now backs it (`src/stat_arb_engine/wf_v3_*.py`):
+  per-window pair rediscovery (not chronology-only), a fair static-OLS-vs-
+  Kalman comparison (Kalman is traded, not diagnostics-only), fixed-gross-
+  notional sizing, and GROSS/BASE/STRESS costs with real daily-accrued
+  borrow (unlike `execution.CostModel`, whose `borrow_cost` is a stub that
+  always returns 0.0). 19 offline tests pass (`tests/test_wf_v3_pipeline.py`,
+  synthetic fixtures only). **Not yet run against real data**: dataset
+  acquisition is blocked by this session's egress policy (Yahoo Finance
+  denied with policy 403; see `scripts/acquire_yf_stat_arb_etfs_daily.py`).
+  No DEV/2024-validation results exist yet, and no 2025 evaluation of any
+  kind has occurred for v3.

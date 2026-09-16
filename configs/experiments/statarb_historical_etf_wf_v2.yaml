@@ -1,12 +1,28 @@
-# Stat-Arb historical walk-forward study — FROZEN FOR HOLDOUT (conforming D9-B)
-# Status: frozen-for-holdout
-# FINAL CONFIGURATION FROZEN after DEV (2015–2023) + VAL (2024) parameter selection.
-# Holdout (2025) may now be evaluated once; do not retune after this freeze.
-# Authoritative universe: ETF groups A–D (NOT PairFinder.SECTOR_PAIRS).
-# Prior exploratory config statarb_historical_oos_study_v1.yaml is SUPERSEDED.
+# Stat-Arb historical walk-forward study — INVALIDATED BEFORE HOLDOUT
+# Status: invalidated-before-holdout (was: frozen-for-holdout)
+#
+# CORRECTIVE NOTE (independent audit, see quant-research-portfolio Issue #3):
+# This freeze was procedurally invalid. The branch never contained a
+# manifest for dataset_id below, a conforming executable pipeline, or
+# reproducible DEV/2024-validation artifacts demonstrating this config was
+# actually run -- only this YAML document existed. No v2 2025 result
+# artifact was ever generated, and none was inspected.
+#   original_freeze_timestamp_utc: "2026-09-16T13:37:28Z"
+#   invalidation_timestamp_utc:    "2026-09-16T17:30:00Z"
+#   reason: "No dataset manifest, no pipeline code, no DEV/VAL artifacts existed
+#            for this config anywhere in the repository at the time of freeze."
+#   no_conforming_2025_v2_holdout_executed: true
+#   no_v2_2025_result_artifact_exists: true
+#   superseded_by: statarb_hist_etf_wf_v3 (configs/experiments/statarb_historical_etf_wf_v3.yaml)
+#
+# This file is preserved unmodified below (git history + this header are the
+# audit trail) -- do not delete or rewrite history.
+#
+# Prior exploratory config statarb_historical_oos_study_v1.yaml remains
+# SUPERSEDED / EXPLORATORY / NON-CONFORMING as before.
 
 experiment_id: statarb_hist_etf_wf_v2
-status: frozen-for-holdout
+status: invalidated-before-holdout
 directive: 9
 dataset_id: yf_stat_arb_etfs_daily_2015_2025_v1
 seed: 0
