@@ -213,16 +213,19 @@ def main(argv: list[str] | None = None) -> int:
     results_dir = args.results_dir if args.results_dir.is_absolute() else root / args.results_dir
     ledger_path = args.ledger if args.ledger.is_absolute() else root / args.ledger
 
+    # Bucket by the calendar year of test_start only -- exhaustive and
+    # non-overlapping, so no window (e.g. one whose test block straddles a
+    # year boundary) can be silently dropped from every bucket.
     if args.allow_holdout:
-        buckets = [("holdout_2025", [w for w in study.windows
-                                       if w.test_start >= pd.Timestamp("2025-01-01")])]
+        buckets = [("holdout_2025", [w for w in study.windows if w.test_start.year == 2025])]
     else:
         buckets = [
-            ("dev_formation", [w for w in study.windows
-                                if w.test_end < pd.Timestamp("2024-01-01")]),
-            ("val_2024", [w for w in study.windows
-                           if w.test_start >= pd.Timestamp("2024-01-01")]),
+            ("dev_formation", [w for w in study.windows if w.test_start.year <= 2023]),
+            ("val_2024", [w for w in study.windows if w.test_start.year == 2024]),
         ]
+    assert sum(len(ws) for _, ws in buckets) == len(study.windows), (
+        "bucketing dropped or double-counted a window"
+    )
 
     for period_name, windows in buckets:
         if not windows:
