@@ -1,5 +1,10 @@
-# Stat-Arb historical walk-forward study — PRE-REGISTERED (conforming D9-B v4)
-# Status: pre-registered
+# Stat-Arb historical walk-forward study — FROZEN-FOR-HOLDOUT (conforming D9-B v4)
+# Status: frozen-for-holdout (frozen 2026-09-17; see freeze_record below for the
+# full basis). No numerical parameter in this file changed as part of the freeze --
+# only status (this line + the status: field) and the new freeze_record block were
+# added, per Directive #9 Addendum 11's "do not change code or numerical parameters
+# after freeze." Pre-freeze sha256 (pre-registered, HEAD 3527634): unaffected by
+# this freeze -- unchanged since ff5c44d -- e8acafc514d87267d4dc3965212d0e8ed7dc2da600f34ff758b00bf6e49db003.
 #
 # Supersedes statarb_hist_etf_wf_v3 (configs/experiments/statarb_historical_etf_wf_v3.yaml),
 # which is invalidated-before-holdout: independent review found two defects
@@ -70,8 +75,37 @@
 # holdout-evaluated. No retune after freeze.
 
 experiment_id: statarb_hist_etf_wf_v4
-status: pre-registered
+status: frozen-for-holdout
 directive: 9
+
+freeze_record:
+  marker: FINAL CONFIGURATION FROZEN BEFORE HOLDOUT EVALUATION
+  frozen_utc: "2026-09-17T00:00:00Z"
+  reviewed_code_head: 3527634430a8db2dacbdb83e5f2fe9405973451e
+  reviewed_code_repo: jmiaie/Advanced_Algorithmic_Trading_Simulator_public
+  pre_freeze_config_sha256: e8acafc514d87267d4dc3965212d0e8ed7dc2da600f34ff758b00bf6e49db003
+  dataset_id: yf_stat_arb_etfs_daily_2015_2025_v1
+  dataset_canonical_sha256: a4082398991400c171062ee4ff2b12dba87e84c4f0133462ed9ee2fbb13f9fa8
+  selection_basis:
+    dev_formation: {windows: 25, qualifying: 4, fallback: 4, grid_selected: 0}
+    boundary_2023_2024: {windows: 1, qualifying: 0, note: no-trade}
+    val_2024: {windows: 3, qualifying: 0, note: no-trade}
+    n_grid_selected_windows_total: 0
+  frozen_hyperparameters: see selection_objective.insufficient_trades_fallback above
+    (entry_z/exit_abs_z/trailing_z_window/kalman_process_variance) -- this freeze
+    record does not restate those four numbers a second time, to avoid a second
+    copy that could silently drift from the one under selection_objective.
+  kalman_observation_variance: see kalman.observation_variance above (1.0e-2)
+  binding_2025_label: FINAL 2025 WALK-FORWARD EVALUATION
+  binding_2025_label_note: >
+    Not UNTOUCHED 2025 HOLDOUT, per Directive #9 Addendum 12 -- 5 of 19 symbols
+    (SPY, QQQ, IWM, TLT, GLD) overlap the already-executed D9-A FDM universe;
+    see research/holdout-audit.md for the full cross-program exposure disclosure.
+  post_freeze: >
+    No code or numerical parameter in this file may change after this freeze
+    record is committed. The one-time 2025 evaluation follows in the next
+    commit on this branch, executed exactly once against the dataset hash
+    above.
 dataset_id: yf_stat_arb_etfs_daily_2015_2025_v1
 seed: 0
 
