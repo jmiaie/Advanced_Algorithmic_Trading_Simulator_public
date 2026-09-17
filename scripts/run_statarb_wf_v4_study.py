@@ -221,6 +221,25 @@ def main(argv: list[str] | None = None) -> int:
     kalman = experiment["kalman"]
     sizing = experiment["sizing"]
 
+    # One source of truth for the insufficient-trades fallback / holdout
+    # freeze: read it from the pre-registered config's own
+    # selection_objective.insufficient_trades_fallback block (the same
+    # values already recorded in this config's own sha256, hashed into
+    # every already-executed v4 ledger row) rather than relying on the
+    # wf_v4_orch.FALLBACK_PARAMS Python constant, which is now only the
+    # default used when a config predates this field.
+    raw_fallback = experiment.get("selection_objective", {}).get("insufficient_trades_fallback")
+    fallback_params: Dict[str, float] = (
+        dict(FALLBACK_PARAMS)
+        if raw_fallback is None
+        else {
+            "entry_z": float(raw_fallback["entry_z"]),
+            "exit_abs_z": float(raw_fallback["exit_abs_z"]),
+            "trailing_z_window": float(raw_fallback["trailing_z_window"]),
+            "kalman_process_variance": float(raw_fallback["kalman_process_variance"]),
+        }
+    )
+
     study = run_walk_forward_study(
         eval_panel,
         group_membership,
@@ -242,7 +261,10 @@ def main(argv: list[str] | None = None) -> int:
         # (partly-2025) validation slice -- required by this config's own
         # no_retune_after_freeze / no_2025_access_before_final_configuration_frozen
         # constraints. DEV/2024-validation mode is unchanged (None below).
-        frozen_signal_params=FALLBACK_PARAMS if args.allow_holdout else None,
+        # Both this and fallback_params below are the SAME fallback_params
+        # dict read once from the config above -- one source of truth.
+        frozen_signal_params=fallback_params if args.allow_holdout else None,
+        fallback_params=fallback_params,
     )
 
     results_dir = args.results_dir if args.results_dir.is_absolute() else root / args.results_dir

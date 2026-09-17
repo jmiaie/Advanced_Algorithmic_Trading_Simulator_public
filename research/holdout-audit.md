@@ -92,3 +92,17 @@ Per Directive #9 Addendum 12: v4's code-level holdout controls are clean (see ve
 **Binding label for the eventual v4 2025 run:** `FINAL 2025 WALK-FORWARD EVALUATION` — explicitly **not** an untouched holdout — reported together with the unresolved cross-program exposure disclosure above every time a v4 2025 number is cited (report text, ledger notes, tracker updates, and any D10 evidence package entry). This applies from the first v4 2025 run onward; it is not a label to be revisited after seeing the numbers.
 
 This pre-commitment does not authorize running the 2025 evaluation: `configs/experiments/statarb_historical_etf_wf_v4.yaml` remains unmodified and `pre-registered`, per Addendum 3's prohibition on unauthorized status changes and Addendum 11's requirement that the holdout runner gate pass independent review first.
+
+## v4 DEV/2024-validation verification basis, recorded before any 2025 number exists
+
+**Date (PT):** 2026-09-17. `configs/experiments/statarb_historical_etf_wf_v4.yaml` sha256 `e8acafc514d87267d4dc3965212d0e8ed7dc2da600f34ff758b00bf6e49db003` (unchanged by this record — recorded here and in `research/experiment-ledger.csv`, never in the YAML itself, per this program's own no-retune/no-observed-outcome-edits convention).
+
+From the already-executed, already-committed DEV/2024-validation run (`research/experiment-ledger.csv`, `config_sha256` matching the hash above on all three rows):
+
+| Bucket | Windows | Qualifying | Fallback | Grid-selected |
+|---|---|---|---|---|
+| `dev_formation` (2015–2023) | 25 | 4 | 4 | 0 |
+| `boundary_2023_2024` | 1 | 0 (no-trade) | — | — |
+| `val_2024` | 3 | 0 (no-trade) | — | — |
+
+`n_grid_selected_windows = 0` across every qualifying window in this run: all 4 `dev_formation` windows that found a cointegrated pair used the insufficient-trades fallback (now sourced from this config's own `selection_objective.insufficient_trades_fallback` block, not a separate Python constant — see the runner script and `wf_v4_orch.run_walk_forward_study`'s `fallback_params` argument), never a grid-selected candidate. This is a credible null on the grid-search path specifically (the validation window never had enough qualifying trades to clear `MIN_VALIDATION_TRADES` for any grid cell), reported honestly rather than loosened to force a non-null result.

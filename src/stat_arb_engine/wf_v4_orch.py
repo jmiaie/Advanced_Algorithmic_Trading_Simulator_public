@@ -273,6 +273,7 @@ def run_walk_forward_study(
     gross_notional_multiple: float = 1.0,
     validation_cost: CostScenario = BASE,
     frozen_signal_params: Dict[str, float] | None = None,
+    fallback_params: Dict[str, float] | None = None,
 ) -> WalkForwardStudyResult:
     """frozen_signal_params, when provided, disables per-window hyperparameter
     re-selection entirely: every qualifying window uses these exact
@@ -289,7 +290,17 @@ def run_walk_forward_study(
     those, not the signal/Kalman hyperparameters this flag freezes. When
     None (the default, used for DEV/2024-validation), behavior is
     unchanged: each window grid-searches independently, falling back to
-    FALLBACK_PARAMS only when no candidate clears MIN_VALIDATION_TRADES."""
+    fallback_params only when no candidate clears MIN_VALIDATION_TRADES.
+
+    fallback_params supplies the same four values used both as the
+    DEV-path insufficient-trades fallback (above) and, when the caller also
+    passes them as frozen_signal_params, as the holdout freeze -- one
+    caller-supplied source of truth (the pre-registered config's own
+    selection_objective.insufficient_trades_fallback block) rather than two
+    independently-maintained copies of the same numbers. Defaults to the
+    module-level FALLBACK_PARAMS only when the caller passes None (e.g. a
+    config that predates this field, or a test that doesn't set it)."""
+    effective_fallback = dict(FALLBACK_PARAMS if fallback_params is None else fallback_params)
     windows = walk_forward_windows(
         combined_prices, formation_size, validation_size, test_size, step_size=step_size
     )
@@ -356,7 +367,9 @@ def run_walk_forward_study(
             )
             used_fallback = selected_signal_params is None
             signal_params = (
-                dict(FALLBACK_PARAMS) if selected_signal_params is None else selected_signal_params
+                dict(effective_fallback)
+                if selected_signal_params is None
+                else selected_signal_params
             )
             window_result.validation_ols_sharpe = ols_val_sharpe
             window_result.used_fallback = used_fallback
