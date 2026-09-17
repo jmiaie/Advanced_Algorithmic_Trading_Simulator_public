@@ -3,7 +3,7 @@
 #
 # CORRECTIVE NOTE (independent code review, see quant-research-portfolio
 # Issue #3): this config's implementation (src/stat_arb_engine/wf_v3_*.py)
-# has three verified defects, none of which were ever exercised against
+# has four verified defects, none of which were ever exercised against
 # 2025 data -- v3 never reached a 2025 evaluation; only DEV/2024-validation
 # were ever run under it.
 #   defect_1_execution_timing:
@@ -28,6 +28,19 @@
 #     (worse) of two tied-Sharpe candidates, the opposite of "lower max
 #     drawdown." Caught by a v4 unit test before shipping, not observed in
 #     an actual v3 run.
+#   defect_4_drawdown_calculation_baseline (found via independent external
+#     review 2026-09-17, verified directly against the code and against
+#     the v4 dev_formation artifact before acting on it -- not accepted on
+#     claim alone; also present in v4, fixed there):
+#     wf_v3_backtest.simulate_pair_backtest's max_drawdown calculation
+#     excluded the pre-trade starting NAV from its running peak
+#     (equity_curve only ever records mark-to-market values starting from
+#     the first EXECUTED bar) and divided by the constant allocated_nav
+#     rather than the running peak at each point -- understating, in the
+#     worst case zeroing out, the reported drawdown on any window with at
+#     least one trade. v3's own already-committed DEV/2024 max_drawdown
+#     figures carry this defect and are not corrected (v3 is not re-run;
+#     see v4's config for the fix and its effect on v4's own artifacts).
 #   invalidation_timestamp_utc: "2026-09-16T20:30:00Z"
 #   no_2025_v3_evaluation_ever_executed: true
 #   superseded_by: statarb_hist_etf_wf_v4 (configs/experiments/statarb_historical_etf_wf_v4.yaml)

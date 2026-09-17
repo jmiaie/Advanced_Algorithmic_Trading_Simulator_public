@@ -19,6 +19,30 @@ decision series plus the window it wants executed.
 
 Pair selection, sizing, and cost mechanics are unchanged from v3 and
 reused directly (not implicated by this defect).
+
+A second, independently-review-flagged defect in the drawdown calculation
+(found in this same module, not carried over from a different one) is
+also fixed here: `equity_curve` only ever appends bar-by-bar mark-to-
+market values starting from the first *executed* bar, with no entry
+representing NAV = allocated_nav "before" that first bar. Computing
+`running_peak = (allocated_nav + equity_curve).cummax()` directly over
+that series therefore never sees the true starting peak whenever the
+first executed bar already shows a loss (e.g. immediate entry costs),
+understating -- in the worst case erasing entirely -- the reported
+drawdown. Concretely, for allocated_nav=100 and per-bar mark-to-market
+P&L of [-1, -1] (100 -> 99 -> 99), the old code returned 0% instead of
+the correct -1%. The old code also divided by the constant
+`allocated_nav` rather than by the running peak at each point, which
+understates drawdown further on any window where NAV had risen above
+its starting allocation before falling back. Fixed by prepending an
+explicit allocated_nav baseline observation to the NAV path before
+taking `cummax()`, and dividing by that running peak at each point --
+the same pattern `stat_arb_engine.analytics.calculate_max_drawdown`
+already uses correctly elsewhere in this codebase. This affects the
+reported `max_drawdown` value (and, downstream, the Sharpe-then-
+drawdown-then-turnover tie-break that sorts on it) for any window with
+at least one trade; windows with zero qualifying trades are unaffected
+(a flat, all-zero equity curve has zero drawdown under either formula).
 """
 
 from __future__ import annotations
@@ -176,8 +200,11 @@ def simulate_pair_backtest(
         sharpe = (
             float(mean_excess / std_ret * (TRADING_DAYS_PER_YEAR**0.5)) if std_ret > 0 else None
         )
-        running_peak = (allocated_nav + equity_curve).cummax()
-        drawdown = ((allocated_nav + equity_curve) - running_peak) / allocated_nav
+        nav_path = pd.concat(
+            [pd.Series([allocated_nav]), allocated_nav + equity_curve], ignore_index=True
+        )
+        running_peak = nav_path.cummax()
+        drawdown = nav_path / running_peak - 1.0
         max_dd = float(drawdown.min())
 
     turnover = (

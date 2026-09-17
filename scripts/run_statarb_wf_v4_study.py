@@ -299,9 +299,12 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 "notes": (
                     "D9-B v4 corrected walk-forward (fixes v3's execution-timing "
-                    "look-ahead, omitted turnover tie-break, and an independently "
-                    "found drawdown tie-break sign inversion). Same dataset/universe/"
-                    "grid/costs as v3."
+                    "look-ahead, omitted turnover tie-break, an independently "
+                    "found drawdown tie-break sign inversion, and a second "
+                    "independently-flagged max_drawdown calculation defect: the "
+                    "running peak excluded the pre-trade starting NAV and divided "
+                    "by allocated_nav instead of the running peak). Same dataset/"
+                    "universe/grid/costs as v3."
                 ),
                 "created_utc": pd.Timestamp.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"),
             },

@@ -195,6 +195,55 @@ def test_changing_price_at_t_plus_1_cannot_change_signal_decided_at_t():
     pd.testing.assert_series_equal(z_a.iloc[:50], z_b.iloc[:50])
 
 
+# ------------------------------------------------- drawdown calculation ---
+
+
+def test_max_drawdown_reflects_loss_from_starting_capital_not_just_within_executed_bars():
+    """A second, independently-flagged defect (distinct from the tie-break
+    sign inversion covered below): the old running-peak calculation only
+    ever looked at mark-to-market values starting from the first EXECUTED
+    bar, with no baseline observation for NAV = allocated_nav "before" that
+    bar. With only one executed bar, that meant `cummax()` over a
+    single-point series trivially equals its own value, so ANY single-bar
+    loss -- including the guaranteed nonzero entry cost of opening a
+    position -- was reported as exactly 0% drawdown, regardless of the real
+    loss versus starting capital. Entering a position costs money
+    (commission/spread/slippage/impact), so a single executed bar with a
+    fresh entry must show a strictly negative drawdown, not zero."""
+    idx = _idx(2)
+    prices_y = pd.Series([100.0, 100.0], index=idx)
+    prices_x = pd.Series([50.0, 50.0], index=idx)
+    hedge_ratio = pd.Series([1.0, 1.0], index=idx)
+    spread = SpreadSeries(
+        spread=prices_y - hedge_ratio * prices_x,
+        hedge_ratio=hedge_ratio,
+        intercept=pd.Series(0.0, index=idx),
+        estimation_mode="static_batch_ols",
+    )
+    # Decided long at bar 0 so the lagged (executed) position at bar 1 is 1.
+    decision_positions = pd.Series([1, 1], index=idx)
+
+    result = simulate_pair_backtest(
+        prices_y=prices_y,
+        prices_x=prices_x,
+        spread=spread,
+        decision_positions=decision_positions,
+        execution_index=idx[1:],  # a single executed bar
+        allocated_nav=1_000_000.0,
+        gross_notional_multiple=1.0,
+        cost=BASE,
+        pair_label="Y/X",
+    )
+
+    assert len(result.equity_curve) == 1
+    assert result.equity_curve.iloc[0] < 0.0  # entry costs are strictly positive
+    assert result.max_drawdown is not None
+    assert result.max_drawdown == pytest.approx(
+        result.equity_curve.iloc[0] / 1_000_000.0
+    )
+    assert result.max_drawdown < 0.0  # the old code always returned exactly 0.0 here
+
+
 # -------------------------------------------------------- tie-break ---
 
 

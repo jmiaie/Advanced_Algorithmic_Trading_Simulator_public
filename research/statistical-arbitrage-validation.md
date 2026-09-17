@@ -95,22 +95,38 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
      the *deeper* of two tied-Sharpe candidates' drawdowns -- the opposite
      of "lower max drawdown." Caught by a v4 unit test, never manifested
      in an executed v3 run.
+  4. **Drawdown calculation baseline** (found via independent external
+     review 2026-09-17, verified directly against the code and the actual
+     v4 artifact before acting on it; also present in v4, fixed there --
+     see below): `simulate_pair_backtest`'s max_drawdown calculation
+     excluded the pre-trade starting NAV from its running peak and divided
+     by the constant allocated_nav rather than the running peak at each
+     point, understating -- in the worst case zeroing out -- the reported
+     drawdown for any window with at least one trade. v3's own
+     already-committed DEV/2024 max_drawdown figures carry this defect and
+     are not corrected (v3 is not re-run).
   See the config file's header for the full corrective record. Superseded
   by v4.
 - **v4** (`statarb_hist_etf_wf_v4`, `configs/experiments/statarb_historical_etf_wf_v4.yaml`):
   the active conforming experiment, **status: pre-registered**. Identical
-  dataset/universe/grid/costs/hypotheses to v3; fixes all three defects
-  above via `src/stat_arb_engine/wf_v4_backtest.py` (execution-lag
-  enforcement: `lag_for_execution` + a lag-aware `simulate_pair_backtest`)
-  and `wf_v4_orch.py` (corrected three-level tie-break:
-  Sharpe -> drawdown -> turnover, with the correct sign on each). 29
-  offline tests pass (`tests/test_wf_v4_pipeline.py`,
-  `tests/test_wf_v4_holdout_gate.py`, plus the unaffected 21 pre-existing
-  v3 tests, all synthetic fixtures only), including dedicated causality
-  tests proving: a later price cannot change an earlier decision, a
-  decision at t cannot alter holdings at t (only from t+1 onward), and the
-  hedge ratio used to execute a t-decided trade is the estimate as of t,
-  never a later Kalman update.
+  dataset/universe/grid/costs/hypotheses to v3; fixes defects 1-3 above via
+  `src/stat_arb_engine/wf_v4_backtest.py` (execution-lag enforcement:
+  `lag_for_execution` + a lag-aware `simulate_pair_backtest`) and
+  `wf_v4_orch.py` (corrected three-level tie-break: Sharpe -> drawdown ->
+  turnover, with the correct sign on each). Defect 4 (drawdown calculation
+  baseline) was caught by a separate independent review after v4's initial
+  run and fixed in a follow-up commit to the same `wf_v4_backtest.py`
+  module -- see below. `tests/test_wf_v4_pipeline.py` and
+  `tests/test_wf_v4_holdout_gate.py` together now hold 11 tests (all
+  synthetic fixtures only), including dedicated causality tests proving: a
+  later price cannot change an earlier decision, a decision at t cannot
+  alter holdings at t (only from t+1 onward), and the hedge ratio used to
+  execute a t-decided trade is the estimate as of t, never a later Kalman
+  update, plus a dedicated regression test for defect 4 reproducing a
+  single-executed-bar loss that the old formula always reported as exactly
+  0% drawdown. The full repo suite (78 tests, including the unaffected
+  pre-existing v3/Directive-3-gate tests) passes, along with a clean
+  ruff/mypy run.
 
   **Run against the real acquired dataset** (DEV 2015-2023 + 2024
   validation only; 2025 structurally excluded, not just status-gated --
@@ -118,10 +134,15 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   qualifying, 21 no-trade), 1 boundary window (no-trade), 3 val_2024
   windows (all no-trade -- a credible null result, not loosened to force a
   trade). The no-trade windows' summaries are byte-identical to v3's for
-  the same windows (pair selection is unaffected by either defect, so this
-  is an expected and reassuring consistency check, not evidence the fix
-  did nothing); the dev_formation summary, where trades did occur, differs
-  from v3's (SHA-256 `a1b033f9...` vs v3's `c7ca93a6...`), confirming the
-  fix changed real trading behavior exactly where it should. No 2025
-  evaluation has occurred for v4; config freeze and holdout require
-  independent review sign-off first.
+  the same windows (pair selection is unaffected by any of the four
+  defects, so this is an expected and reassuring consistency check, not
+  evidence the fixes did nothing); the dev_formation summary, where trades
+  did occur, differs from v3's. Two dev_formation hashes now exist in the
+  ledger for v4 itself: `a1b033f9...` (post defects 1-3, pre defect-4 fix)
+  and the current `52a45f3b...` (post defect-4 fix) -- both preserved in
+  `research/experiment-ledger.csv` per this program's no-overwrite audit
+  convention; only `52a45f3b...` is current. Re-running after the defect-4
+  fix changed every qualifying window's reported max_drawdown magnitude but
+  did not flip pair selection or any tie-break winner in this already-
+  executed run. No 2025 evaluation has occurred for v4; config freeze and
+  holdout require independent review sign-off first.

@@ -28,7 +28,32 @@
 # validation tie needing this comparison in the DEV/2024-validation
 # execution already on record).
 #
-# None of this is observed-outcome-driven: all three defects are mechanical
+# A fourth defect was found via an independent external review of this PR
+# (flagged 2026-09-17, verified directly against the code and the actual
+# v4 dev_formation artifact before acting on it -- not accepted on claim
+# alone): both v3's and v4's max_drawdown calculation excluded the
+# pre-trade starting NAV from the running peak -- equity_curve only ever
+# records mark-to-market values starting from the first EXECUTED bar, so a
+# single executed bar with a loss (e.g. from entry costs alone) always
+# reported exactly 0% drawdown, since a one-point series' cummax trivially
+# equals itself -- and divided by the constant allocated_nav rather than
+# the running peak at each point. This violated this same spec's own
+# `evaluation.metrics_required` naming below (`max_drawdown_incl_initial_nav`),
+# which explicitly called for the initial NAV to be included. Fixed in v4
+# by prepending an explicit allocated_nav baseline observation before
+# taking cummax() and dividing by that running peak, matching the
+# already-correct pattern in stat_arb_engine.analytics.calculate_max_drawdown.
+# Re-running v4's dev_formation bucket after the fix changed every
+# qualifying window's reported max_drawdown magnitude (see
+# research/experiment-ledger.csv for both hashes) but did not flip pair
+# selection or any tie-break winner in that already-executed run;
+# boundary_2023_2024 and val_2024 are byte-identical before/after (both
+# are all-no-trade buckets, so drawdown is 0.0 under either formula). v3
+# carries the identical bug and is not re-run (already invalidated above
+# for unrelated reasons); its own already-committed DEV/2024 max_drawdown
+# figures share this same defect and should not be read as corrected.
+#
+# None of this is observed-outcome-driven: all four defects are mechanical
 # implementation bugs found by code review and unit testing, not by
 # comparing candidate specs against realized 2025 (or later) results, which
 # remain untouched by both v3 and v4 to this point.
@@ -144,7 +169,10 @@ selection_objective:
     independently-found third defect inverted the lower_max_drawdown
     comparison. v4 implements both criteria via
     wf_v4_orch._select_best_by_tiebreak with the correct sign convention,
-    covered by dedicated unit tests.
+    covered by dedicated unit tests. Defect #4 (see header) was a separate
+    bug in how the max_drawdown VALUE being compared was itself computed
+    (understated or zeroed by an incorrect running-peak baseline), not in
+    the comparison logic above; fixed independently in wf_v4_backtest.py.
   insufficient_trades_fallback:
     entry_z: 2.0
     exit_abs_z: 0.5
