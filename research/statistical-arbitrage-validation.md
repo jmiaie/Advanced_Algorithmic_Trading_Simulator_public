@@ -98,13 +98,23 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   4. **Drawdown calculation baseline** (found via independent external
      review 2026-09-17, verified directly against the code and the actual
      v4 artifact before acting on it; also present in v4, fixed there --
-     see below): `simulate_pair_backtest`'s max_drawdown calculation
-     excluded the pre-trade starting NAV from its running peak and divided
-     by the constant allocated_nav rather than the running peak at each
-     point, understating -- in the worst case zeroing out -- the reported
-     drawdown for any window with at least one trade. v3's own
-     already-committed DEV/2024 max_drawdown figures carry this defect and
-     are not corrected (v3 is not re-run).
+     see below): `simulate_pair_backtest`'s max_drawdown calculation had
+     two distinct sub-bugs. It excluded the pre-trade starting NAV from
+     its running peak, which understates -- in the worst case zeroing
+     out -- drawdown for a window whose losses start from a fresh
+     baseline (e.g. a single-bar loss from entry costs alone). It also
+     divided by the constant `allocated_nav` rather than the running peak
+     at each point, which -- a second independent review caught this
+     precisely, correcting an earlier draft of this note that had the
+     direction backwards -- can only OVERSTATE drawdown magnitude in
+     isolation (e.g. allocated_nav=100, NAV path 100 -> 110 -> 95: -15.00%
+     against the constant vs. the correct -13.64% against the peak of
+     110), since the running peak is always >= allocated_nav once the
+     first sub-bug is fixed. The two sub-bugs' combined effect on any
+     given window's reported number therefore depends on that window's
+     own NAV path, not a single universal direction. v3's own
+     already-committed DEV/2024 max_drawdown figures carry both defects
+     and are not corrected (v3 is not re-run).
   See the config file's header for the full corrective record. Superseded
   by v4.
 - **v4** (`statarb_hist_etf_wf_v4`, `configs/experiments/statarb_historical_etf_wf_v4.yaml`):

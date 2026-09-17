@@ -32,9 +32,21 @@ understating -- in the worst case erasing entirely -- the reported
 drawdown. Concretely, for allocated_nav=100 and per-bar mark-to-market
 P&L of [-1, -1] (100 -> 99 -> 99), the old code returned 0% instead of
 the correct -1%. The old code also divided by the constant
-`allocated_nav` rather than by the running peak at each point, which
-understates drawdown further on any window where NAV had risen above
-its starting allocation before falling back. Fixed by prepending an
+`allocated_nav` rather than by the running peak at each point. In
+isolation this sub-bug can only OVERSTATE drawdown magnitude (or leave
+it unchanged), never understate it: once the missing-baseline bug above
+is fixed, the running peak is always >= allocated_nav by construction,
+so dividing by the smaller constant instead produces a more-negative
+percentage than the true one -- e.g. allocated_nav=100 with a NAV path
+of 100 -> 110 -> 95 gives -15.00% against the constant denominator but
+the correct -13.64% against the running peak of 110 (independently
+confirmed via review: an earlier draft of this docstring had this
+sub-bug's direction backwards, calling it "understating"). The two bugs
+together can still net either direction depending on a given window's
+own path -- a single fresh loss is understated (per the -1% example
+above, where the missing-baseline effect dominates), while a window
+where NAV rose meaningfully before falling can be overstated by the
+old code once the baseline is accounted for. Fixed by prepending an
 explicit allocated_nav baseline observation to the NAV path before
 taking `cummax()`, and dividing by that running peak at each point --
 the same pattern `stat_arb_engine.analytics.calculate_max_drawdown`
