@@ -542,3 +542,144 @@ def test_frozen_signal_params_bypasses_both_selection_functions():
             "trailing_z_window": frozen["trailing_z_window"],
             "kalman_process_variance": frozen["kalman_process_variance"],
         }
+
+
+# --------------------- Addendum 11 holdout-gate points 6 and 7 ---------------------
+
+
+def test_holdout_pair_selection_receives_formation_only_data():
+    """Directive #9 Addendum 11 point 6 ('pair selection remains
+    formation-only'): a dedicated regression proving the ORCHESTRATOR --
+    not select_pair_within_groups's own cointegration logic, which is
+    outside this module's scope -- only ever passes each window's own
+    formation-period slice into pair selection, in frozen_signal_params
+    (holdout) mode. No date from that window's own validation or test
+    (2025) period may appear in the frame handed to selection."""
+    import stat_arb_engine.wf_v4_orch as orch
+    from stat_arb_engine.research import walk_forward_windows
+
+    idx = _idx(700)
+    rng = np.random.default_rng(2)
+    combined_prices = pd.DataFrame(
+        {
+            "Y": 100 + np.cumsum(rng.normal(0, 0.5, len(idx))),
+            "X": 50 + np.cumsum(rng.normal(0, 0.5, len(idx))),
+        },
+        index=idx,
+    )
+    group_membership = {"Y": "GROUP_A", "X": "GROUP_A"}
+    window_kwargs = dict(formation_size=200, validation_size=200, test_size=100, step_size=100)
+    expected_windows = walk_forward_windows(combined_prices, **window_kwargs)
+    assert len(expected_windows) >= 2  # the fixture must exercise more than one window
+
+    captured_formation_indices: list[pd.Index] = []
+    real_select = orch.select_pair_within_groups
+
+    def _spy_select(formation_prices, *args, **kwargs):
+        captured_formation_indices.append(formation_prices.index)
+        return real_select(formation_prices, *args, **kwargs)
+
+    with pytest.MonkeyPatch.context() as mp:
+        mp.setattr(orch, "select_pair_within_groups", _spy_select)
+        orch.run_walk_forward_study(
+            combined_prices=combined_prices,
+            group_membership=group_membership,
+            formation_size=200,
+            validation_size=200,
+            test_size=100,
+            step_size=100,
+            grid_entry_z=(1.5,),
+            grid_exit_abs_z=(0.25,),
+            grid_z_window=(20,),
+            grid_kalman_process_variance=(1e-4,),
+            frozen_signal_params=dict(orch.FALLBACK_PARAMS),
+        )
+
+    assert len(captured_formation_indices) == len(expected_windows)
+    for captured_index, expected_window in zip(
+        captured_formation_indices, expected_windows, strict=True
+    ):
+        assert captured_index.equals(expected_window["formation"])
+        assert captured_index.max() < expected_window["validation"].min()
+        assert captured_index.max() < expected_window["test"].min()
+
+
+def test_holdout_signal_unaffected_by_perturbing_that_windows_own_later_test_bars():
+    """Directive #9 Addendum 11 point 7 ('no test-window future information
+    affects its own decision'): perturbing the LATTER portion of a
+    window's own 2025 test period must not change the causal z-score fed
+    into position generation for the EARLIER portion of that same test
+    period. This exercises the actual orchestrator wiring (formation-fit
+    static spread + continuous forward-only Kalman filter run across
+    formation+validation+test, per build_static_spread's and
+    build_kalman_spread's own docstrings) end-to-end, complementing the
+    lower-level causal_zscore/generate_positions unit tests above with a
+    holdout-mode-specific integration proof."""
+    import stat_arb_engine.wf_v4_orch as orch
+    from stat_arb_engine.wf_v3_pairs import PairSelectionResult
+
+    idx = _idx(500)
+    n_formation = 200
+    wiggle = 0.01 * np.sin(np.arange(len(idx)) / 5.0)
+    base_y = 100.0 + wiggle
+    base_x = 50.0 + wiggle
+    tail = len(idx) - n_formation
+    spikes = np.zeros(tail)
+    spikes[0::10] = [30.0 if (i // 10) % 2 == 0 else -30.0 for i in range(0, tail, 10)]
+    base_y[n_formation:] += spikes
+
+    combined_baseline = pd.DataFrame({"Y": base_y.copy(), "X": base_x.copy()}, index=idx)
+    combined_perturbed = combined_baseline.copy()
+    # Window 1 (formation=idx[100:300], validation=idx[300:400],
+    # test=idx[400:500]) is the only qualifying window below. Perturb only
+    # the back half of ITS OWN test period -- strictly after the point
+    # whose earlier z-scores/decisions must remain untouched.
+    perturb_from = idx[460]
+    combined_perturbed.loc[perturb_from:, "Y"] += 500.0
+
+    group_membership = {"Y": "GROUP_A", "X": "GROUP_A"}
+
+    def _fake_select_pair(formation_prices, group_membership, **kwargs):
+        return PairSelectionResult(
+            n_candidate_tests=1,
+            n_fdr_survivors=1,
+            selected={"symbol_a": "Y", "symbol_b": "X"},
+            all_candidates=pd.DataFrame(),
+        )
+
+    def _run_capturing_z(combined_prices: pd.DataFrame) -> list[pd.Series]:
+        captured_z: list[pd.Series] = []
+        real_causal_zscore = orch.causal_zscore
+
+        def _spy_causal_zscore(spread, window, *args, **kwargs):
+            z = real_causal_zscore(spread, window, *args, **kwargs)
+            captured_z.append(z)
+            return z
+
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(orch, "select_pair_within_groups", _fake_select_pair)
+            mp.setattr(orch, "causal_zscore", _spy_causal_zscore)
+            study = orch.run_walk_forward_study(
+                combined_prices=combined_prices,
+                group_membership=group_membership,
+                formation_size=200,
+                validation_size=100,
+                test_size=100,
+                step_size=100,
+                grid_entry_z=(1.5,),
+                grid_exit_abs_z=(0.25,),
+                grid_z_window=(20,),
+                grid_kalman_process_variance=(1e-4,),
+                frozen_signal_params=dict(orch.FALLBACK_PARAMS),
+            )
+        assert any(not w.no_trade for w in study.windows)  # fixture must qualify
+        return captured_z
+
+    baseline_z_series = _run_capturing_z(combined_baseline)
+    perturbed_z_series = _run_capturing_z(combined_perturbed)
+
+    assert len(baseline_z_series) == len(perturbed_z_series) > 0
+    for baseline_z, perturbed_z in zip(baseline_z_series, perturbed_z_series, strict=True):
+        prefix = baseline_z.index[baseline_z.index < perturb_from]
+        assert len(prefix) > 0
+        pd.testing.assert_series_equal(baseline_z.loc[prefix], perturbed_z.loc[prefix])

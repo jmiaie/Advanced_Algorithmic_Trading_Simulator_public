@@ -270,15 +270,37 @@ def main(argv: list[str] | None = None) -> int:
         # unlike DEV/VAL mode, the single holdout_2025 bucket is a subset of
         # it by design, not a full partition, so comparing against
         # len(study.windows) here would always raise AssertionError even on
-        # a fully correct run. Caught by independent review before this
-        # config was ever frozen-for-holdout or --allow-holdout ever
-        # actually invoked against real data -- the refusal gate above
-        # would have blocked any such attempt from reaching this line
-        # anyway, so this was a latent bug, not one observed in a past run.
-        expected_2025_count = sum(1 for w in study.windows if w.test_start.year == 2025)
-        assert (
-            sum(len(ws) for _, ws in buckets) == expected_2025_count
-        ), "holdout bucketing dropped or double-counted a 2025 window"
+        # a fully correct run (Addendum 11 item 8 forbids that). An earlier
+        # version of this guard compared the bucket's size against a count
+        # built from the exact same test_start.year == 2025 predicate used
+        # to build the bucket -- tautologically equal, so it could never
+        # fail (independently flagged by review). Consequence: a run whose
+        # panel produced zero 2025 test windows exited 0, printed a skip
+        # message, and wrote no artifact -- a false success on the
+        # one-time evaluation. Replaced with a guard that can actually
+        # fail (non-empty bucket) plus a report (not a hard failure, since
+        # this can legitimately happen depending on step_size alignment)
+        # of any window straddling the 2024/2025 boundary, which the
+        # test_start.year == 2025 predicate silently drops from every
+        # bucket -- mirroring the boundary_2023_2024 bucket DEV/VAL mode
+        # already carries for the analogous 2023/2024 boundary.
+        holdout_windows = buckets[0][1]
+        n_excluded_straddling = sum(
+            1 for w in study.windows if w.test_start.year < 2025 <= w.test_end.year
+        )
+        if n_excluded_straddling:
+            print(
+                f"WARNING: {n_excluded_straddling} window(s) straddling the "
+                "2024/2025 boundary (test_start before 2025, test_end in 2025) "
+                "were excluded from the holdout_2025 bucket -- they test neither "
+                "a pure-2024 nor a pure-2025 period and are not scored here.",
+                file=sys.stderr,
+            )
+        assert holdout_windows, (
+            "holdout_2025 bucket is empty -- no 2025 test window was produced by "
+            "this panel/config; a --allow-holdout run must not silently exit 0 "
+            "with no evaluation performed and no artifact written"
+        )
     else:
         assert sum(len(ws) for _, ws in buckets) == len(
             study.windows

@@ -12,6 +12,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pytest
 import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
@@ -20,10 +21,10 @@ import run_statarb_wf_v4_study as runner  # noqa: E402
 SYMBOLS = ["SPY", "QQQ", "DIA", "IWM", "XLB"]
 
 
-def _write_synthetic_raw(raw_dir: Path) -> None:
+def _write_synthetic_raw(raw_dir: Path, *, end: str = "2025-12-31") -> None:
     raw_dir.mkdir(parents=True, exist_ok=True)
     rng = np.random.default_rng(0)
-    idx = pd.bdate_range("2015-01-02", "2025-12-31")
+    idx = pd.bdate_range("2015-01-02", end)
     for sym in SYMBOLS:
         close = 100 + np.cumsum(rng.normal(0, 0.5, len(idx)))
         df = pd.DataFrame(
@@ -181,3 +182,39 @@ def test_v4_runner_frozen_holdout_happy_path_no_reselection(tmp_path):
             "trailing_z_window": FALLBACK_PARAMS["trailing_z_window"],
             "kalman_process_variance": FALLBACK_PARAMS["kalman_process_variance"],
         }
+
+
+def test_v4_runner_holdout_empty_bucket_guard_actually_fails(tmp_path):
+    """Regression for a real, independently-flagged defect distinct from
+    the bucketing bug fixed above: the previous --allow-holdout guard
+    compared the holdout_2025 bucket's size against a count built from the
+    exact same test_start.year == 2025 predicate used to build that
+    bucket -- tautologically equal, so it could never fail. Consequence: a
+    --allow-holdout run whose panel produces ZERO 2025 test windows exited
+    0, printed only a skip message, and wrote no artifact -- a false
+    success on the one-time evaluation. This proves the replacement guard
+    (holdout bucket must be non-empty) actually raises in that scenario,
+    and that no artifact is written when it does. Synthetic data ending
+    before 2025 entirely -- no real 2025 data is used, per Addendum 11."""
+    dataset_id = "test_dataset_v4"
+    raw_dir = tmp_path / "data" / "raw" / dataset_id
+    _write_synthetic_raw(raw_dir, end="2023-12-31")
+    config_path = tmp_path / "config.yaml"
+    _write_config(config_path, status="frozen-for-holdout", dataset_id=dataset_id)
+
+    with pytest.raises(AssertionError, match="holdout_2025 bucket is empty"):
+        runner.main(
+            [
+                "--config",
+                str(config_path),
+                "--raw-dir",
+                str(raw_dir),
+                "--results-dir",
+                str(tmp_path / "results"),
+                "--ledger",
+                str(tmp_path / "ledger.csv"),
+                "--allow-holdout",
+            ]
+        )
+
+    assert not list((tmp_path / "results").glob("*.json"))

@@ -82,3 +82,13 @@ v3 was never evaluated against 2025 data (see above) and **remains** never evalu
 - The cross-repository exposure disclosure above (5/19 symbols also in FDM's D9-A universe, whose 2025 holdout already executed; design-origin question genuinely unresolved) applies identically to v4, since the universe is unchanged from v3.
 
 **Verdict for v4:** Same as v3's verdict above, carried forward unchanged — CLEAR on code-level execution, NOT RESOLVED on design-origin chronology. No 2025 evaluation has occurred for v4.
+
+## v4 2025 label, pre-committed before any 2025 numbers exist
+
+**Date (PT):** 2026-09-17. Written now, while `configs/experiments/statarb_historical_etf_wf_v4.yaml` status is still `pre-registered` and no `--allow-holdout` run has ever produced a v4 2025 artifact — so this label cannot have been chosen to fit an already-seen result.
+
+Per Directive #9 Addendum 12: v4's code-level holdout controls are clean (see verdict immediately above), but cross-program research-design exposure remains genuinely unresolved because 5 of the 19 ETFs (SPY, QQQ, IWM, TLT, GLD) overlap the already-executed D9-A FDM universe. Addendum 12 therefore forbids labeling the eventual v4 2025 run `UNTOUCHED 2025 HOLDOUT` until final independent review resolves that design-origin chronology.
+
+**Binding label for the eventual v4 2025 run:** `FINAL 2025 WALK-FORWARD EVALUATION` — explicitly **not** an untouched holdout — reported together with the unresolved cross-program exposure disclosure above every time a v4 2025 number is cited (report text, ledger notes, tracker updates, and any D10 evidence package entry). This applies from the first v4 2025 run onward; it is not a label to be revisited after seeing the numbers.
+
+This pre-commitment does not authorize running the 2025 evaluation: `configs/experiments/statarb_historical_etf_wf_v4.yaml` remains unmodified and `pre-registered`, per Addendum 3's prohibition on unauthorized status changes and Addendum 11's requirement that the holdout runner gate pass independent review first.
