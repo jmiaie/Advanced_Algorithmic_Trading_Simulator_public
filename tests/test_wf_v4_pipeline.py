@@ -439,3 +439,106 @@ def test_drawdown_is_the_second_tiebreak_criterion_before_turnover():
     best = _select_best_by_tiebreak(candidates)
     assert best is not None
     assert best[0]["label"] == "better_dd_worse_turnover"
+
+
+# ------------------------------------------- frozen holdout hyperparameters ---
+
+
+def test_frozen_signal_params_bypasses_both_selection_functions():
+    """Regression test for a real, independently-flagged defect: the
+    holdout path must NOT call _validation_grid_search_signal_params or
+    _select_kalman_process_variance at all -- this config's own
+    no_retune_after_freeze / no_2025_access_before_final_configuration_frozen
+    constraints require entry_z/exit_abs_z/trailing_z_window/
+    kalman_process_variance to be selected ONCE from pre-2025 DEV/2024-
+    validation data and then held fixed, not reselected inside each 2025
+    window from that window's own preceding (partly-2025) validation slice.
+    pair_rediscovery_per_window governs pair discovery only, not this.
+
+    Proven here by monkeypatching both selection functions to raise if
+    called, using data deliberately engineered so that if either function
+    DID run, it would find candidates clearing MIN_VALIDATION_TRADES (i.e.
+    the test doesn't pass merely because nothing qualifies) -- confirmed by
+    running the same fixture with frozen_signal_params=None first."""
+    import stat_arb_engine.wf_v4_orch as orch
+    from stat_arb_engine.wf_v3_pairs import PairSelectionResult
+
+    idx = _idx(700)
+    n_formation = 200
+    n_validation_and_test = 500
+    n_total = n_formation + n_validation_and_test
+    # A persistent small wiggle across the FULL series (not just formation)
+    # keeps prices_x from ever being exactly flat -- with 3 rolling windows
+    # here (run_walk_forward_study walks forward, unlike the single-window
+    # grid-search tests above), a LATER window's formation slice can land
+    # entirely past n_formation, and a flat regressor there degenerates
+    # statsmodels' add_constant (it skips adding a constant column at all),
+    # which is an unrelated edge case this test isn't about.
+    wiggle = 0.01 * np.sin(np.arange(n_total) / 5.0)
+    prices_y = 100.0 + wiggle
+    prices_x = 50.0 + wiggle
+    spikes = np.zeros(n_validation_and_test)
+    spikes[0::10] = [
+        30.0 if (i // 10) % 2 == 0 else -30.0 for i in range(0, n_validation_and_test, 10)
+    ]
+    prices_y[n_formation:] += spikes
+    combined_prices = pd.DataFrame({"Y": prices_y, "X": prices_x}, index=idx)
+    group_membership = {"Y": "GROUP_A", "X": "GROUP_A"}
+
+    def _fake_select_pair(formation_prices, group_membership, **kwargs):
+        return PairSelectionResult(
+            n_candidate_tests=1,
+            n_fdr_survivors=1,
+            selected={"symbol_a": "Y", "symbol_b": "X"},
+            all_candidates=pd.DataFrame(),
+        )
+
+    common_kwargs = dict(
+        combined_prices=combined_prices,
+        group_membership=group_membership,
+        formation_size=n_formation,
+        validation_size=200,
+        test_size=100,
+        step_size=100,
+        grid_entry_z=(1.5, 2.0, 2.5),
+        grid_exit_abs_z=(0.25, 0.50, 0.75),
+        grid_z_window=(20,),
+        grid_kalman_process_variance=(1e-4,),
+    )
+
+    import pytest as _pytest
+
+    with _pytest.MonkeyPatch.context() as mp:
+        mp.setattr(orch, "select_pair_within_groups", _fake_select_pair)
+
+        # Sanity: with selection ALLOWED (frozen_signal_params=None), at
+        # least one window must actually reach a non-fallback or fallback
+        # selection without erroring, proving the fixture is well-formed.
+        baseline_study = orch.run_walk_forward_study(**common_kwargs)
+        assert any(not w.no_trade for w in baseline_study.windows)
+
+        # Now the actual regression check: force both selection functions
+        # to raise, and confirm frozen_signal_params avoids calling them.
+        def _boom(*args, **kwargs):
+            raise AssertionError(
+                "holdout path must not call this -- hyperparameters must be frozen"
+            )
+
+        mp.setattr(orch, "_validation_grid_search_signal_params", _boom)
+        mp.setattr(orch, "_select_kalman_process_variance", _boom)
+
+        frozen = dict(orch.FALLBACK_PARAMS)
+        study = orch.run_walk_forward_study(frozen_signal_params=frozen, **common_kwargs)
+
+    qualifying = [w for w in study.windows if not w.no_trade]
+    assert qualifying  # the fixture must actually reach a qualifying window
+    for w in qualifying:
+        assert w.used_fallback is True
+        assert w.validation_ols_sharpe is None
+        assert w.validation_kalman_sharpe is None
+        assert w.frozen_params == {
+            "entry_z": frozen["entry_z"],
+            "exit_abs_z": frozen["exit_abs_z"],
+            "trailing_z_window": frozen["trailing_z_window"],
+            "kalman_process_variance": frozen["kalman_process_variance"],
+        }

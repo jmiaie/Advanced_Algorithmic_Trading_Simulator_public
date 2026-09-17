@@ -125,3 +125,59 @@ def test_v4_runner_dev_val_run_never_scores_2025_rows(tmp_path):
             assert pd.Timestamp(window["test_end"]) < pd.Timestamp(
                 "2025-01-01"
             ), f"{artifact.name} scored a window extending into 2025"
+
+
+def test_v4_runner_frozen_holdout_happy_path_no_reselection(tmp_path):
+    """End-to-end synthetic happy path for the frozen-config holdout run:
+    a --allow-holdout invocation against a frozen-for-holdout config must
+    (a) not crash on the bucketing assertion (a real, independently-flagged
+    bug: the old assertion compared the 2025-only bucket's size against
+    len(study.windows) over the FULL 2015-2025 panel, which can never be
+    equal), and (b) produce a 2025-only artifact whose every window's
+    frozen_params are exactly the pre-registered fallback, never a
+    grid-selected value -- proving the holdout path never reopens the
+    signal/Kalman hyperparameter grid inside 2025, per this config's own
+    no_retune_after_freeze / no_2025_access_before_final_configuration_frozen
+    constraints. No real market data is used or touched."""
+    import json
+
+    from stat_arb_engine.wf_v4_orch import FALLBACK_PARAMS
+
+    dataset_id = "test_dataset_v4"
+    raw_dir = tmp_path / "data" / "raw" / dataset_id
+    _write_synthetic_raw(raw_dir)
+    config_path = tmp_path / "config.yaml"
+    _write_config(config_path, status="frozen-for-holdout", dataset_id=dataset_id)
+
+    exit_code = runner.main(
+        [
+            "--config",
+            str(config_path),
+            "--raw-dir",
+            str(raw_dir),
+            "--results-dir",
+            str(tmp_path / "results"),
+            "--ledger",
+            str(tmp_path / "ledger.csv"),
+            "--allow-holdout",
+        ]
+    )
+    assert exit_code == 0
+
+    artifacts = list((tmp_path / "results").glob("*holdout_2025.json"))
+    assert len(artifacts) == 1
+    payload = json.loads(artifacts[0].read_text())
+
+    for window in payload["windows"]:
+        assert pd.Timestamp(window["test_start"]).year == 2025
+        if window["no_trade"]:
+            continue
+        assert window["used_fallback"] is True
+        assert window["validation_ols_sharpe"] is None
+        assert window["validation_kalman_sharpe"] is None
+        assert window["frozen_params"] == {
+            "entry_z": FALLBACK_PARAMS["entry_z"],
+            "exit_abs_z": FALLBACK_PARAMS["exit_abs_z"],
+            "trailing_z_window": FALLBACK_PARAMS["trailing_z_window"],
+            "kalman_process_variance": FALLBACK_PARAMS["kalman_process_variance"],
+        }

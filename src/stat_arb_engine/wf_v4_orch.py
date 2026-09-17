@@ -272,7 +272,24 @@ def run_walk_forward_study(
     allocated_nav: float = 1_000_000.0,
     gross_notional_multiple: float = 1.0,
     validation_cost: CostScenario = BASE,
+    frozen_signal_params: Dict[str, float] | None = None,
 ) -> WalkForwardStudyResult:
+    """frozen_signal_params, when provided, disables per-window hyperparameter
+    re-selection entirely: every qualifying window uses these exact
+    entry_z/exit_abs_z/trailing_z_window/kalman_process_variance values
+    instead of calling _validation_grid_search_signal_params /
+    _select_kalman_process_variance. This is required for the one-time 2025
+    holdout run (config constraints no_retune_after_freeze /
+    no_2025_access_before_final_configuration_frozen): the signal/Kalman
+    grid must be selected once from pre-2025 DEV/2024-validation data and
+    then held fixed, not reopened inside 2025 windows. Per-window PAIR
+    rediscovery (select_pair_within_groups, above) and the per-window
+    static-OLS/causal-Kalman spread fits below are UNCHANGED and continue
+    exactly as in DEV/validation mode -- pair_rediscovery_per_window governs
+    those, not the signal/Kalman hyperparameters this flag freezes. When
+    None (the default, used for DEV/2024-validation), behavior is
+    unchanged: each window grid-searches independently, falling back to
+    FALLBACK_PARAMS only when no candidate clears MIN_VALIDATION_TRADES."""
     windows = walk_forward_windows(
         combined_prices, formation_size, validation_size, test_size, step_size=step_size
     )
@@ -309,38 +326,54 @@ def run_walk_forward_study(
             formation_idx.union(validation_idx).union(test_idx), [sym_a, sym_b]
         ].dropna()
 
-        signal_params, ols_val_sharpe = _validation_grid_search_signal_params(
-            formation_prices=formation_prices,
-            combined_for_spread=combined_for_spread,
-            validation_index=validation_idx,
-            sym_a=sym_a,
-            sym_b=sym_b,
-            grid_entry_z=grid_entry_z,
-            grid_exit_abs_z=grid_exit_abs_z,
-            grid_z_window=grid_z_window,
-            allocated_nav=allocated_nav,
-            gross_notional_multiple=gross_notional_multiple,
-            cost=validation_cost,
-        )
-        used_fallback = signal_params is None
-        if signal_params is None:
-            signal_params = dict(FALLBACK_PARAMS)
-        window_result.validation_ols_sharpe = ols_val_sharpe
-        window_result.used_fallback = used_fallback
+        signal_params: Dict[str, float]
+        if frozen_signal_params is not None:
+            # Holdout mode: hyperparameters are globally frozen, not
+            # re-selected from this window's own preceding validation
+            # slice. Neither selection function is called at all.
+            signal_params = {
+                "entry_z": frozen_signal_params["entry_z"],
+                "exit_abs_z": frozen_signal_params["exit_abs_z"],
+                "trailing_z_window": frozen_signal_params["trailing_z_window"],
+            }
+            best_q = frozen_signal_params["kalman_process_variance"]
+            window_result.validation_ols_sharpe = None
+            window_result.validation_kalman_sharpe = None
+            window_result.used_fallback = True
+        else:
+            selected_signal_params, ols_val_sharpe = _validation_grid_search_signal_params(
+                formation_prices=formation_prices,
+                combined_for_spread=combined_for_spread,
+                validation_index=validation_idx,
+                sym_a=sym_a,
+                sym_b=sym_b,
+                grid_entry_z=grid_entry_z,
+                grid_exit_abs_z=grid_exit_abs_z,
+                grid_z_window=grid_z_window,
+                allocated_nav=allocated_nav,
+                gross_notional_multiple=gross_notional_multiple,
+                cost=validation_cost,
+            )
+            used_fallback = selected_signal_params is None
+            signal_params = (
+                dict(FALLBACK_PARAMS) if selected_signal_params is None else selected_signal_params
+            )
+            window_result.validation_ols_sharpe = ols_val_sharpe
+            window_result.used_fallback = used_fallback
 
-        best_q, kalman_val_sharpe = _select_kalman_process_variance(
-            combined_for_spread=combined_for_spread,
-            validation_index=validation_idx,
-            sym_a=sym_a,
-            sym_b=sym_b,
-            signal_params=signal_params,
-            grid_process_variance=grid_kalman_process_variance,
-            observation_variance=kalman_observation_variance,
-            allocated_nav=allocated_nav,
-            gross_notional_multiple=gross_notional_multiple,
-            cost=validation_cost,
-        )
-        window_result.validation_kalman_sharpe = kalman_val_sharpe
+            best_q, kalman_val_sharpe = _select_kalman_process_variance(
+                combined_for_spread=combined_for_spread,
+                validation_index=validation_idx,
+                sym_a=sym_a,
+                sym_b=sym_b,
+                signal_params=signal_params,
+                grid_process_variance=grid_kalman_process_variance,
+                observation_variance=kalman_observation_variance,
+                allocated_nav=allocated_nav,
+                gross_notional_multiple=gross_notional_multiple,
+                cost=validation_cost,
+            )
+            window_result.validation_kalman_sharpe = kalman_val_sharpe
         frozen_params = dict(signal_params)
         frozen_params["kalman_process_variance"] = best_q
         window_result.frozen_params = frozen_params

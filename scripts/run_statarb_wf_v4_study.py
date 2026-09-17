@@ -32,7 +32,7 @@ from typing import Any, Dict, List
 import pandas as pd
 import yaml
 
-from stat_arb_engine.wf_v4_orch import WindowResult, run_walk_forward_study
+from stat_arb_engine.wf_v4_orch import FALLBACK_PARAMS, WindowResult, run_walk_forward_study
 
 
 def _repo_root() -> Path:
@@ -237,6 +237,12 @@ def main(argv: list[str] | None = None) -> int:
         adf_alpha=float(experiment["selection"]["adf_alpha"]),
         allocated_nav=1_000_000.0,
         gross_notional_multiple=float(sizing["gross_notional_multiple_of_allocated_nav"]),
+        # Holdout mode freezes signal/Kalman hyperparameters globally instead
+        # of re-selecting them per window from that window's own preceding
+        # (partly-2025) validation slice -- required by this config's own
+        # no_retune_after_freeze / no_2025_access_before_final_configuration_frozen
+        # constraints. DEV/2024-validation mode is unchanged (None below).
+        frozen_signal_params=FALLBACK_PARAMS if args.allow_holdout else None,
     )
 
     results_dir = args.results_dir if args.results_dir.is_absolute() else root / args.results_dir
@@ -259,9 +265,24 @@ def main(argv: list[str] | None = None) -> int:
                 [w for w in study.windows if w.test_start.year >= 2024 and w.test_end.year <= 2024],
             ),
         ]
-    assert sum(len(ws) for _, ws in buckets) == len(
-        study.windows
-    ), "bucketing dropped or double-counted a window"
+    if args.allow_holdout:
+        # study.windows spans the FULL panel (2015-2025) in holdout mode --
+        # unlike DEV/VAL mode, the single holdout_2025 bucket is a subset of
+        # it by design, not a full partition, so comparing against
+        # len(study.windows) here would always raise AssertionError even on
+        # a fully correct run. Caught by independent review before this
+        # config was ever frozen-for-holdout or --allow-holdout ever
+        # actually invoked against real data -- the refusal gate above
+        # would have blocked any such attempt from reaching this line
+        # anyway, so this was a latent bug, not one observed in a past run.
+        expected_2025_count = sum(1 for w in study.windows if w.test_start.year == 2025)
+        assert (
+            sum(len(ws) for _, ws in buckets) == expected_2025_count
+        ), "holdout bucketing dropped or double-counted a 2025 window"
+    else:
+        assert sum(len(ws) for _, ws in buckets) == len(
+            study.windows
+        ), "bucketing dropped or double-counted a window"
 
     for period_name, windows in buckets:
         if not windows:
