@@ -156,3 +156,29 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   did not flip pair selection or any tie-break winner in this already-
   executed run. No 2025 evaluation has occurred for v4; config freeze and
   holdout require independent review sign-off first.
+
+  **Disclosed plainly, not buried in a hash (flagged by independent
+  review):** all 4 of dev_formation's qualifying windows have
+  `used_fallback: true` -- the validation grid search
+  (`_validation_grid_search_signal_params`, `MIN_VALIDATION_TRADES=10`)
+  never found an `(entry_z, exit_abs_z, trailing_z_window)` combination
+  clearing the minimum trade count in any of them, so every one ran on the
+  pre-registered fallback (`entry_z=2.0, exit_abs_z=0.5,
+  trailing_z_window=40`), not a validated selection. The ledger now records
+  this as a first-class number (`n_grid_selected_windows: 0` alongside
+  `n_qualifying_windows: 4`, plus `config_sha256` for the exact config that
+  produced it), not just inferable from per-window JSON. Because the
+  pre-registered primary objective (net Sharpe on the validation block) is
+  gated by this same `MIN_VALIDATION_TRADES` filter, the parameter-selection
+  step is effectively inert for this entire run -- the reported dev_formation
+  numbers are fixed-parameter results, not validated-parameter results. This
+  is accepted as a genuine null (the grid/FDR/universe/`min_trade_count`
+  are **not** being relaxed in response to it -- that would be exactly the
+  retune-on-observed-outcome this program's protocol forbids), but it should
+  weigh on how much confidence review places in the dev_formation result
+  before authorizing freeze. `tests/test_wf_v4_pipeline.py` now has two
+  dedicated tests for `_validation_grid_search_signal_params` that were
+  previously untested in either direction: one confirming it returns `None`
+  when no candidate clears the threshold (a flat, zero-variance spread), one
+  confirming it returns a real selection when trades do clear it (an
+  engineered spread with reliable entry/exit crossings).

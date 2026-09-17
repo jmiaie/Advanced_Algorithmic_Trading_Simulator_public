@@ -309,6 +309,108 @@ def test_tiebreak_falls_back_to_grid_order_on_exact_triple_tie():
     assert best[0]["label"] == "first_in_grid_order"
 
 
+# ------------------------------------------------ validation grid search ---
+
+
+def test_validation_grid_search_returns_none_when_no_candidate_clears_min_trades():
+    """Regression/coverage test: nothing in the test suite exercised either
+    branch of _validation_grid_search_signal_params before this (flagged by
+    independent review). This is also the ACTUAL, currently-observed path in
+    production: all 4 qualifying dev_formation windows in the real study
+    have used_fallback=True, meaning this function returned None for every
+    one of them. A flat spread with zero variance can never cross any
+    entry_z threshold, so it must return (None, None) rather than silently
+    selecting an arbitrary candidate."""
+    from stat_arb_engine.wf_v3_costs import BASE
+    from stat_arb_engine.wf_v4_orch import _validation_grid_search_signal_params
+
+    idx = _idx(300)
+    n_formation = 200
+    # Formation: a small deterministic wiggle (not perfectly flat -- a
+    # zero-variance regressor makes statsmodels' add_constant skip adding a
+    # constant column at all, an unrelated edge case this test isn't about)
+    # so the static OLS hedge-ratio fit behaves normally, landing close to
+    # slope=1 on a Y that tracks X plus a tiny deterministic offset.
+    wiggle = 0.01 * np.sin(np.arange(n_formation) / 5.0)
+    prices_x_formation = 50.0 + wiggle
+    prices_y_formation = 100.0 + wiggle
+    # Validation: perfectly flat, so the spread has zero variance and its
+    # z-score is undefined (zero rolling std) -> no entry ever fires.
+    prices_x_validation = np.full(100, 50.0)
+    prices_y_validation = np.full(100, 100.0)
+
+    prices_x = np.concatenate([prices_x_formation, prices_x_validation])
+    prices_y = np.concatenate([prices_y_formation, prices_y_validation])
+    combined = pd.DataFrame({"Y": prices_y, "X": prices_x}, index=idx)
+    formation_prices = combined.iloc[:n_formation]
+    validation_index = idx[n_formation : n_formation + 80]
+
+    params, sharpe = _validation_grid_search_signal_params(
+        formation_prices=formation_prices,
+        combined_for_spread=combined,
+        validation_index=validation_index,
+        sym_a="Y",
+        sym_b="X",
+        grid_entry_z=(1.5, 2.0, 2.5),
+        grid_exit_abs_z=(0.25, 0.50, 0.75),
+        grid_z_window=(20, 40, 60),
+        allocated_nav=1_000_000.0,
+        gross_notional_multiple=1.0,
+        cost=BASE,
+    )
+    assert params is None
+    assert sharpe is None
+
+
+def test_validation_grid_search_selects_a_candidate_when_trades_clear_the_threshold():
+    """Complements the no-candidate test above: an oscillating spread that
+    reliably crosses entry/exit thresholds many times over the validation
+    window must return a real (non-None) selected parameter set, proving
+    the grid-search success path is not dead code."""
+    from stat_arb_engine.wf_v3_costs import BASE
+    from stat_arb_engine.wf_v4_orch import _validation_grid_search_signal_params
+
+    idx = _idx(500)
+    # Formation: a small deterministic wiggle (not perfectly flat -- see the
+    # no-candidate test above for why), so the static OLS hedge ratio is a
+    # clean fit (slope ~= 1) with no large spikes to contaminate it.
+    n_formation = 200
+    n_validation = 300
+    wiggle = 0.01 * np.sin(np.arange(n_formation) / 5.0)
+    prices_y = np.concatenate([100.0 + wiggle, np.zeros(n_validation)])
+    prices_x = np.concatenate([50.0 + wiggle, np.zeros(n_validation)])
+    # Validation: mostly-flat spread with a sign-alternating spike every 10
+    # bars. A rolling std dominated by the mostly-flat majority stays small,
+    # so each spike's z-score comfortably clears any grid entry_z, and the
+    # very next (flat, z~0) bar comfortably clears any grid exit_abs_z --
+    # 30 clean round trips over the window, verified empirically to clear
+    # MIN_VALIDATION_TRADES for the (entry_z=1.5, exit_abs_z=0.25) cell.
+    spikes = np.zeros(n_validation)
+    spikes[0::10] = [30.0 if (i // 10) % 2 == 0 else -30.0 for i in range(0, n_validation, 10)]
+    prices_y[n_formation:] = 100.0 + spikes
+    prices_x[n_formation:] = 50.0
+
+    combined = pd.DataFrame({"Y": prices_y, "X": prices_x}, index=idx)
+    formation_prices = combined.iloc[:n_formation]
+    validation_index = idx[n_formation:]
+
+    params, sharpe = _validation_grid_search_signal_params(
+        formation_prices=formation_prices,
+        combined_for_spread=combined,
+        validation_index=validation_index,
+        sym_a="Y",
+        sym_b="X",
+        grid_entry_z=(1.5, 2.0, 2.5),
+        grid_exit_abs_z=(0.25, 0.50, 0.75),
+        grid_z_window=(20,),
+        allocated_nav=1_000_000.0,
+        gross_notional_multiple=1.0,
+        cost=BASE,
+    )
+    assert params is not None
+    assert set(params) == {"entry_z", "exit_abs_z", "trailing_z_window"}
+
+
 def test_drawdown_is_the_second_tiebreak_criterion_before_turnover():
     from stat_arb_engine.wf_v4_backtest import BacktestResult
 

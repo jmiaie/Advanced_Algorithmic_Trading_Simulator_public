@@ -63,6 +63,12 @@ def sha256_json(payload: Any) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def sha256_file_bytes(path: Path) -> str:
+    """Plain sha256 of a file's raw bytes -- matches `sha256sum <path>`
+    directly, unlike sha256_json (which JSON-encodes its payload first)."""
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
 def write_artifact(path: Path, payload: Dict[str, Any]) -> str:
     path.parent.mkdir(parents=True, exist_ok=True)
     text = json.dumps(payload, indent=2, sort_keys=True, default=str) + "\n"
@@ -294,6 +300,10 @@ def main(argv: list[str] | None = None) -> int:
                         "n_qualifying_windows": summary["n_qualifying_windows"],
                         "n_no_trade_windows": summary["n_no_trade_windows"],
                         "n_fallback_windows": summary["n_fallback_windows"],
+                        "n_grid_selected_windows": (
+                            summary["n_qualifying_windows"] - summary["n_fallback_windows"]
+                        ),
+                        "config_sha256": sha256_file_bytes(config_path),
                     },
                     sort_keys=True,
                 ),
