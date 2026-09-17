@@ -81,7 +81,7 @@ v3 was never evaluated against 2025 data (see above) and **remains** never evalu
 - DEV/2024-validation execution used the same structural 2025-exclusion as v3 (`scripts/run_statarb_wf_v4_study.py`, panel sliced to `< 2025-01-01` before the study runs, not just a status check), verified by `tests/test_wf_v4_holdout_gate.py::test_v4_runner_dev_val_run_never_scores_2025_rows` and a refusal-gate test analogous to v3's.
 - The cross-repository exposure disclosure above (5/19 symbols also in FDM's D9-A universe, whose 2025 holdout already executed; design-origin question genuinely unresolved) applies identically to v4, since the universe is unchanged from v3.
 
-**Verdict for v4:** Same as v3's verdict above, carried forward unchanged — CLEAR on code-level execution, NOT RESOLVED on design-origin chronology. No 2025 evaluation has occurred for v4.
+**Verdict for v4:** Same as v3's verdict above, carried forward unchanged — CLEAR on code-level execution, NOT RESOLVED on design-origin chronology. The v4 2025 evaluation has now occurred (owner-authorized, 2026-09-17) — see the final section below for the result and its label.
 
 ## v4 2025 label, pre-committed before any 2025 numbers exist
 
@@ -106,3 +106,13 @@ From the already-executed, already-committed DEV/2024-validation run (`research/
 | `val_2024` | 3 | 0 (no-trade) | — | — |
 
 `n_grid_selected_windows = 0` across every qualifying window in this run: all 4 `dev_formation` windows that found a cointegrated pair used the insufficient-trades fallback (now sourced from this config's own `selection_objective.insufficient_trades_fallback` block, not a separate Python constant — see the runner script and `wf_v4_orch.run_walk_forward_study`'s `fallback_params` argument), never a grid-selected candidate. This is a credible null on the grid-search path specifically (the validation window never had enough qualifying trades to clear `MIN_VALIDATION_TRADES` for any grid cell), reported honestly rather than loosened to force a non-null result.
+
+## v4 FINAL 2025 WALK-FORWARD EVALUATION — executed (2026-09-17)
+
+Owner-authorized freeze (config `status: pre-registered` → `frozen-for-holdout`, commit `28be77f`, reviewed HEAD `3527634`) followed immediately by the one-time 2025 run — no code or numerical parameter changed between freeze and execution. Post-freeze config sha256 `5768fd10b63c0436f3ff5aa1863374b348cca5bf72ccfb7d1b01a7ae0d95376d` (differs from the pre-freeze `e8acafc5...` only in the `status` field and the new `freeze_record` block).
+
+**Label, as pre-committed above:** `FINAL 2025 WALK-FORWARD EVALUATION`, not `UNTOUCHED 2025 HOLDOUT` — the cross-program exposure disclosure above (5/19 symbols shared with FDM's already-executed D9-A 2025 holdout; design-origin chronology still unresolved) applies to this result and must accompany it wherever it is cited.
+
+**Result:** a complete, credible null. All 3 pure-2025 test windows found `n_fdr_survivors: 0` in the Engle-Granger + BH-FDR pair scan — no cointegrated pair, hence `no_trade: true` for every window, no trade ever placed, no Sharpe/drawdown/turnover number exists or is fabricated for this period. One boundary-straddling window (test period spanning 2024→2025) was excluded from this bucket by design and reported via a runner warning, not silently dropped. Artifact: `results/historical_oos/statarb_hist_etf_wf_v4_holdout_2025.json`, sha256 `b1197d0fb5280b54849270cfadd50bd450458522bbf6e482a1870cec723b6d66`. Full detail in `research/statistical-arbitrage-validation.md`'s "FINAL 2025 WALK-FORWARD EVALUATION" section.
+
+STOPPING FOR INDEPENDENT POST-HOLDOUT REVIEW per Directive #9 Addendum 11/20 — no further code, parameter, or config change on this experiment; no merge; D10 not started.

@@ -118,7 +118,11 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   See the config file's header for the full corrective record. Superseded
   by v4.
 - **v4** (`statarb_hist_etf_wf_v4`, `configs/experiments/statarb_historical_etf_wf_v4.yaml`):
-  the active conforming experiment, **status: pre-registered**. Identical
+  the active conforming experiment, **status: frozen-for-holdout** (frozen
+  2026-09-17, owner-authorized, after independent review found zero open
+  code/provenance items at HEAD `3527634`; see the config file's
+  `freeze_record` block and `research/holdout-audit.md` for the full
+  basis). Identical
   dataset/universe/grid/costs/hypotheses to v3; fixes defects 1-3 above via
   `src/stat_arb_engine/wf_v4_backtest.py` (execution-lag enforcement:
   `lag_for_execution` + a lag-aware `simulate_pair_backtest`) and
@@ -154,8 +158,7 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   convention; only `52a45f3b...` is current. Re-running after the defect-4
   fix changed every qualifying window's reported max_drawdown magnitude but
   did not flip pair selection or any tie-break winner in this already-
-  executed run. No 2025 evaluation has occurred for v4; config freeze and
-  holdout require independent review sign-off first.
+  executed run.
 
   **Disclosed plainly, not buried in a hash (flagged by independent
   review):** all 4 of dev_formation's qualifying windows have
@@ -182,3 +185,51 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   when no candidate clears the threshold (a flat, zero-variance spread), one
   confirming it returns a real selection when trades do clear it (an
   engineered spread with reliable entry/exit crossings).
+
+  **FINAL 2025 WALK-FORWARD EVALUATION** (executed once, 2026-09-17,
+  immediately after the freeze commit above -- not "UNTOUCHED 2025
+  HOLDOUT," per Directive #9 Addendum 12: 5 of the 19 symbols overlap
+  FDM's already-executed D9-A universe; see `research/holdout-audit.md`
+  for the full cross-program exposure disclosure). Config sha256 at
+  execution time: `5768fd10b63c0436f3ff5aa1863374b348cca5bf72ccfb7d1b01a7ae0d95376d`
+  (post-freeze; the pre-freeze reviewed config was
+  `e8acafc514d87267d4dc3965212d0e8ed7dc2da600f34ff758b00bf6e49db003` --
+  only the `status` field and the `freeze_record` block differ between
+  the two, no numerical parameter). Result artifact:
+  `results/historical_oos/statarb_hist_etf_wf_v4_holdout_2025.json`,
+  sha256 `b1197d0fb5280b54849270cfadd50bd450458522bbf6e482a1870cec723b6d66`.
+
+  **Result: a credible, complete null.** All 3 pure-2025 test windows
+  (`test_start`/`test_end` both in 2025) found `n_fdr_survivors: 0` --
+  the Engle-Granger + Benjamini-Hochberg FDR pair scan (55 within-group
+  candidate tests per window) selected no cointegrated pair in any of
+  them, so every window is `no_trade: true` with `selected_pair: None`
+  and `frozen_params: None`. No trade was ever placed against 2025 data;
+  there is no Sharpe, drawdown, or turnover number to report for this
+  period, and none is fabricated. This is not loosened or re-run under
+  different settings in response to the null -- doing so would be
+  exactly the retune-on-observed-outcome this program's protocol
+  forbids. One additional window (`window_index=29`, test period
+  straddling 2024-2025) was excluded from this bucket by design (it
+  tests neither a pure-2024 nor a pure-2025 period) and is reported via
+  a runner warning, not silently dropped -- see
+  `tests/test_wf_v4_holdout_gate.py::test_v4_runner_holdout_empty_bucket_guard_actually_fails`
+  for the regression test proving an empty 2025 bucket cannot pass
+  silently.
+
+  **Reading this result in context:** this null is consistent with,
+  not contradicted by, the DEV/2024-validation pattern above -- pair
+  selection was already weak throughout this dataset (`boundary_2023_2024`
+  and `val_2024` were both all-no-trade; only 4 of 25 `dev_formation`
+  windows found a qualifying pair at all, and every one of those used
+  the fallback rather than a validated selection). The 2025 result
+  extends that same pattern rather than diverging from it. No claim of
+  trading-alpha or risk-adjusted outperformance is or can be made from
+  this study; the honest finding is that formation-period cointegration
+  in this authoritative ETF universe did not persist into a tradeable
+  2025 signal under this pre-registered design.
+
+  Per Directive #9 Addendum 11/20: this result and the freeze record
+  above are now committed. **STOPPING FOR INDEPENDENT POST-HOLDOUT
+  REVIEW** -- no further code, parameter, or config change on this
+  experiment; no merge; D10 not started.
