@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="380" viewBox="0 0 900 380">
+<rect width="900" height="380" fill="#ffffff"/>
+<text x="16" y="24" font-family="monospace" font-size="13" font-weight="bold" fill="#111111">
+D10-B stat-arb-study: selection funnel per walk-forward bucket (accepted artifacts only)</text>
+<text x="16" y="42" font-family="monospace" font-size="10" fill="#333333">
+Source: results/historical_oos/statarb_hist_etf_wf_v4_{dev_formation,boundary_2023_2024,val_2024,holdout_2025}.json</text>
+<text x="16" y="58" font-family="monospace" font-size="10" fill="#333333">
+Zero trades in the 2025 bucket is the reported result, not missing data: no FDR survivor means no pair, hence NO_TRADE.</text>
+<rect x="16" y="70" width="420" height="290" fill="#ffffff" stroke="#333333"/>
+<text x="24" y="86" font-family="monospace" font-size="11" font-weight="bold" fill="#111111">candidate pair tests</text>
+<rect x="48" y="104" width="55" height="230" fill="#4a6fa5"/>
+<text x="76" y="100" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">1339</text>
+<text x="76" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">dev_formation</text>
+<rect x="148" y="325" width="55" height="9" fill="#4a6fa5"/>
+<text x="176" y="321" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">55</text>
+<text x="176" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">boundary_2023_2024</text>
+<rect x="248" y="306" width="55" height="28" fill="#4a6fa5"/>
+<text x="276" y="302" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">165</text>
+<text x="276" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">val_2024</text>
+<rect x="348" y="306" width="55" height="28" fill="#4a6fa5"/>
+<text x="376" y="302" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">165</text>
+<text x="376" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">holdout_2025</text>
+<line x1="26" y1="334" x2="426" y2="334" stroke="#333333" stroke-width="1"/>
+<rect x="452" y="70" width="432" height="290" fill="#ffffff" stroke="#333333"/>
+<text x="460" y="86" font-family="monospace" font-size="11" font-weight="bold" fill="#111111">windows w/ selected pair</text>
+<rect x="485" y="104" width="56" height="230" fill="#2e7d32"/>
+<text x="513" y="100" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">4</text>
+<text x="513" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">dev_formation</text>
+<rect x="588" y="334" width="56" height="0" fill="#2e7d32"/>
+<text x="616" y="330" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">0</text>
+<text x="616" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">boundary_2023_2024</text>
+<rect x="691" y="334" width="56" height="0" fill="#2e7d32"/>
+<text x="719" y="330" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">0</text>
+<text x="719" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">val_2024</text>
+<rect x="794" y="334" width="56" height="0" fill="#2e7d32"/>
+<text x="822" y="330" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">0</text>
+<text x="822" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">holdout_2025</text>
+<line x1="462" y1="334" x2="874" y2="334" stroke="#333333" stroke-width="1"/>
+<text x="460" y="86" font-family="monospace" font-size="11" font-weight="bold" fill="#111111">windows: no-trade</text>
+<rect x="485" y="104" width="56" height="230" fill="#8c8c8c"/>
+<text x="513" y="100" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">21</text>
+<text x="513" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">dev_formation</text>
+<rect x="588" y="324" width="56" height="10" fill="#8c8c8c"/>
+<text x="616" y="320" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">1</text>
+<text x="616" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">boundary_2023_2024</text>
+<rect x="691" y="302" width="56" height="32" fill="#8c8c8c"/>
+<text x="719" y="298" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">3</text>
+<text x="719" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">val_2024</text>
+<rect x="794" y="302" width="56" height="32" fill="#8c8c8c"/>
+<text x="822" y="298" text-anchor="middle" font-family="monospace" font-size="11" fill="#111111">3</text>
+<text x="822" y="348" text-anchor="middle" font-family="monospace" font-size="9" fill="#333333">holdout_2025</text>
+<line x1="462" y1="334" x2="874" y2="334" stroke="#333333" stroke-width="1"/>
+</svg>

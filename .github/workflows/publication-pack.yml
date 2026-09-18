@@ -1,0 +1,22 @@
+name: publication-pack
+
+on:
+  push:
+    branches: [publication/stat-arb-study]
+  pull_request:
+    paths:
+      - 'publication/stat-arb-study/**'
+      - '.github/workflows/publication-pack.yml'
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # hashcheck re-measures the config blob at the freeze commit's parent
+      - name: Verify D10-B publication pack (offline, fail-closed)
+        run: |
+          python3 publication/stat-arb-study/scripts/publication_pack.py check
+          python3 publication/stat-arb-study/scripts/publication_pack.py hashcheck
+          python3 publication/stat-arb-study/scripts/claim_crosscheck.py
