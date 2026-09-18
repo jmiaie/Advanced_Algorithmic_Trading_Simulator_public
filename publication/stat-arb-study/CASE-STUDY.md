@@ -57,7 +57,7 @@ Three observable facts separate a legitimate null from a broken pipeline — all
 artifacts and the git record:
 
 1. **The mechanism demonstrably fires.** The same screen admitted four windows earlier in the study, with real
-   selected pairs and recorded parameters (C-07, C-08, C-15).
+   selected pairs and recorded parameters (C-12, C-13, C-15).
 2. **The run completed normally.** The 2025 evaluation was executed once, wrote its ledger row at
    2026-09-17T03:44:34Z, and its evidence commit landed at 03:48:08Z — no failure path, no partial artifact (C-34).
 3. **Nothing was silently dropped.** One window straddling the 2024/2025 boundary was excluded from the 2025
@@ -88,7 +88,7 @@ rather than guessing (paper §13, §16).
 
 The 2025 period carries the label **FINAL 2025 WALK-FORWARD EVALUATION**, deliberately *not* "untouched
 holdout". Reason: 5 of 19 symbols overlap a separate, already-executed research program's 2025 universe, and the
-chronology between the two designs is unresolved (C-18). Calling it untouched would be a stronger claim than the
+chronology between the two designs is unresolved (C-36, C-37). Calling it untouched would be a stronger claim than the
 evidence supports — precisely the kind of upgrade this pack exists to refuse.
 
 Also refused: framing the null as "the strategy correctly stayed out of the market". The artifacts show no
@@ -119,4 +119,4 @@ validate a false claim: they share no code and parse the artifacts independently
 ## 10. Provenance in one line
 
 Accepted HEAD `d1ef6fd0` → freeze `28be77fb` → frozen config `5768fd10…` → primary artifact `b1197d0f…`
-(2,359 B) → ledger row (2026-09-17T03:44:34Z) → this pack, offline-verified and CI-checked.
+(1,833 B) → ledger row (2026-09-17T03:44:34Z) → this pack, offline-verified and CI-checked.

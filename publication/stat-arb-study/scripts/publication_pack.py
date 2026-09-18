@@ -253,6 +253,9 @@ def check() -> int:
     repro = load_repro()
 
     # 1. Every source artifact hash recorded in reproducibility.json must match disk.
+    #    Guard the vacuous case first: an empty list must fail loud, not print OK.
+    if not repro["source_artifacts"]:
+        failures.append("reproducibility.json lists no source_artifacts — hash gate would pass vacuously")
     for entry in repro["source_artifacts"]:
         p = ROOT / entry["path"]
         if not p.exists():
@@ -302,6 +305,30 @@ ABBR = re.compile(r"\b([0-9a-f]{8,63})…")
 # Deliberately not a claim about repository bytes: asserted in this file's __main__ self-check.
 SELFTEST_FIXTURES = {hashlib.sha256(b"abc").hexdigest()}
 
+# Hash values that this pack published in an earlier revision and then legitimately retired,
+# because the underlying artifact changed (D10 CL-20 remediation, 2026-09-18). Declared one by one
+# with a reason so the defect log can keep quoting what it measured without the sweep going blind.
+RETIRED_HASHES = {
+    # research/experiment-ledger.csv at 77c8fbd: 23 rows / 19,542 B, before the three corrective rows.
+    "85fd6bf54713d640676bb4174ddfdf9fe2833762d0d919b9ed8a9e7c2af57dd8": "retired ledger hash (resolvable at 77c8fbd)",
+}
+
+
+def hashcheck_bind_citations(texts: dict[Path, str]) -> int:
+    """Bind every `path` (sha256 `hash`) citation in the pack to THAT path's own bytes.
+
+    Token membership is not enough: a genuine hash of some other file satisfies it. Separated
+    from hashcheck() so the __main__ self-check can prove the binding fails on a poisoned copy.
+    """
+    for p, t in texts.items():
+        for rel, digest in CITATION_RE.findall(t):
+            fp = ROOT / rel
+            actual = sha256_file(fp) if fp.exists() else "MISSING"
+            if actual != digest:
+                print(f"hash-integrity check FAILED: {p.relative_to(ROOT)} cites {rel} = {digest} but path is {actual}")
+                return 1
+    return 0
+
 
 def hashcheck() -> int:
     """Sweep every hash printed anywhere in the pack and fail closed on any untraceable value.
@@ -314,6 +341,8 @@ def hashcheck() -> int:
         p: p.read_text(encoding="utf-8", errors="ignore")
         for p in sorted(x for x in PACK.rglob("*") if x.is_file())
     }
+    if hashcheck_bind_citations(texts):
+        return 1
     known: dict[str, str] = {}
     for p in ROOT.rglob("*"):
         if p.is_file() and "/.git/" not in str(p):
@@ -331,6 +360,8 @@ def hashcheck() -> int:
     known.setdefault(sha256_bytes(blob), "config blob at the freeze commit's parent")
     for v in HEX64.findall(MANIFEST.read_text(encoding="utf-8")):
         known.setdefault(v, "value recorded in the accepted frozen manifest")
+    for v, why in RETIRED_HASHES.items():
+        known.setdefault(v, why)
 
     printed = {t for text in texts.values() for t in HEX_LONG.findall(text)}
     unresolved: list[str] = []

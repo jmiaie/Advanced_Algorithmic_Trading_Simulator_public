@@ -23,12 +23,12 @@ pair selection is gated by Engle-Granger cointegration and a Benjamini-Hochberg 
 screen, with signal thresholds selected on a validation block under an explicit insufficient-trades fallback.
 Across four walk-forward buckets (32 windows, 1,724 candidate pair tests) the screen produced exactly four
 FDR survivors — **all in the 2015-2023 development/formation bucket, all executed with fallback parameters, and
-none selected from the signal grid** (C-07, C-08, C-19). The 2024-validation bucket (3 windows) and the
+none selected from the signal grid** (C-12, C-13, C-19). The 2024-validation bucket (3 windows) and the
 boundary bucket (1 window) are entirely no-trade (C-09). **In the 2025 evaluation bucket, all three windows
 found zero FDR survivors, hence no pair, hence no position: a complete null trading outcome** (C-02, C-03,
 C-04). Because no pair passed the frozen screen, the portfolio held no position; the 2025 period therefore
 contributes an opportunity-screening outcome rather than a trading-performance estimate. We state the null plainly, disclose the cross-program exposure that
-prevents the 2025 period from being an untouched holdout (C-18), and deliberately make no claim of edge,
+prevents the 2025 period from being an untouched holdout (C-36, C-37), and deliberately make no claim of edge,
 alpha, economic significance or capacity (CL-21, CL-22).
 
 ## 1. Research Question
@@ -50,7 +50,7 @@ in which a signal is actually traded, and the number selected by grid search, ma
 
 **Direction of prediction:** H0 predicts *qualifying-window scarcity*, not a particular profit or loss. This
 matters for interpretation: the design is falsifiable only in the sense that windows *can* qualify — and in the
-development bucket four did (C-07), which establishes the mechanism fires, while zero did in 2025 (C-02).
+development bucket four did (C-12, C-13), which establishes the mechanism fires, while zero did in 2025 (C-02).
 
 **No alternative hypothesis was tested**, no parameter was chosen to improve outcomes, and no hypothesis was
 changed after execution (D10 scope; `SOURCE-GATE.md` Field 9).
@@ -173,14 +173,14 @@ only — and in the evaluation period there were no positions for it to price.
 
 ### 10.1 Development / formation bucket (2015-2023), 25 windows
 4 qualifying windows (all traded), 21 no-trade, 4 fallback-applied, **0 windows selected by grid search**
-(C-07). The four traded windows used the fallback parameters on pairs XLP/XLU (three windows) and XLU/XLV
-(one) (C-08). This bucket is also the only source of populated hedge-comparison metrics (§8).
+(C-12, C-13). The four traded windows used the fallback parameters on pairs XLP/XLU (three windows) and XLU/XLV
+(one) (C-13, C-15). This bucket is also the only source of populated hedge-comparison metrics (§8).
 
 ### 10.2 Boundary bucket (2023-10-06 → 2024-01-05), 1 window
-55 candidate tests, 0 survivors, **no-trade** (C-09, C-17).
+55 candidate tests, 0 survivors, **no-trade** (C-17).
 
 ### 10.3 2024 validation bucket, 3 windows
-55 candidate tests per window (165 total), 0 survivors in each, **all no-trade** (C-09, C-18).
+55 candidate tests per window (165 total), 0 survivors in each, **all no-trade** (C-18).
 
 ### 10.4 2025 evaluation bucket, 3 windows — the primary result of this paper
 
@@ -205,8 +205,8 @@ consistent with the DEV bucket being the only one where a fix could change a tra
 **Superseded lineage inventory (C-40, CL-20):** the v1 result artifacts (3 files) and the v3 result artifacts
 (3 JSON + window-boundaries CSV) remain in `results/historical_oos/` under their original labels; the v2 lineage
 is config-only (no v2 result artifacts exist — v2 was invalidated before holdout) alongside one
-`statarb_hist_etf_wf_v2_INVALIDATED` ledger row; the ledger holds 23 rows including four v1 rows and three
-explicit `…SUPERSEDED_*` rows. Nothing here is edited, re-labelled or removed, and no citation in this pack
+`statarb_hist_etf_wf_v2_INVALIDATED` ledger row; the ledger holds 26 rows including four v1 rows, three v1 corrective rows and six
+explicit `…SUPERSEDED_*` rows. **Disclosure (corrected 2026-09-18):** the `artifact_sha256` values recorded on the three v1 ledger rows resolve to no artifact present in this repository or its history (every blob scanned, dangling included); the v1 artifacts on disk are the slimmed forms (2,496 B `29b6effa…`, 2,163 B `e3396ba0…`, 2,156 B `4fd88a82…`) and the recorded values are unverifiable — disclosed by three corrective `…SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH` ledger rows (CL-20). Nothing here is edited, re-labelled or removed, and no citation in this pack
 depends on a superseded artifact's *content*.
 
 ## 11. No-Trade Result
@@ -218,7 +218,7 @@ Three things this section does *not* do, each deliberately:
 1. It does not attach a performance number to a period with no position. There is no 2025 Sharpe, return,
    drawdown or turnover figure in the accepted artifacts, and this pack does not manufacture one (C-11, CL-21).
 2. It does not characterise the no-trade outcome as an implementation failure. The same screen admitted four
-   windows in the earlier development bucket (C-07), the run completed and wrote its ledger row
+   windows in the earlier development bucket (C-12, C-13), the run completed and wrote its ledger row
    (C-34: ledger created 2026-09-17T03:44:34Z, evidence commit 03:48:08Z), and the single boundary-straddling
    window was excluded by design with a surfaced warning rather than silently dropped (C-35).
    The narrow interpretation CL-13 asserts exactly this and nothing more; it carries an explicit reversal
@@ -238,9 +238,9 @@ Stated as findings:
 1. **Null (primary):** zero qualifying 2025 buy/sell opportunities under the pre-specified screen — no
    opportunity to measure, hence no measurement (C-02, C-03, C-11).
 2. **Null (design-level):** grid selection **never** fired in any bucket: `n_grid_selected_windows_total = 0`
-   (C-07, C-13). Every traded window used the fallback. The tuned-threshold path is therefore *untested in
+   (C-13). Every traded window used the fallback. The tuned-threshold path is therefore *untested in
    effect*, and no claim about grid-selected thresholds is possible.
-3. **Weak pre-2025 signal:** 2024-validation and boundary buckets were entirely no-trade (C-09).
+3. **Weak pre-2025 signal:** 2024-validation and boundary buckets were entirely no-trade (C-17, C-18).
 4. **Partial evidence:** the OLS/Kalman comparison produced almost no populated metrics (§8).
 5. **Absent diagnostics:** pair-persistence and hedge-variation diagnostics are not present in the artifacts
    (C-39), so the gate's "where present" qualifier resolves to *not present* — no persistence claim is made.
@@ -249,7 +249,7 @@ Stated as findings:
 
 1. **Cross-program exposure.** 5 of 19 symbols (SPY, QQQ, IWM, TLT, GLD) overlap the already-executed FDM
    D9-A 2025 evaluation universe, and the design-origin chronology relative to FDM results is **unresolved**
-   (C-18). The binding label is therefore **FINAL 2025 WALK-FORWARD EVALUATION**, *not* untouched holdout.
+   (C-36, C-37). The binding label is therefore **FINAL 2025 WALK-FORWARD EVALUATION**, *not* untouched holdout.
 2. **Static, present-day universe** → survivorship and convenience bias (§4).
 3. **No 2025 risk measurement.** Zero positions means zero volatility/drawdown/turnover observation. Absence of
    measurement is not evidence of stability, and this pack does not read it as such.
@@ -275,7 +275,7 @@ Stated as findings:
 
 - **Frozen-parameter model risk:** all thresholds are fixed ex ante (§7), so any bias in the grid or the
   fallback transfers directly into the (zero) 2025 outcome. The fallback used in every traded window
-  (C-08, C-14) is a single parameter set, never re-estimated out-of-sample.
+  (C-13, C-14) is a single parameter set, never re-estimated out-of-sample.
 - **Filter-risk asymmetry:** a conservative screen that finds nothing is indistinguishable, within this design,
   from a screen that *would* find opportunities under a slightly different threshold. This cannot be resolved
   without changing the design — which this lane prohibits.
@@ -300,7 +300,7 @@ Stated as findings:
 - **Regeneration only, never re-derivation:** `build` re-emits tables/figures *from* the accepted artifacts;
   it never recomputes cointegration, thresholds, or portfolio results.
 - **Provenance chain:** accepted HEAD `d1ef6fd0` → freeze commit `28be77fb` → post-freeze config
-  `5768fd10…` → primary artifact `b1197d0f…` (2,359 B) → ledger row (created 2026-09-17T03:44:34Z) →
+  `5768fd10…` → primary artifact `b1197d0f…` (1,833 B) → ledger row (created 2026-09-17T03:44:34Z) →
   this pack. Each link is hash-checked or git-verifiable.
 - **Environment independence:** Python 3.11+ stdlib only; no pandas/numpy, no network, no credentials.
 

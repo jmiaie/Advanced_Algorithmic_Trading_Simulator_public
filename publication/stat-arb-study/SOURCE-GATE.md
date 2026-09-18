@@ -79,7 +79,7 @@ Lane: **D10-B (Hai)**. Directive: **#10** (publication layer over accepted D9 ev
 
 ## Field 8 — Primary 2025 artifact
 - **Value:** `results/historical_oos/statarb_hist_etf_wf_v4_holdout_2025.json`
-  (sha256 `b1197d0fb5280b54849270cfadd50bd450458522bbf6e482a1870cec723b6d66`), 2,359 bytes, bucket
+  (sha256 `b1197d0fb5280b54849270cfadd50bd450458522bbf6e482a1870cec723b6d66`), 1,833 bytes, bucket
   `holdout_2025`. Ledger row `statarb_hist_etf_wf_v4_holdout_2025` (created 2026-09-17T03:44:34Z) records the
   same hash and the same key metrics.
 - **Status:** ACCEPTED (gate Field 10) + MEASURED (bytes re-hashed here; ledger row agrees).
@@ -100,6 +100,11 @@ Lane: **D10-B (Hai)**. Directive: **#10** (publication layer over accepted D9 ev
 - **Reason:** 5 of 19 symbols (SPY, QQQ, IWM, TLT, GLD) overlap the already-executed FDM D9-A research
   universe; a superseded exploratory v1 study on a *different* (equity-pair) universe also ran its own 2025
   window. Both exposures are disclosed (Field 13).
+- **Disclosure (corrected 2026-09-18):** the `artifact_sha256` recorded on the v1 holdout ledger row does not
+  resolve to any artifact present in this repository or its history; the v1 artifact on disk is the slimmed
+  2,156 B form (`4fd88a82…`). The divergence is disclosed by a corrective
+  `…SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH` ledger row (see `CLAIM-REGISTER.md` CL-20). The v1 study's own
+  result — 0 pairs selected — is unaffected.
 
 ## Field 11 — Program audit citation (authoritative, as handed down)
 > "Independent review status: Directive #9 Final Four-Stream Independent Program Audit (Grokbot,
@@ -141,8 +146,8 @@ Lane: **D10-B (Hai)**. Directive: **#10** (publication layer over accepted D9 ev
 10. **Superseded lineage preserved, not edited:** the v1 result artifacts (3 files) and v3 result artifacts
     (3 JSON + boundaries CSV) remain under their original labels in `results/historical_oos/`; the v2 lineage is
     **config-only** (no v2 result artifacts were produced before invalidation) plus one
-    `statarb_hist_etf_wf_v2_INVALIDATED` ledger row; the ledger's 23 rows retain four v1 rows and three explicit
-    `…SUPERSEDED_*` rows. All are cited as superseded. **The 2025 label on the superseded v1 study was not
+    `statarb_hist_etf_wf_v2_INVALIDATED` ledger row; the ledger's 26 rows retain four v1 rows, three v1 corrective rows and six explicit
+    `…SUPERSEDED_*` rows. All are cited as superseded. **Disclosure (corrected 2026-09-18):** the `artifact_sha256` values recorded on the three v1 ledger rows resolve to no artifact present in this repository or its history (every blob scanned, dangling included), and the v1 artifacts on disk are the slimmed forms (2,496 B `29b6effa…`, 2,163 B `e3396ba0…`, 2,156 B `4fd88a82…`) — the recorded values are unverifiable, disclosed by three corrective `…SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH` ledger rows (CL-20). **The 2025 label on the superseded v1 study was not
     changed.**
 11. **Sources of record are prose + artifact, not a paper:** the D9-B prose record is
     `research/statistical-arbitrage-validation.md`

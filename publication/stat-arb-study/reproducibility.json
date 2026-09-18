@@ -35,7 +35,7 @@
     "superseded_predecessors": {
       "statarb_hist_etf_wf_v3": "invalidated-before-holdout (execution-timing + tie-break defects); never evaluated against 2025",
       "statarb_hist_etf_wf_v2": "invalidated-before-holdout; no dataset/pipeline/artifacts ever existed",
-      "statarb_hist_oos_v1": "SUPERSEDED / EXPLORATORY - wrong universe (PairFinder.SECTOR_PAIRS equities); its own 2025 run executed with 0 pairs selected; zero symbol overlap with the v4 ETF universe"
+      "statarb_hist_oos_v1": "SUPERSEDED / EXPLORATORY - wrong universe (PairFinder.SECTOR_PAIRS equities); its own 2025 run executed with 0 pairs selected; non-overlapping universe (its own 56-symbol equity-pair dataset; v1 records no symbol list, so non-overlap is asserted from the differing dataset/universe record, not an enumerated symbol comparison)"
     }
   },
   "dataset": {
@@ -57,7 +57,7 @@
     {"path": "results/historical_oos/statarb_hist_etf_wf_v4_val_2024.json", "sha256": "d59c9747044262a2b736f455a5924fde13dedadb5ff8567d3964fa9b919dfbb8", "role": "pre-2025 2024 validation bucket"},
     {"path": "configs/experiments/statarb_historical_etf_wf_v4.yaml", "sha256": "5768fd10b63c0436f3ff5aa1863374b348cca5bf72ccfb7d1b01a7ae0d95376d", "role": "frozen conforming config"},
     {"path": "data/manifests/yf_stat_arb_etfs_daily_2015_2025_v1.json", "sha256": "b2557499091cd87e412365db2a4a32eac7134995bf641e35e5676114f6cc2e30", "role": "frozen dataset manifest (declares per-symbol CSV hashes + dataset_canonical)"},
-    {"path": "research/experiment-ledger.csv", "sha256": "85fd6bf54713d640676bb4174ddfdf9fe2833762d0d919b9ed8a9e7c2af57dd8", "role": "append-only experiment ledger (v4 rows carry artifact hashes + key_metrics)"},
+    {"path": "research/experiment-ledger.csv", "sha256": "cb4b7b0f461a0ed3f42e0798752552ca43ba2eb56277aac45930ef398e973211", "role": "append-only experiment ledger (v4 rows carry artifact hashes + key_metrics)"},
     {"path": "research/holdout-audit.md", "sha256": "d1f15db859957ff88a186474892e2cde2e63be6dc0b35bb5c636321dbcf4bf24", "role": "holdout audit + cross-program exposure disclosure + pre-committed 2025 label"},
     {"path": "research/statistical-arbitrage-validation.md", "sha256": "dde09a88c6c69b6027b18ed316156686dcb2555fd8b28804dec08e1633ce1370", "role": "program research record"},
     {"path": "results/historical_oos/statarb_hist_etf_wf_v3_dev_formation.json", "sha256": "c7ca93a6b7ffa9ab6bb19c76780ead86bb2746f000e20b679911824dbada811f", "role": "SUPERSEDED v3 artifact (predecessor of v4 DEV; not a publication source)"},
