@@ -1,0 +1,5 @@
+bucket,n_windows,n_qualifying_windows,n_no_trade_windows,n_fallback_windows,n_fdr_survivors_total,n_candidate_tests_total,n_traded_windows
+dev_formation,25,4,21,4,4,1339,4
+boundary_2023_2024,1,0,1,0,0,55,0
+val_2024,3,0,3,0,0,165,0
+holdout_2025,3,0,3,0,0,165,0
