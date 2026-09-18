@@ -267,7 +267,8 @@ def main() -> int:
     ok(
         sids.count("statarb_hist_etf_wf_v2_INVALIDATED") == 1
         and sum(i.startswith("statarb_hist_oos_v1_") for i in sids) == 7,
-        "C-40 superseded lineage rows retained (1 v2_INVALIDATED + 4 v1 rows + 3 v1 corrective rows)",
+        "C-40 superseded lineage rows retained "
+        "(1 v2_INVALIDATED + 4 v1 rows + 3 v1 corrective rows)",
     )
     ok(
         sum(1 for i in sids if "SUPERSEDED_" in i) == 6,
@@ -277,11 +278,22 @@ def main() -> int:
     # corrective row naming the hash actually present, or the disclosure can silently vanish.
     for stem in ("dev_formation", "val_2024", "holdout_2025"):
         art = ROOT / f"results/historical_oos/statarb_hist_oos_v1_{stem}.json"
-        fixed = [r for r in sup if r["experiment_id"] == f"statarb_hist_oos_v1_{stem}_SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH"]
+        fixed = [
+            r
+            for r in sup
+            if r["experiment_id"]
+            == f"statarb_hist_oos_v1_{stem}_SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH"
+        ]
         ok(len(fixed) == 1, f"C-20 corrective row present for v1 {stem}")
-        ok(fixed[0]["artifact_sha256"] == sha(art), f"C-20 corrective row carries the verifiable v1 {stem} hash")
+        ok(
+            fixed[0]["artifact_sha256"] == sha(art),
+            f"C-20 corrective row carries the verifiable v1 {stem} hash",
+        )
         unv = [r for r in sup if r["experiment_id"] == f"statarb_hist_oos_v1_{stem}"]
-        ok(unv[0]["artifact_sha256"] != fixed[0]["artifact_sha256"], f"C-20 v1 {stem} recorded hash disclosed as superseded")
+        ok(
+            unv[0]["artifact_sha256"] != fixed[0]["artifact_sha256"],
+            f"C-20 v1 {stem} recorded hash disclosed as superseded",
+        )
 
     # --- frozen config -------------------------------------------------------
     import re

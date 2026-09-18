@@ -255,7 +255,9 @@ def check() -> int:
     # 1. Every source artifact hash recorded in reproducibility.json must match disk.
     #    Guard the vacuous case first: an empty list must fail loud, not print OK.
     if not repro["source_artifacts"]:
-        failures.append("reproducibility.json lists no source_artifacts — hash gate would pass vacuously")
+        failures.append(
+            "reproducibility.json lists no source_artifacts — hash gate would pass vacuously"
+        )
     for entry in repro["source_artifacts"]:
         p = ROOT / entry["path"]
         if not p.exists():
@@ -309,8 +311,11 @@ SELFTEST_FIXTURES = {hashlib.sha256(b"abc").hexdigest()}
 # because the underlying artifact changed (D10 CL-20 remediation, 2026-09-18). Declared one by one
 # with a reason so the defect log can keep quoting what it measured without the sweep going blind.
 RETIRED_HASHES = {
-    # research/experiment-ledger.csv at 77c8fbd: 23 rows / 19,542 B, before the three corrective rows.
-    "85fd6bf54713d640676bb4174ddfdf9fe2833762d0d919b9ed8a9e7c2af57dd8": "retired ledger hash (resolvable at 77c8fbd)",
+    # research/experiment-ledger.csv at 77c8fbd: 23 rows / 19,542 B,
+    # before the three corrective rows.
+    "85fd6bf54713d640676bb4174ddfdf9fe2833762d0d919b9ed8a9e7c2af57dd8": (
+        "retired ledger hash (resolvable at 77c8fbd)"
+    ),
 }
 
 
@@ -325,7 +330,10 @@ def hashcheck_bind_citations(texts: dict[Path, str]) -> int:
             fp = ROOT / rel
             actual = sha256_file(fp) if fp.exists() else "MISSING"
             if actual != digest:
-                print(f"hash-integrity check FAILED: {p.relative_to(ROOT)} cites {rel} = {digest} but path is {actual}")
+                print(
+                    f"hash-integrity check FAILED: {p.relative_to(ROOT)} cites {rel} = {digest}"
+                    f" but path is {actual}"
+                )
                 return 1
     return 0
 
