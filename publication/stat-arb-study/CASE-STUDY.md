@@ -11,7 +11,7 @@ the numbers are trustworthy — without reading the paper's design sections firs
 
 A statistical-arbitrage study looked for cointegrated ETF pairs inside four economically related groups, screened
 candidate pairs with a false-discovery-rate control, and traded whatever survived — under a rule set frozen
-before the evaluation period was touched. Over 32 walk-forward windows it admitted four tradable pairs, all of
+before the D9-B 2025 evaluation run was executed. Over 32 walk-forward windows it admitted four tradable pairs, all of
 them before 2024 and all under a pre-declared fallback rule. In the 2025 evaluation period it admitted none, so
 the strategy held nothing. **That is the result: a complete null, reported as a null.**
 

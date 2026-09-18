@@ -54,7 +54,7 @@ $ python3 publication/stat-arb-study/scripts/publication_pack.py check
 publication-pack check OK: 13 artifact hashes, 4 generated files, 11 map citations verified
 
 $ python3 publication/stat-arb-study/scripts/publication_pack.py hashcheck
-hash-integrity check OK: 14 published sha256 values verified (61 occurrences), 3 full git SHAs printed, 15 abbreviations resolved
+hash-integrity check OK: 14 published sha256 values verified (62 occurrences), 3 full git SHAs printed, 15 abbreviations resolved
 
 $ python3 publication/stat-arb-study/scripts/claim_crosscheck.py
 claim cross-check OK: 92 independent assertions passed
@@ -119,7 +119,7 @@ row C-40 was fabricated from an 8-character prefix. This build therefore ends wi
 hash printed anywhere in the pack (`publication_pack.py hashcheck`): each published sha256 must be the measured
 sha256 of a working-tree file, a value recorded in the accepted frozen manifest, or the config blob at the freeze
 commit's parent; every abbreviated hex must resolve to a full form printed in the pack. No padded, reconstructed,
-guessed, prefix-expanded or placeholder digests survive the sweep — `hash-integrity check OK: 14 published sha256 values verified (61 occurrences), 3 full git SHAs printed, 15 abbreviations resolved`.
+guessed, prefix-expanded or placeholder digests survive the sweep — `hash-integrity check OK: 14 published sha256 values verified (62 occurrences), 3 full git SHAs printed, 15 abbreviations resolved`.
 
 ## 7. How a reviewer reproduces this in three commands
 

@@ -26,8 +26,8 @@ FDR survivors — **all in the 2015-2023 development/formation bucket, all execu
 none selected from the signal grid** (C-07, C-08, C-19). The 2024-validation bucket (3 windows) and the
 boundary bucket (1 window) are entirely no-trade (C-09). **In the 2025 evaluation bucket, all three windows
 found zero FDR survivors, hence no pair, hence no position: a complete null trading outcome** (C-02, C-03,
-C-04). Because the design correctly remained out of market, the 2025 period contributes an opportunity-screening
-result, not a performance measurement. We state the null plainly, disclose the cross-program exposure that
+C-04). Because no pair passed the frozen screen, the portfolio held no position; the 2025 period therefore
+contributes an opportunity-screening outcome rather than a trading-performance estimate. We state the null plainly, disclose the cross-program exposure that
 prevents the 2025 period from being an untouched holdout (C-18), and deliberately make no claim of edge,
 alpha, economic significance or capacity (CL-21, CL-22).
 
