@@ -3,10 +3,70 @@
 **Lane:** D10-B (Hai) · **Directive:** #10 (publication/communication over accepted D9 evidence only)
 **Status: READY FOR INDEPENDENT D10 REVIEW.** No merge, no external publication, no D11.
 
+*(Authoring-phase status — 2026-09-18. Superseded as a statement of current state: the pack is now integrated on `main`. See "Post-review integration status" at the top of this file.)*
+
 *Date:* 2026-09-18 · *Pack:* `publication/stat-arb-study/` · *Every number below is captured from a command run,
 not typed by hand.*
 
 ---
+
+## Post-review integration status
+
+This publication pack was originally authored and reviewed under a
+no-merge / stop-at-independent-review instruction. That language is preserved
+below as a historical record of the authoring phase.
+
+The pack has subsequently been integrated into `main`. This integration does
+not, by itself, constitute Directive #10 program sign-off.
+
+Current lifecycle status:
+INTEGRATED ON MAIN / FINAL D10 PROGRAM SIGN-OFF PENDING.
+
+| Integration record | Value |
+| --- | --- |
+| Accepted D9 head | `d1ef6fd04ac3f6e48f20f9424a029e19064af619` |
+| Cleared publication head / accepted publication ancestor | `77c8fbd83ea87804bdde90139c4415f88f649a9d` (PR #8 head; later cleared line at `main` is `372d5571`) |
+| Current `main` head | `372d5571ca72913ed0c69c53337473ffe63f8c94` |
+| Integration path | Pack authored on `publication/stat-arb-study`; PR **#8** merged it into `research/historical-oos-study` (merge `887ad649`, 2026-09-18T13:22:48Z). `main` carries the pack as linear descendants of the accepted D9-B head: `d1ef6fd` → `b35862e` → `77c8fbd` → `63d0434` → `1758de4` → `372d557`. |
+| Relevant pull requests | #8 (pack → study branch, merged); #7 remains open, unmerged, not draft (PR hygiene inventory) |
+| Exact-head CI evidence | At exact `main` head `372d5571`: `ci` run `35401862776` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35401862776 ; `ci` run `35391301575` (success); `publication-pack` run `35391301475` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35391301475 . |
+| Diff from accepted D9 is publication-only | **No — publication pack plus one append-only ledger file.** `git diff --name-status d1ef6fd 372d557` yields the pack, `.github/workflows/publication-pack.yml`, and `research/experiment-ledger.csv`. The ledger change is **3 inserted rows / 0 deletions / 0 modifications** (`3 +++`), all corrective provenance rows named `*_SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH`, recording that three previously recorded `artifact_sha256` values resolve to no blob in the object store. The superseded rows are left unedited; no accepted result artifact was changed. |
+| Disclosed integration nuance | **No pull request records a merge of this pack into `main`.** PR #8's merge commit `887ad649` is not an ancestor of `main`; the pack commits appear in `main`'s linear history directly. Recorded as a provenance gap for the independent re-audit; no content difference is implied. |
+
+**Current program state.** D9: COMPLETE / ACCEPTED. D10: TECHNICALLY
+INTEGRATED / FORMAL SIGN-OFF PENDING. D11: PARTIALLY STARTED THROUGH THE
+PUBLIC HUB / NOT FORMALLY ACTIVATED. D12: DRAFTED / BLOCKED BY D11 HIRING
+EVIDENCE. D13: DRAFTED / NOT YET JUSTIFIED.
+
+**Final D10 program sign-off remains PENDING.** No authoritative
+`DIRECTIVE #10 PUBLICATION PACK SIGN-OFF: YES` has been issued for this pack.
+A D9 program sign-off is not a D10 program sign-off. This section records
+integration state only: it is not a sign-off, and it does not strengthen,
+weaken, or restate any finding, number, or claim in the pack.
+
+### How to read the rest of this directory
+
+Every "no merge", "no pull request merged", "draft PR only", "not on `main`",
+"not from `main`", "no external publication", and "READY FOR INDEPENDENT
+(D10) REVIEW" statement preserved below, or elsewhere in this directory, is
+**authoring-phase language** kept deliberately as the contemporaneous record
+(append-only history; the historical record is not rewritten). Where such a
+statement could be read as describing the *current* lifecycle state, this
+section supersedes it; the statement itself is left unedited. The
+machine-readable `reproducibility.json` field `merge` is likewise left
+byte-unchanged on purpose, so the pack's own hash and regeneration gates stay
+valid at the recorded tip.
+
+*Repository visibility note:* the host repository is public, so this pack is
+world-readable on `main`. No PyPI/npm release, website deployment, or other
+external-service publication was performed.
+
+---
+
+*Post-review integration section added 2026-09-21 as documentation-only
+reconciliation. No empirical artifact, configuration, dataset manifest,
+experiment identity, ledger row, number, or finding was changed; no
+rerun, retune, or reacquisition was performed.*
 
 ## 1. Publication branch
 
@@ -22,6 +82,8 @@ not typed by hand.*
 
 Source PR **#7** (`research/historical-oos-study`) remains open, unmerged and **untouched**; the pack is
 published on a separate branch from the exact accepted SHA, not from `main`.
+
+*(Authoring-phase statement. “Not from `main`” no longer describes the current state: `main` now carries the pack — see "Post-review integration status".)*
 
 ## 2. Deliverables
 
