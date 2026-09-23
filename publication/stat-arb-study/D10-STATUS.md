@@ -10,6 +10,86 @@ not typed by hand.*
 
 ---
 
+## Final Directive #10 program sign-off — 2026-09-23
+
+**This section is current. It supersedes every "sign-off pending" statement in this
+file**, including the reconciliation-phase lifecycle conclusion and program-state
+lines recorded below, which are retained unedited as the historical record.
+
+An independent clean-room review of the live four-stream D10 heads concluded
+`DIRECTIVE #10 PUBLICATION PACK SIGN-OFF: YES`, with final counts **P0 = 0, P1 = 0,
+P2 = 3, P3 = 14** and this lane's verdict **ACCEPT-WITH-RESIDUALS**. No accepted
+dataset, configuration, manifest, result artifact, experiment identity, ledger row,
+table, figure, estimate, interval or finding was found to have changed.
+
+D10 publication-pack program sign-off for D10-B is therefore **COMPLETE** as of
+**2026-09-23**.
+
+| Final closure record | Value |
+| --- | --- |
+| Independently signed reconciliation head | `980f660f0a9f20386c7b2591f8580577bec854f6` |
+| Current `main` merge head | `c73b61dbeec89955aed31d8cb346256f3532f4a9` |
+| Merge tree vs signed head | **Byte-identical — zero changed files.** `git diff --name-only 980f660f0a9f20386c7b2591f8580577bec854f6 c73b61dbeec89955aed31d8cb346256f3532f4a9` returns empty (re-measured 2026-09-23). The integration carried the reviewed tree forward unchanged. |
+| Accepted evidence changed by integration | **None.** No rerun, retrain, refit, retune, reacquire, or result replacement was performed. |
+| Administrative status | Closure **packaged, not merged**. This section is a status record; it is **not merge authorization**, and it does not decide whether Directive #10 is formally closed. |
+
+### What this sign-off does not assert
+
+It records that the publication pack on `main` is the independently reviewed pack.
+**Explicitly refused claims.** This section does **not** assert any of the following
+phrases, or their substance: "predictive edge"; "alpha"; "economic significance";
+deployment, production or live-trading approval; or prospective/live validation. **No 2025 Sharpe ratio, drawdown or turnover figure exists or is implied**; the study contains no out-of-sample performance observation, so nothing here is a strategy-performance claim.
+
+### Preserved findings and classifications
+
+- **The accepted 2025 null result**: three pure-2025 windows, 55 tests per window,
+  **zero FDR survivors, zero qualifying pairs, zero trades**, and no 2025 Sharpe,
+  drawdown or turnover.
+- The disclosed main-history/provenance gap: PR #8's merge `887ad649` is **not an
+  ancestor of `main`**; the publication commits appear in `main`'s linear history.
+  Independently reviewed and disclosed — it is not an open P1 blocking sign-off.
+- The binding 2025 period label and the development-bucket fallback-parameterisation
+  limitation (the pack records no out-of-sample performance observation at all).
+
+### Residual register — preserved, not closed
+
+Sign-off does **not** imply zero remaining maintenance work, and this closure change
+does not silently close any residual. The independent review recorded:
+
+**P2 (disclosed, open)**
+
+1. The evaluation bucket covers 2025-01-08 → 2025-10-09, not the full calendar year;
+2. rolling re-selection inside the 2025 bucket (causally safe, `validation_end < test_start`);
+3. the four traded windows are development-bucket fallback-parameterised — the study
+   contains no out-of-sample performance observation at all.
+   See §4 of this file for the full register; none of the three is repaired here.
+
+**P3 (shared register, disclosed, open)**
+
+- FDM formation/development explanatory prose and early publication-commit ordering;
+- Stat-Arb canonical source-gate presentation and stale superseded-ledger-row count;
+- Options stale source-map manifest-hash instruction;
+- Sentiment combined-model margin wording and majority-baseline model description;
+- the shared reconciliation-baseline table omission (**corrected in this round**) and the
+  A/B/C workflow-trigger prose (**corrected in this round**) — the only two shared
+  administrative items authorized for correction in this round.
+
+### Supersession wording
+
+The reconciliation-phase conclusions **"INTEGRATED ON MAIN / FINAL D10 PROGRAM
+SIGN-OFF PENDING"** and **"Final D10 program sign-off remains PENDING"** are
+superseded by this statement:
+
+> **D10 publication-pack program sign-off is complete as of 2026-09-23 at merged
+> head `c73b61dbeec89955aed31d8cb346256f3532f4a9`, on the independently signed head `980f660f0a9f20386c7b2591f8580577bec854f6`, with the merge tree
+> byte-identical to that signed head and the P2/P3 residuals above preserved and
+> undisputed.**
+
+The superseded wording is retained verbatim below as the reconciliation-phase
+record rather than rewritten.
+
+---
+
 ## Post-review integration status
 
 This publication pack was originally authored and reviewed under a
@@ -19,27 +99,37 @@ below as a historical record of the authoring phase.
 The pack has subsequently been integrated into `main`. This integration does
 not, by itself, constitute Directive #10 program sign-off.
 
-Current lifecycle status:
-INTEGRATED ON MAIN / FINAL D10 PROGRAM SIGN-OFF PENDING.
+Current lifecycle status: **SUPERSEDED 2026-09-23 — see "Final Directive #10
+program sign-off" at the top of this file.** As recorded at the 2026-09-21
+reconciliation, this cell read **"INTEGRATED ON MAIN / FINAL D10 PROGRAM
+SIGN-OFF PENDING."** That wording is retained here as the reconciliation-phase
+record rather than rewritten.
 
 | Integration record | Value |
 | --- | --- |
 | Accepted D9 head | `d1ef6fd04ac3f6e48f20f9424a029e19064af619` |
 | Cleared publication head / accepted publication ancestor | `77c8fbd83ea87804bdde90139c4415f88f649a9d` (PR #8 head; later cleared line at `main` is `372d5571`) |
-| `main` head at the reconciliation baseline (frozen 2026-09-21; a reference point, not a permanently-current value — verify with `git ls-remote <repo> refs/heads/main`) |
+| `main` head at the reconciliation baseline (frozen 2026-09-21; a reference point, not a permanently-current value — verify with `git ls-remote <repo> refs/heads/main`)  `372d5571ca72913ed0c69c53337473ffe63f8c94` — restored 2026-09-23; this cell was left blank at reconciliation. |
 | Integration path | Pack authored on `publication/stat-arb-study`; PR **#8** merged it into `research/historical-oos-study` (merge `887ad649`, 2026-09-18T13:22:48Z). `main` carries the pack as linear descendants of the accepted D9-B head: `d1ef6fd` → `b35862e` → `77c8fbd` → `63d0434` → `1758de4` → `372d557`. |
 | Relevant pull requests | #8 (pack → study branch, merged); #7 remains open, unmerged, not draft (PR hygiene inventory) |
 | Exact-head CI evidence | At exact `main` head `372d5571`: `ci` run `35401862776` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35401862776 ; `ci` run `35391301575` (success); `publication-pack` run `35391301475` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35391301475 . |
-| Exact-head CI evidence — remediation branch | `reconcile/d10-b-lifecycle`. Both workflows run on every push to this branch, so the current head's runs are listed at https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions?query=branch%3Areconcile%2Fd10-b-lifecycle (this documentation-only push triggers both). Most recent completed runs, at commit `c93e1aebe3` — the commit immediately preceding this edit: `ci` run `35660173452` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35660173452 ; `publication-pack` run `35660173465` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35660173465 . |
+| Exact-head CI evidence — remediation branch | `reconcile/d10-b-lifecycle`. **Corrected 2026-09-23 — "Both workflows run on every push to this branch" was true only of one of the two workflows.** Measured against the workflow definitions at `main` (`c73b61db`) and against the runs actually recorded on this branch: the repository `ci` workflow triggers on `push` for **all** branches (`branches: ["**"]`) and on `pull_request`; the `publication-pack` workflow triggers on `push` only for `publication/stat-arb-study`, and on `pull_request` for changes under `publication/stat-arb-study/**`. The branch carries **6 runs**: `ci` ×2 `push` and ×2 `pull_request`, `publication-pack` ×2 `pull_request` and **zero `push`**. Repository CI therefore does verify a push to a reconciliation branch, but the pack workflow does not — pack verification of a reconciliation head occurs through the **PR event**. The two runs listed immediately below are `pull_request` runs. Most recent completed runs, at commit `c93e1aebe3` — the commit immediately preceding this edit: `ci` run `35660173452` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35660173452 ; `publication-pack` run `35660173465` (success) — https://github.com/jmiaie/Advanced_Algorithmic_Trading_Simulator_public/actions/runs/35660173465 . |
 | Diff from accepted D9 is publication-only | **No — publication pack plus one append-only ledger file.** `git diff --name-status d1ef6fd 372d557` yields the pack, `.github/workflows/publication-pack.yml`, and `research/experiment-ledger.csv`. The ledger change is **3 inserted rows / 0 deletions / 0 modifications** (`3 +++`), all corrective provenance rows named `*_SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH`, recording that three previously recorded `artifact_sha256` values resolve to no blob in the object store. The superseded rows are left unedited; no accepted result artifact was changed. |
 | Disclosed integration nuance | **No pull request records a merge of this pack into `main`.** PR #8's merge commit `887ad649` is not an ancestor of `main`; the pack commits appear in `main`'s linear history directly. Recorded as a provenance gap for the independent re-audit; no content difference is implied. |
+
+*(Superseded 2026-09-23 for D10 only: D10 publication-pack program sign-off is now
+complete — see "Final Directive #10 program sign-off" at the top of this
+file. The D9 and D11–D13 wording below is unchanged and remains current.)*
 
 **Current program state.** D9: COMPLETE / ACCEPTED. D10: TECHNICALLY
 INTEGRATED / FORMAL SIGN-OFF PENDING. D11: PARTIALLY STARTED THROUGH THE
 PUBLIC HUB / NOT FORMALLY ACTIVATED. D12: DRAFTED / BLOCKED BY D11 HIRING
 EVIDENCE. D13: DRAFTED / NOT YET JUSTIFIED.
 
-**Final D10 program sign-off remains PENDING.** No authoritative
+**Superseded 2026-09-23 — an authoritative D10 publication-pack program
+sign-off has since been issued; see "Final Directive #10 program sign-off" at
+the top of this file. The paragraph below is the reconciliation-phase record,
+retained unedited.** No authoritative
 `DIRECTIVE #10 PUBLICATION PACK SIGN-OFF: YES` has been issued for this pack.
 A D9 program sign-off is not a D10 program sign-off. This section records
 integration state only: it is not a sign-off, and it does not strengthen,
