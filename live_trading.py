@@ -195,7 +195,7 @@ class LiveTradingEngine:
             logger.info("Stopped by user.")
 
 
-def main():
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Live Pairs Trading Engine")
     parser.add_argument(
         "--scan",
@@ -253,11 +253,20 @@ def main():
     parser.add_argument("--once", action="store_true", help="Run one cycle and exit")
     parser.add_argument(
         "--paper",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
         default=True,
-        help="Use paper trading API",
+        help="Use the Alpaca paper trading account (default); --no-paper uses the live account",
     )
-    args = parser.parse_args()
+    return parser
+
+
+def main():
+    args = build_parser().parse_args()
+    logger.info(
+        "Alpaca account: %s | order mode: %s",
+        "PAPER" if args.paper else "LIVE",
+        "LIVE SUBMISSION" if args.live else "DRY RUN",
+    )
 
     if args.live:
         args.dry_run = False

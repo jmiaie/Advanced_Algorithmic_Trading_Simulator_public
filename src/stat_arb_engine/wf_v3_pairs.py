@@ -1,4 +1,4 @@
-"""D9-B v3 pair discovery: group-constrained candidate enumeration re-run
+"""V3 pair discovery: group-constrained candidate enumeration re-run
 independently inside every walk-forward formation window (spec: "a
 chronology-only list of windows is insufficient" -- v1/v2's
 selection_rescanned_per_window=False is explicitly non-conforming).

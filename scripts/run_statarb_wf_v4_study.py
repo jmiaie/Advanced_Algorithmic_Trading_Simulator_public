@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Directive #9 D9-B v4 corrected walk-forward study on frozen local
+"""Run the v4 corrected walk-forward study on frozen local
 data only. v4 fixes two defects independent review found in v3 (execution
 timing, validation tie-break) plus a third found while porting the
 tie-break fix (see configs/experiments/statarb_historical_etf_wf_v4.yaml
@@ -292,7 +292,7 @@ def main(argv: list[str] | None = None) -> int:
         # unlike DEV/VAL mode, the single holdout_2025 bucket is a subset of
         # it by design, not a full partition, so comparing against
         # len(study.windows) here would always raise AssertionError even on
-        # a fully correct run (Addendum 11 item 8 forbids that). An earlier
+        # a fully correct run (the pre-registered spec forbids that). An earlier
         # version of this guard compared the bucket's size against a count
         # built from the exact same test_start.year == 2025 predicate used
         # to build the bucket -- tautologically equal, so it could never

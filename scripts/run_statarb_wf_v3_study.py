@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Directive #9 D9-B v3 conforming walk-forward study on frozen local
+"""Run the v3 conforming walk-forward study on frozen local
 data only.
 
 Without --allow-holdout, 2025 rows are sliced out of the panel before the

@@ -2,13 +2,11 @@
 
 **A pre-registered historical walk-forward evaluation with a complete null in 2025**
 
-D10-B publication pack · experiment `statarb_hist_etf_wf_v4` · directive #10 (publication layer over accepted
-D9 evidence) · 2026-09-18
+Reproducibility bundle · experiment `statarb_hist_etf_wf_v4` · write-up over the accepted pre-registered run · 2026-09-18
 
 > **Evidence basis.** Every number below is read from the accepted v4 artifacts on the accepted HEAD
 > `d1ef6fd0` and its frozen config. Pointer IDs (`C-nn`) resolve field-by-field in
-> [`RESULT-SOURCE-MAP.md`](RESULT-SOURCE-MAP.md). The source gates are recorded in
-> [`SOURCE-GATE.md`](SOURCE-GATE.md). Nothing here was re-run, re-tuned, or re-derived.
+> [`RESULT-SOURCE-MAP.md`](RESULT-SOURCE-MAP.md). Nothing here was re-run, re-tuned, or re-derived.
 >
 > **What this study is not.** It is not a strategy-performance report. In the 2025 evaluation period the
 > pre-specified screen selected no pair, the portfolio held no position, and therefore **no return, Sharpe,
@@ -53,7 +51,7 @@ matters for interpretation: the design is falsifiable only in the sense that win
 development bucket four did (C-12, C-13), which establishes the mechanism fires, while zero did in 2025 (C-02).
 
 **No alternative hypothesis was tested**, no parameter was chosen to improve outcomes, and no hypothesis was
-changed after execution (D10 scope; `SOURCE-GATE.md` Field 9).
+changed after execution (write-up scope).
 
 ## 3. Data
 
@@ -65,7 +63,7 @@ changed after execution (D10 scope; `SOURCE-GATE.md` Field 9).
   (C-30), identical in the manifest and in the frozen config's freeze record.
 - **Reproducibility caveat (disclosed):** raw per-symbol CSVs are not committed to the repository
   (`data/` holds manifests only), so the canonical hash is an accepted, manifest-declared identity — it cannot
-  be recomputed from repository bytes (`SOURCE-GATE.md` Field 7 limit).
+  be recomputed from repository bytes.
 - **Price basis:** vendor daily bars (yfinance family). Not exchange-official data; no tick or quote data.
 
 ## 4. Universe
@@ -81,8 +79,8 @@ Nineteen ETFs in four within-group buckets; **pairs are formed only inside a gro
 
 Within-group pairing bounds the candidate set and prevents economically spurious cross-asset pairings, at the
 cost of a smaller search space (relevant to §6). **Universe selection is static and reflects present-day
-knowledge of liquid, long-lived ETFs** — a survivorship/convenience bias disclosed in §13 and in
-`SOURCE-GATE.md` Field 13 item 2.
+knowledge of liquid, long-lived ETFs** — a survivorship/convenience bias disclosed in §13 and in the
+limitations section.
 
 ## 5. Pair-Selection Procedure
 
@@ -117,8 +115,8 @@ screen is essential. Across the four buckets the pipeline ran **1,724 candidate 
 
 Controls: BH-FDR applied to the per-window candidate set; residual ADF retained as a **secondary** diagnostic
 only (it does not by itself admit a pair); no profitability-driven selection. **Disclosed ceiling:** block-bootstrap
-uncertainty over the selection stage was **not** computed — the gate lists it as unfinished
-(`SOURCE-GATE.md` Field 13 item 4), and no uncertainty estimate for the survivor count is claimed here.
+uncertainty over the selection stage was **not** computed — it is listed as unfinished
+(§13), and no uncertainty estimate for the survivor count is claimed here.
 
 ## 7. Walk-Forward Design
 
@@ -150,7 +148,7 @@ comparison is partial, and we report that rather than a comparison we do not hav
 Consequently: **no claim is made about the relative merit of static OLS and Kalman hedging**, and the three
 populated development-window values are reported only as what they are (three validation-block Sharpe
 observations from a bucket that also produced all four traded windows). Treating those three numbers as a
-hedge-method conclusion would be exactly the kind of overreach this pack is built to avoid.
+hedge-method conclusion would be exactly the kind of overreach this bundle is built to avoid.
 
 ## 9. Execution-Cost Model
 
@@ -166,7 +164,7 @@ execution costs** (C-26):
 Borrow accrues daily as annualized basis points / 252 on the short market value actually held that day.
 Sizing is fixed-gross-notional at 1.0× allocated NAV with max gross leverage 1.0, and fixed-share sizing is
 banned for the primary run (C-27). **Disclosed ceiling:** no market-impact calibration and no capacity
-analysis were performed (`SOURCE-GATE.md` Field 13 item 4), so the cost model bounds *stylized* outcomes
+analysis were performed (§13), so the cost model bounds *stylized* outcomes
 only — and in the evaluation period there were no positions for it to price.
 
 ## 10. Results
@@ -206,7 +204,7 @@ consistent with the DEV bucket being the only one where a fix could change a tra
 (3 JSON + window-boundaries CSV) remain in `results/historical_oos/` under their original labels; the v2 lineage
 is config-only (no v2 result artifacts exist — v2 was invalidated before holdout) alongside one
 `statarb_hist_etf_wf_v2_INVALIDATED` ledger row; the ledger holds 26 rows including four v1 rows, three v1 corrective rows and six
-explicit `…SUPERSEDED_*` rows. **Disclosure (corrected 2026-09-18):** the `artifact_sha256` values recorded on the three v1 ledger rows resolve to no artifact present in this repository or its history (every blob scanned, dangling included); the v1 artifacts on disk are the slimmed forms (2,496 B `29b6effa…`, 2,163 B `e3396ba0…`, 2,156 B `4fd88a82…`) and the recorded values are unverifiable — disclosed by three corrective `…SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH` ledger rows (CL-20). Nothing here is edited, re-labelled or removed, and no citation in this pack
+explicit `…SUPERSEDED_*` rows. **Disclosure (corrected 2026-09-18):** the `artifact_sha256` values recorded on the three v1 ledger rows resolve to no artifact present in this repository or its history (every blob scanned, dangling included); the v1 artifacts on disk are the slimmed forms (2,496 B `29b6effa…`, 2,163 B `e3396ba0…`, 2,156 B `4fd88a82…`) and the recorded values are unverifiable — disclosed by three corrective `…SUPERSEDED_UNVERIFIABLE_ARTIFACT_HASH` ledger rows (CL-20). Nothing here is edited, re-labelled or removed, and no citation in this bundle
 depends on a superseded artifact's *content*.
 
 ## 11. No-Trade Result
@@ -216,7 +214,7 @@ depends on a superseded artifact's *content*.
 Three things this section does *not* do, each deliberately:
 
 1. It does not attach a performance number to a period with no position. There is no 2025 Sharpe, return,
-   drawdown or turnover figure in the accepted artifacts, and this pack does not manufacture one (C-11, CL-21).
+   drawdown or turnover figure in the accepted artifacts, and this bundle does not manufacture one (C-11, CL-21).
 2. It does not characterise the no-trade outcome as an implementation failure. The same screen admitted four
    windows in the earlier development bucket (C-12, C-13), the run completed and wrote its ledger row
    (C-34: ledger created 2026-09-17T03:44:34Z, evidence commit 03:48:08Z), and the single boundary-straddling
@@ -243,17 +241,17 @@ Stated as findings:
 3. **Weak pre-2025 signal:** 2024-validation and boundary buckets were entirely no-trade (C-17, C-18).
 4. **Partial evidence:** the OLS/Kalman comparison produced almost no populated metrics (§8).
 5. **Absent diagnostics:** pair-persistence and hedge-variation diagnostics are not present in the artifacts
-   (C-39), so the gate's "where present" qualifier resolves to *not present* — no persistence claim is made.
+   (C-39), so the spec's "where present" qualifier resolves to *not present* — no persistence claim is made.
 
 ## 13. Limitations
 
 1. **Cross-program exposure.** 5 of 19 symbols (SPY, QQQ, IWM, TLT, GLD) overlap the already-executed FDM
-   D9-A 2025 evaluation universe, and the design-origin chronology relative to FDM results is **unresolved**
+   (a separate factor-model study) 2025 evaluation universe, and the design-origin chronology relative to FDM results is **unresolved**
    (C-36, C-37). The binding label is therefore **FINAL 2025 WALK-FORWARD EVALUATION**, *not* untouched holdout.
 2. **Static, present-day universe** → survivorship and convenience bias (§4).
 3. **No 2025 risk measurement.** Zero positions means zero volatility/drawdown/turnover observation. Absence of
-   measurement is not evidence of stability, and this pack does not read it as such.
-4. **Unfinished analyses (gate-confirmed):** factor attribution, capacity/liquidity, and block-bootstrap
+   measurement is not evidence of stability, and this bundle does not read it as such.
+4. **Unfinished analyses:** factor attribution, capacity/liquidity, and block-bootstrap
    uncertainty (CL-21 — no such quantity is claimed).
 5. **Stylized costs** (§9) — assumptions, not measured execution.
 6. **Partial hedge-comparison evidence** (§8).
@@ -263,12 +261,11 @@ Stated as findings:
    sessions. Causally safe (`validation_end < test_start`, C-10), but the bucket is a rolling re-selection path,
    not a single frozen projection.
 10. **Single evaluation invocation.** One run, one label; no stability check across repeated runs of the 2025
-    evaluation was performed (and rerunning is prohibited in this lane).
-11. **Evidence class.** Program-audited accepted evidence, not external peer review
-    (`SOURCE-GATE.md` Field 9).
+    evaluation was performed (and rerunning is prohibited by the pre-registered spec).
+11. **Evidence class.** Internally reviewed evidence, not external peer review.
 12. **Calendar coverage of the evaluation bucket.** The three 2025 windows span **2025-01-08 → 2025-10-09**; the
     remainder of the calendar year is not covered by the frozen 63-session geometry, and one boundary-straddling
-    window was excluded by design with a surfaced warning (§10.2, C-35). No sentence in this pack characterises
+    window was excluded by design with a surfaced warning (§10.2, C-35). No sentence in this bundle characterises
     the result as a full-year statement.
 
 ## 14. Model Risk
@@ -278,13 +275,13 @@ Stated as findings:
   (C-13, C-14) is a single parameter set, never re-estimated out-of-sample.
 - **Filter-risk asymmetry:** a conservative screen that finds nothing is indistinguishable, within this design,
   from a screen that *would* find opportunities under a slightly different threshold. This cannot be resolved
-  without changing the design — which this lane prohibits.
+  without changing the design — which the pre-registered spec prohibits.
 - **Multiple-testing residual risk:** BH-FDR controls the false-discovery proportion under its assumptions
   (independence/positive dependence). The 0.23% survivor rate (§6) is consistent with a strict gate; whether the
   gate is *too* strict is unmeasured.
 - **Execution-model risk:** costs are stylized (§9); borrow is modelled, not observed.
-- **Provenance risk:** this pack's guard is byte-level hash agreement with the accepted artifacts and frozen
-  manifest (`SOURCE-GATE.md` Field 14). It does not re-derive the result, so any error inside the accepted
+- **Provenance risk:** this bundle's guard is byte-level hash agreement with the accepted artifacts and frozen
+  manifest. It does not re-derive the result, so any error inside the accepted
   artifacts would be inherited, not caught — disclosed, not hidden.
 - **No live-capital claim:** nothing in this study supports allocating capital, and none is implied (CL-21,
   CL-23).
@@ -296,12 +293,12 @@ Stated as findings:
   It (1) re-hashes every accepted artifact named in `reproducibility.json`, (2) regenerates `tables/` and
   `figures/` and requires byte-identical output, and (3) resolves every `` `path` (sha256 `…`) `` citation in
   `RESULT-SOURCE-MAP.md`. Any failure exits non-zero (fail-closed).
-- **CI:** `.github/workflows/publication-pack.yml` runs the same command on push and pull request.
+- **CI:** `.github/workflows/publication.yml` runs the same command on push and pull request.
 - **Regeneration only, never re-derivation:** `build` re-emits tables/figures *from* the accepted artifacts;
   it never recomputes cointegration, thresholds, or portfolio results.
 - **Provenance chain:** accepted HEAD `d1ef6fd0` → freeze commit `28be77fb` → post-freeze config
   `5768fd10…` → primary artifact `b1197d0f…` (1,833 B) → ledger row (created 2026-09-17T03:44:34Z) →
-  this pack. Each link is hash-checked or git-verifiable.
+  this bundle. Each link is hash-checked or git-verifiable.
 - **Environment independence:** Python 3.11+ stdlib only; no pandas/numpy, no network, no credentials.
 
 ## 16. Conclusion
@@ -313,8 +310,8 @@ measurement. **The null is the finding**, and the design behaved as pre-specifie
 
 The defensible claims are narrow: the screening pipeline runs, fires when opportunities exist in-sample
 (4/1,724), and is silent in 2025. The indefensible claims — an edge, a Sharpe, an alpha, economic
-significance, capacity, or a validated strategy — are not made anywhere in this pack, and
-`CLAIM-REGISTER.md` records that omission as an explicit, checkable decision (CL-21…CL-23) rather than a gap.
+significance, capacity, or a validated strategy — are not made anywhere in this bundle, and
+`CLAIMS-AND-LIMITS.md` records that omission as an explicit, checkable decision (CL-21…CL-23) rather than a gap.
 
 The next decision this study rewards is not "tune until it trades" (prohibited, and it would destroy the
 pre-registration) but whether the screen's strictness is appropriate for this asset class — a question that
@@ -331,6 +328,5 @@ requires a **new, separately pre-registered** design, not a revision of this one
 | `tables/artifact-hashes.csv` | resolved hash + byte size of every source artifact at build time |
 | `figures/selection-funnel.svg` | candidate tests vs selected-pair vs no-trade windows, per bucket |
 | `RESULT-SOURCE-MAP.md` | claim → artifact pointer → hash |
-| `CLAIM-REGISTER.md` | what may and may not be asserted, with reversal conditions |
-| `SOURCE-GATE.md` | 14-field evidence contract and gate provenance |
+| `CLAIMS-AND-LIMITS.md` | what may and may not be asserted, with reversal conditions |
 | `reproducibility.json` | machine-readable manifest of source artifacts and generation steps |

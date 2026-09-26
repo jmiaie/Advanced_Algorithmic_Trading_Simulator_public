@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic D10-B publication-pack generator / verifier.
+"""Deterministic reproducibility-bundle generator / verifier.
 
 Zero network. Stdlib only. Never re-derives empirical results: every number in
 tables/ and figures/ is read from the ACCEPTED artifacts in results/historical_oos/
@@ -27,7 +27,7 @@ REPRO_PATH = PACK / "reproducibility.json"
 SOURCE_MAP = PACK / "RESULT-SOURCE-MAP.md"
 
 # Accepted v4 walk-forward buckets, in program order. Labels are the binding
-# period names used throughout the D9-B record.
+# period names used throughout the study record.
 BUCKETS = [
     ("dev_formation", "2015-2023 development/formation"),
     ("boundary_2023_2024", "boundary 2023-10 - 2024-01"),
@@ -308,7 +308,7 @@ ABBR = re.compile(r"\b([0-9a-f]{8,63})…")
 SELFTEST_FIXTURES = {hashlib.sha256(b"abc").hexdigest()}
 
 # Hash values that this pack published in an earlier revision and then legitimately retired,
-# because the underlying artifact changed (D10 CL-20 remediation, 2026-09-18). Declared one by one
+# because the underlying artifact changed (CL-20 correction, 2026-09-18). Declared one by one
 # with a reason so the defect log can keep quoting what it measured without the sweep going blind.
 RETIRED_HASHES = {
     # research/experiment-ledger.csv at 77c8fbd: 23 rows / 19,542 B,

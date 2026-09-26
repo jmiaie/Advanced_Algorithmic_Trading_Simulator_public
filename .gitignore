@@ -9,7 +9,7 @@ algo_sim_project/
 .pytest_cache/
 .mypy_cache/
 
-# Directive #9: raw vendor snapshots stay local / gitignored
+# Raw vendor snapshots stay local / gitignored
 data/raw/
 
 # Keep research ledger tracked even if CSV patterns appear later

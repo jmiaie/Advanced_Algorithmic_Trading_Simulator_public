@@ -1,4 +1,4 @@
-"""D9-B v4 backtest execution: fixes an execution-timing defect an
+"""V4 backtest execution: fixes an execution-timing defect an
 independent review found in v3.
 
 v3's simulate_pair_backtest decided a position using information through

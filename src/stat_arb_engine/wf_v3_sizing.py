@@ -1,4 +1,4 @@
-"""D9-B v3 position sizing: fixed_gross_notional, primary gross leverage <= 1.0x
+"""V3 position sizing: fixed_gross_notional, primary gross leverage <= 1.0x
 allocated NAV. Leg quantities are normalized by the hedge ratio so total
 absolute gross exposure respects the specified notional -- not the v1
 fixed-100-share sizing, which the authoritative spec bans for the primary

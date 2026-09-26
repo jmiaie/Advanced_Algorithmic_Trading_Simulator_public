@@ -1,4 +1,4 @@
-"""Automated evidence for the D9-B v4 holdout gate -- as opposed to a
+"""Automated evidence for the v4 holdout gate -- as opposed to a
 one-off manual CLI run, which isn't reproducible evidence on its own.
 
 Exercises scripts/run_statarb_wf_v4_study.py's actual main(). Synthetic
@@ -205,7 +205,7 @@ def test_v4_runner_holdout_empty_bucket_guard_actually_fails(tmp_path):
     success on the one-time evaluation. This proves the replacement guard
     (holdout bucket must be non-empty) actually raises in that scenario,
     and that no artifact is written when it does. Synthetic data ending
-    before 2025 entirely -- no real 2025 data is used, per Addendum 11."""
+    before 2025 entirely -- no real 2025 data is used, per the pre-registered spec."""
     dataset_id = "test_dataset_v4"
     raw_dir = tmp_path / "data" / "raw" / dataset_id
     _write_synthetic_raw(raw_dir, end="2023-12-31")
@@ -242,7 +242,7 @@ def test_v4_runner_holdout_uses_config_fallback_not_python_constant(tmp_path):
     values instead. This end-to-end test uses a config whose fallback
     values DIFFER from FALLBACK_PARAMS and confirms the produced holdout
     artifact carries the YAML values, not the Python constant. Synthetic
-    data only, per Addendum 11."""
+    data only, per the pre-registered spec."""
     import json
 
     from stat_arb_engine.wf_v4_orch import FALLBACK_PARAMS

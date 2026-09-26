@@ -1,4 +1,4 @@
-"""D9-B v3 backtest: fair OLS-vs-Kalman comparison on one selected pair over
+"""V3 backtest: fair OLS-vs-Kalman comparison on one selected pair over
 one walk-forward test window, under fixed_gross_notional sizing and the
 GROSS/BASE/STRESS cost scenarios.
 

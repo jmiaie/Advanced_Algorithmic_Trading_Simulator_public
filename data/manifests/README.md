@@ -1,4 +1,4 @@
-# Dataset manifests (Directive #9)
+# Dataset manifests
 
 Committed JSON manifests describe frozen historical panels. Raw CSVs stay under `data/raw/` (gitignored).
 

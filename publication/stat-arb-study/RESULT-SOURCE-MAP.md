@@ -1,6 +1,6 @@
-# RESULT-SOURCE-MAP.md — D10-B `stat-arb-study`
+# RESULT-SOURCE-MAP.md — `stat-arb-study`
 
-Every quantitative statement in `TECHNICAL-PAPER.md`, `CASE-STUDY.md` and `CLAIM-REGISTER.md` maps to an
+Every quantitative statement in `TECHNICAL-PAPER.md`, `CASE-STUDY.md` and `CLAIMS-AND-LIMITS.md` maps to an
 exact artifact field below. JSON pointers are relative to the artifact root.
 
 Artifact hash notation: `` `path` (sha256 `64-hex`) ``. All hashes are re-verified by
@@ -80,12 +80,12 @@ Canonical artifact references used throughout:
 | C-34 | 2025 was executed once, immediately after the freeze, with no change in between | git | commit bodies of `28be77fb` (freeze) and `d1ef6fd0` (evidence); LED rows for `holdout_2025` |
 | C-35 | One boundary-straddling window was excluded from the 2025 bucket by design and surfaced via the runner warning (not silently dropped) | git, HOLD | `d1ef6fd0` commit body; HOLD `n_windows` = 3 |
 | C-36 | Pre-committed 2025 label is FINAL 2025 WALK-FORWARD EVALUATION, not an untouched holdout | AUD | holdout-audit label sections; commit bodies |
-| C-37 | 5 of 19 symbols overlap the FDM D9-A executed universe | AUD | cross-program exposure disclosure section |
+| C-37 | 5 of 19 symbols overlap the executed FDM (factor-model study) universe | AUD | cross-program exposure disclosure section |
 | C-38 | A superseded exploratory v1 study on a different (equity-pair) universe also executed its own 2025 window with 0 pairs selected, and its universe does not overlap this study's. NOTE: v1's artifact records its own `dataset_id` / `universe_source` (a 56-symbol equity-pair universe, distinct from this study's 19-symbol ETF universe) but carries **no symbol list**, so non-overlap is asserted from the differing dataset/universe record rather than from an enumerated symbol comparison. | `results/historical_oos/statarb_hist_oos_v1_holdout_2025.json` (sha256 `4fd88a8204ecb4b92cc5017764fcaf0e159b20b202d971b9edc85d4128d6f271`), AUD | v1 artifact; AUD version history |
 | C-39 | `pair_persistence` / `hedge_variation` diagnostics are not present in any v4 artifact | DEV+BND+VAL+HOLD | absence of such keys in the artifact schema (`windows[*]` key set) |
 | C-40 | Superseded lineage inventory: the v1 result artifacts (3 files) and the v3 result artifacts (3 JSON + window-boundaries CSV) remain in `results/historical_oos/` under their original labels; the v2 lineage is config-only (`configs/experiments/statarb_historical_etf_wf_v2.yaml` — v2 produced no result artifacts before invalidation); the ledger holds 26 rows including one `statarb_hist_etf_wf_v2_INVALIDATED`, four v1 rows (`dev_formation`, `val_2024`, `holdout_2025`, `prereg`), three v1 corrective rows and six explicit `…SUPERSEDED_*` rows in total | `research/experiment-ledger.csv` (sha256 `cb4b7b0f461a0ed3f42e0798752552ca43ba2eb56277aac45930ef398e973211`) — see `scripts/claim_crosscheck.py` for the enforced values; `configs/experiments/statarb_historical_etf_wf_v2.yaml`; `results/historical_oos/statarb_hist_etf_wf_v3_*` | enforced by `claim_crosscheck.py` (no citation depends on a superseded artifact's content) |
 
 ## F. Pointers deliberately NOT cited
 - Any Sharpe / drawdown / turnover / return / alpha number for 2025 — **does not exist** (C-11).
-- Any factor attribution, capacity or market-impact estimate — **not produced** by this lane.
+- Any factor attribution, capacity or market-impact estimate — **not produced** by this study.
 - Any 2025 C-selection or threshold-tuning result — **not produced**; no tuning path exists for this experiment.

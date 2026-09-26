@@ -1,4 +1,4 @@
-"""D9-B v3 walk-forward orchestration: true per-window pair rediscovery,
+"""V3 walk-forward orchestration: true per-window pair rediscovery,
 validation-grid parameter selection, and a fair OLS-vs-Kalman test
 evaluation under all three cost scenarios.
 

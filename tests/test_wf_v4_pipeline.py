@@ -1,4 +1,4 @@
-"""Offline tests for the D9-B v4 walk-forward pipeline -- specifically the
+"""Offline tests for the v4 walk-forward pipeline -- specifically the
 two fixes an independent review found necessary in v3: the execution-
 timing look-ahead (decide-and-fill at the same bar-t close) and the
 omitted turnover tie-break criterion.
@@ -544,11 +544,11 @@ def test_frozen_signal_params_bypasses_both_selection_functions():
         }
 
 
-# --------------------- Addendum 11 holdout-gate points 6 and 7 ---------------------
+# --------------------- Holdout requirements 6 and 7 (pre-registered spec) ---------------------
 
 
 def test_holdout_pair_selection_receives_formation_only_data():
-    """Directive #9 Addendum 11 point 6 ('pair selection remains
+    """Pre-registered spec requirement 6 ('pair selection remains
     formation-only'): a dedicated regression proving the ORCHESTRATOR --
     not select_pair_within_groups's own cointegration logic, which is
     outside this module's scope -- only ever passes each window's own
@@ -605,7 +605,7 @@ def test_holdout_pair_selection_receives_formation_only_data():
 
 
 def test_holdout_signal_unaffected_by_perturbing_that_windows_own_later_test_bars():
-    """Directive #9 Addendum 11 point 7 ('no test-window future information
+    """Pre-registered spec requirement 7 ('no test-window future information
     affects its own decision'): perturbing the LATTER portion of a
     window's own 2025 test period must not change the causal z-score fed
     into position generation for the EARLIER portion of that same test

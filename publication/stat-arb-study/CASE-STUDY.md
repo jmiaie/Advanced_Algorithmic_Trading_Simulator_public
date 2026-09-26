@@ -1,4 +1,4 @@
-# CASE-STUDY.md — D10-B `stat-arb-study`
+# CASE-STUDY.md — `stat-arb-study`
 
 **Reader-facing companion to the technical paper.** Same evidence, no new numbers.
 
@@ -11,7 +11,7 @@ the numbers are trustworthy — without reading the paper's design sections firs
 
 A statistical-arbitrage study looked for cointegrated ETF pairs inside four economically related groups, screened
 candidate pairs with a false-discovery-rate control, and traded whatever survived — under a rule set frozen
-before the D9-B 2025 evaluation run was executed. Over 32 walk-forward windows it admitted four tradable pairs, all of
+before the 2025 evaluation run was executed. Over 32 walk-forward windows it admitted four tradable pairs, all of
 them before 2024 and all under a pre-declared fallback rule. In the 2025 evaluation period it admitted none, so
 the strategy held nothing. **That is the result: a complete null, reported as a null.**
 
@@ -32,7 +32,7 @@ procedure actually emits.
 | Selection | Engle-Granger cointegration → BH-FDR → validation-block thresholds | §5, §6 (C-23, C-24) |
 | Walk-forward | 504 / 126 / 63 / 63 sessions; rediscovery each window; strictly causal | §7 (C-22, C-10) |
 | Costs | GROSS / BASE / STRESS scenarios; fixed-gross-notional sizing | §9 (C-25…C-27) |
-| Publication | This pack: hashes, tables, figures, red-teams, offline verification | `SOURCE-GATE.md`, `RESULT-SOURCE-MAP.md` |
+| Publication | This reproducibility bundle: hashes, tables, figures, offline verification | `RESULT-SOURCE-MAP.md` |
 
 ## 4. What actually happened
 
@@ -48,7 +48,7 @@ rate of 0.23%. In the 2025 bucket: 165 tests, zero survivors, zero pairs, zero p
 
 **The tuned-threshold path never fired.** Every traded window used the pre-declared fallback parameters rather
 than a grid-selected optimum, and the frozen config records zero grid-selected windows across the entire study.
-That is a finding about the design's selectivity, and it is one of the more interesting facts in the pack
+That is a finding about the design's selectivity, and it is one of the more interesting facts in the bundle
 (CL-13's reversal condition is the check on how far it can be pushed).
 
 ## 5. Why "no trades" is not "we broke it"
@@ -65,7 +65,7 @@ artifacts and the git record:
    the counts (C-35, C-17).
 
 What remains genuinely unresolved is *why* no 2025 pair passed: a real absence of cointegration, or a screen
-whose strictness is mismatched to this asset class. This design cannot distinguish the two, and the pack says so
+whose strictness is mismatched to this asset class. This design cannot distinguish the two, and the bundle says so
 rather than guessing (paper §13, §16).
 
 ## 6. How to read the numbers safely
@@ -82,17 +82,17 @@ rather than guessing (paper §13, §16).
 - The three populated Kalman validation-Sharpe values as a verdict on hedge methods: OLS metrics are
   unpopulated throughout, so the pre-specified comparison is only partially evidenced (C-31…C-33).
 - Anything about alpha, economic significance, capacity, or live viability. None were estimated, and
-  `CLAIM-REGISTER.md` records that omission as an explicit decision (CL-21…CL-23), not an oversight.
+  `CLAIMS-AND-LIMITS.md` records that omission as an explicit decision (CL-21…CL-23), not an oversight.
 
 ## 7. The governance story (why the label matters)
 
 The 2025 period carries the label **FINAL 2025 WALK-FORWARD EVALUATION**, deliberately *not* "untouched
 holdout". Reason: 5 of 19 symbols overlap a separate, already-executed research program's 2025 universe, and the
 chronology between the two designs is unresolved (C-36, C-37). Calling it untouched would be a stronger claim than the
-evidence supports — precisely the kind of upgrade this pack exists to refuse.
+evidence supports — precisely the kind of upgrade this bundle exists to refuse.
 
 Also refused: framing the null as "the strategy correctly stayed out of the market". The artifacts show no
-qualifying opportunity and no position. They do not show motive, foresight, or defensive skill, and the pack does
+qualifying opportunity and no position. They do not show motive, foresight, or defensive skill, and the bundle does
 not attribute any (paper §11).
 
 ## 8. Verification you can run yourself
@@ -101,7 +101,7 @@ not attribute any (paper §11).
 # 1. hashes + deterministic regeneration + every citation resolves (fail-closed)
 python3 publication/stat-arb-study/scripts/publication_pack.py check
 
-# 2. independent re-assertion of the claim register values (separate code path)
+# 2. independent re-assertion of the claims-and-limits values (separate code path)
 python3 publication/stat-arb-study/scripts/claim_crosscheck.py
 ```
 
@@ -111,12 +111,12 @@ validate a false claim: they share no code and parse the artifacts independently
 ## 9. What comes next (and what does not)
 
 - **Not** re-tuning this design until it trades. That would destroy the pre-registration that gives the null its
-  value, and it is prohibited in this lane.
-- **Not** quietly extending the label. Superseded lineage stays in place and labelled: the v1 result artifacts (3 files) and v3 result artifacts (3 JSON + a window-boundaries CSV) remain under their original labels; the v2 lineage is config-only (v2 produced no result artifacts before being invalidated, and this pack says so rather than implying otherwise); three explicit `…SUPERSEDED_*` ledger rows remain. Neither the artifacts nor the labels were touched.
+  value, and it is prohibited by the pre-registered spec.
+- **Not** quietly extending the label. Superseded lineage stays in place and labelled: the v1 result artifacts (3 files) and v3 result artifacts (3 JSON + a window-boundaries CSV) remain under their original labels; the v2 lineage is config-only (v2 produced no result artifacts before being invalidated, and this bundle says so rather than implying otherwise); three explicit `…SUPERSEDED_*` ledger rows remain. Neither the artifacts nor the labels were touched.
 - **Yes, if pursued deliberately:** a *new*, separately pre-registered study testing whether the screen's
   strictness matches this asset class — the one question this study raises and cannot answer (paper §16).
 
 ## 10. Provenance in one line
 
 Accepted HEAD `d1ef6fd0` → freeze `28be77fb` → frozen config `5768fd10…` → primary artifact `b1197d0f…`
-(1,833 B) → ledger row (2026-09-17T03:44:34Z) → this pack, offline-verified and CI-checked.
+(1,833 B) → ledger row (2026-09-17T03:44:34Z) → this bundle, offline-verified and CI-checked.
