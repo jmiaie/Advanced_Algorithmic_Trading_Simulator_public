@@ -1,4 +1,4 @@
-"""Panel load + within-sector pair selection for D9 historical OOS."""
+"""Panel load + within-sector pair selection for the historical OOS study."""
 
 from __future__ import annotations
 

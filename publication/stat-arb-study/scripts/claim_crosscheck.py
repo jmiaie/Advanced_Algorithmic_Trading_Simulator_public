@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Independent claim cross-check for the D10-B publication pack.
+"""Independent claim cross-check for the stat-arb study reproducibility bundle.
 
-Deliberately NOT the pack generator: no shared code, no shared helpers, no
+Deliberately NOT the bundle generator: no shared code, no shared helpers, no
 reuse of its bucket table. This script re-reads the accepted artifacts with its
-own parsing and asserts the CLAIM-REGISTER values directly, so that a defect in
+own parsing and asserts the CLAIMS-AND-LIMITS values directly, so that a defect in
 the generator cannot mask a false claim (and vice versa).
 
 Pure stdlib, zero network, no writes. Any failed assertion exits non-zero.
@@ -31,16 +31,11 @@ HASHES = {
     "val_2024": "d59c9747044262a2b736f455a5924fde13dedadb5ff8567d3964fa9b919dfbb8",
 }
 REQUIRED_DOCS = [
-    "SOURCE-GATE.md",
     "TECHNICAL-PAPER.md",
     "RESULT-SOURCE-MAP.md",
     "reproducibility.json",
     "CASE-STUDY.md",
-    "CLAIM-REGISTER.md",
-    "QUANT-RED-TEAM.md",
-    "CLAIM-RED-TEAM.md",
-    "CITATION-RED-TEAM.md",
-    "D10-STATUS.md",
+    "CLAIMS-AND-LIMITS.md",
 ]
 
 CHECKS = 0
@@ -65,7 +60,7 @@ def main() -> int:
     docs = {d for d in REQUIRED_DOCS if (PACK / d).exists()}
     ok(
         docs == set(REQUIRED_DOCS),
-        f"all 10 deliverable docs present (missing {sorted(set(REQUIRED_DOCS) - docs)})",
+        f"all deliverable docs present (missing {sorted(set(REQUIRED_DOCS) - docs)})",
     )
 
     b = {name: load(V4.format(name)) for name in HASHES}

@@ -1,4 +1,4 @@
-"""Period study orchestration for D9 historical OOS."""
+"""Period study orchestration for the historical OOS study."""
 
 from __future__ import annotations
 

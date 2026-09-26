@@ -1,4 +1,4 @@
-"""Offline tests for Directive #9 acquisition helpers (no network)."""
+"""Offline tests for acquisition helpers (no network)."""
 
 from __future__ import annotations
 

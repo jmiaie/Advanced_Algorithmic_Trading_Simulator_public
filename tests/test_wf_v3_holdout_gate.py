@@ -1,4 +1,4 @@
-"""Automated evidence for the D9-B v3 holdout gate -- as opposed to a
+"""Automated evidence for the v3 holdout gate -- as opposed to a
 one-off manual CLI run, which isn't reproducible evidence on its own.
 
 Exercises scripts/run_statarb_wf_v3_study.py's actual main(), not the

@@ -1,4 +1,4 @@
-"""Pair backtest + Kalman diagnostics for D9 historical OOS."""
+"""Pair backtest + Kalman diagnostics for the historical OOS study."""
 
 from __future__ import annotations
 

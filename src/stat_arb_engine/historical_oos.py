@@ -1,4 +1,4 @@
-"""Directive #9 historical walk-forward / OOS helpers for Stat-Arb.
+"""Historical walk-forward / OOS helpers for Stat-Arb.
 
 Holdout (2025) is blocked unless experiment status is frozen-for-holdout.
 """

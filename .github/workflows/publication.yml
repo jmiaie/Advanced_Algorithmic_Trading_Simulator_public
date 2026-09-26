@@ -1,4 +1,4 @@
-name: publication-pack
+name: publication
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
   pull_request:
     paths:
       - 'publication/stat-arb-study/**'
-      - '.github/workflows/publication-pack.yml'
+      - '.github/workflows/publication.yml'
 
 jobs:
   verify:
@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # hashcheck re-measures the config blob at the freeze commit's parent
-      - name: Verify D10-B publication pack (offline, fail-closed)
+      - name: Verify reproducibility bundle (offline, fail-closed)
         run: |
           python3 publication/stat-arb-study/scripts/publication_pack.py check
           python3 publication/stat-arb-study/scripts/publication_pack.py hashcheck

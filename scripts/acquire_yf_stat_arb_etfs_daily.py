@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Acquire and freeze yf_stat_arb_etfs_daily_2015_2025_v1 for Directive #9 D9-B v3.
+"""Acquire and freeze yf_stat_arb_etfs_daily_2015_2025_v1 for the v3 study.
 
 Authoritative 19-symbol, 4-group ETF universe (no cross-group pairs; see
 configs/experiments/statarb_historical_etf_wf_v3.yaml). Raw CSVs under
@@ -32,7 +32,7 @@ REQUESTED_END_EXCLUSIVE = "2026-01-01"
 OHLCV_COLS = ["Open", "High", "Low", "Close", "Volume"]
 ACTION_COLS = ["Dividends", "Stock Splits", "Capital Gains"]
 
-# Authoritative D9-B v3 universe (spec: exact, no substitutions, no cross-group pairs).
+# Pre-registered v3 universe (spec: exact, no substitutions, no cross-group pairs).
 GROUPS: dict[str, list[str]] = {
     "GROUP_A_BROAD_EQUITY": ["SPY", "QQQ", "DIA", "IWM"],
     "GROUP_B_US_EQUITY_SECTORS": [

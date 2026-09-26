@@ -1,4 +1,4 @@
-"""Offline tests for the D9-B v3 conforming walk-forward pipeline.
+"""Offline tests for the v3 conforming walk-forward pipeline.
 
 All fixtures here are SYNTHETIC (seeded random walks / manufactured
 cointegrated pairs) -- for software verification only. No real market data

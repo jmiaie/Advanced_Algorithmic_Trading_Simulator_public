@@ -1,6 +1,6 @@
-"""Directive #3 release-gate regression tests.
+"""Research-correctness regression tests.
 
-Maps directly to the D3 release gate in quant-research-portfolio#3:
+Each group below guards one correctness property of the research engine:
 1. Same-timestamp pair signals
 2. Marked-to-market NAV
 3. Decision-time pair research

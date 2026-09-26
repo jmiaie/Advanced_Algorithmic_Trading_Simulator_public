@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run Directive #9 Stat-Arb historical OOS study on frozen local data only.
+"""Run the Stat-Arb historical OOS study on frozen local data only.
 
 Examples:
   python scripts/run_historical_oos_study.py \\

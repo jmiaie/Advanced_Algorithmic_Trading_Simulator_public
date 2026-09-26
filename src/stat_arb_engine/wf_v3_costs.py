@@ -1,4 +1,4 @@
-"""D9-B v3 cost engine: GROSS / BASE / STRESS scenarios for the conforming
+"""V3 cost engine: GROSS / BASE / STRESS scenarios for the conforming
 walk-forward stat-arb study. These are scenario assumptions, not measured
 historical execution costs.
 
@@ -46,7 +46,7 @@ class CostScenario:
         return smv * (self.borrow_bps_annualized / 10_000.0) / TRADING_DAYS_PER_YEAR
 
 
-# Frozen per authoritative D9-B spec (Sec "Costs"): exact values, not tunable.
+# Frozen per the pre-registered spec (Sec "Costs"): exact values, not tunable.
 GROSS = CostScenario(
     label="analytical_zero",
     commission_per_share=0.0,

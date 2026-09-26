@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Acquire and freeze yf_statarb_sector_equities_daily_2015_2025_v1 for Directive #9.
+"""Acquire and freeze yf_statarb_sector_equities_daily_2015_2025_v1 for the stat-arb study.
 
 Universe: documented PairFinder.SECTOR_PAIRS. Raw under data/raw/ (gitignored).
 Local/agent only — never CI. Coverage exclusions recorded at freeze.

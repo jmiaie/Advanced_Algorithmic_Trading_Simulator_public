@@ -1,4 +1,4 @@
-"""Offline tests for Directive #9 historical OOS helpers (no network)."""
+"""Offline tests for historical OOS helpers (no network)."""
 
 from __future__ import annotations
 

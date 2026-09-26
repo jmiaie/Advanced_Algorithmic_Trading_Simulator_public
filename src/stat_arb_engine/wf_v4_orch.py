@@ -1,4 +1,4 @@
-"""D9-B v4 walk-forward orchestration -- corrects two defects an
+"""V4 walk-forward orchestration -- corrects two defects an
 independent review found in v3 (both verified against v3's actual code
 before this fix was written, not accepted on the review's word alone):
 
