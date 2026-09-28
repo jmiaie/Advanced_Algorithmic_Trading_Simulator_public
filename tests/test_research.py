@@ -74,6 +74,14 @@ def test_bh_fdr_toy_example() -> None:
     assert all(result["qvalue"].sort_values().diff().fillna(0.0) >= 0.0)
 
 
+def test_bh_step_up_rejects_every_rank_below_the_largest_passing_rank() -> None:
+    # Sorted p = [0.01, 0.034, 0.04], m=3, alpha=0.05 -> thresholds [0.0167, 0.0333, 0.05].
+    # Rank 2 fails its own threshold, but rank 3 passes, so step-up rejects all three.
+    result = benjamini_hochberg([0.04, 0.01, 0.034], alpha=0.05)
+    assert result["rejected"].all()
+    assert (result["rejected"] == (result["adjusted_pvalue"] <= 0.05)).all()
+
+
 
 def test_formation_validation_test_non_overlap() -> None:
     frame = pd.DataFrame(
