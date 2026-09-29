@@ -47,16 +47,17 @@ Explicit limitations and truthful positioning:
 
 ```text
 src/stat_arb_engine/        # Research engine package
-main.py                     # Synthetic offline demonstration
-pair_finder.py              # Live-data pair scan bridge using formation-only research logic
-live_trading.py             # Secondary Alpaca bridge (explicit live opt-in)
-live_feed.py                # Alpaca data feed used by the legacy entry points
+scripts/main.py             # Synthetic offline demonstration
+scripts/pair_finder.py      # Live-data pair scan bridge using formation-only research logic
+scripts/live_trading.py     # Secondary Alpaca bridge (explicit live opt-in)
+scripts/live_feed.py        # Alpaca data feed used by the legacy entry points
+scripts/                    # Also holds the data-acquisition and study runners
 research/                   # Experiment ledger and study records
 publication/stat-arb-study/ # Technical write-up + offline reproducibility bundle
 results/
 ```
 
-`main.py`, `pair_finder.py`, `live_trading.py` and `live_feed.py` are legacy root-level entry points kept for the original prototype workflow; the research code lives in `src/stat_arb_engine/` and `scripts/`.
+`scripts/main.py`, `scripts/pair_finder.py`, `scripts/live_trading.py` and `scripts/live_feed.py` are legacy entry points kept for the original prototype workflow (formerly at the repository root); the research code lives in `src/stat_arb_engine/`.
 
 ## Setup
 

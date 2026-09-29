@@ -36,7 +36,11 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src", "."]
+pythonpath = ["src", "scripts"]
+filterwarnings = [
+  # Third-party: statsmodels coint() on near-colinear synthetic fixtures in research tests.
+  "ignore:y0 and y1 are \\(almost\\) perfectly colinear:statsmodels.tools.sm_exceptions.CollinearityWarning",
+]
 
 [tool.ruff]
 line-length = 100
@@ -46,9 +50,21 @@ extend-exclude = ["results"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "B"]
 
+[tool.ruff.lint.isort]
+# Legacy entry points in scripts/ import each other as top-level modules.
+known-first-party = ["stat_arb_engine", "live_feed", "pair_finder"]
+
 [tool.mypy]
 python_version = "3.11"
-files = ["src", "tests", "main.py", "pair_finder.py", "live_trading.py", "live_feed.py"]
+files = [
+  "src",
+  "tests",
+  "scripts/main.py",
+  "scripts/pair_finder.py",
+  "scripts/live_trading.py",
+  "scripts/live_feed.py",
+]
+mypy_path = ["src", "scripts"]
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
 warn_unused_ignores = true
