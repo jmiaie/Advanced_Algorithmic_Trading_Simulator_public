@@ -64,7 +64,17 @@ def build_kalman_spread(
     observation_variance: float,
 ) -> SpreadSeries:
     """Sequential forward-only Kalman filter run continuously across the full
-    formation+eval series (no smoothing; state at bar t uses only bars <= t)."""
+    formation+eval series (no smoothing; state at bar t uses only bars <= t).
+
+    Note on the spread returned here: it is the filter's post-update
+    residual (``DynamicKalmanResult.fitted_spread``), which uses y_t through
+    the state update and is shrunk toward zero relative to the one-step-ahead
+    ``predictive_innovation``. It is left unchanged because the published
+    walk-forward results depend on it. It never uses data after bar t, and
+    the v4 backtest (``wf_v4_backtest.lag_for_execution``) executes the
+    position and hedge ratio decided at t only at t+1, so no traded P&L is
+    earned on the bar whose observation entered that residual.
+    """
     result = fit_dynamic_kalman_hedge_ratio(
         combined_prices[sym_a],
         combined_prices[sym_b],
