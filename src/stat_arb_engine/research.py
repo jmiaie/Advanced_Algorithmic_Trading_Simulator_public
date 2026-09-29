@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from itertools import combinations
 from typing import Any, Dict, List, Sequence
 
@@ -23,14 +23,57 @@ class StaticOLSHedgeResult:
     estimation_mode: str = "static_batch_ols"
 
 
+def _empty_series() -> pd.Series:
+    return pd.Series(dtype=float)
+
+
 @dataclass(frozen=True)
 class DynamicKalmanResult:
+    """Output of the sequential (forward-only) Kalman hedge-ratio filter.
+
+    Two different residuals are reported, and they answer different questions:
+
+    - ``predictive_innovation`` (e_t = y_t - (alpha_{t|t-1} + beta_{t|t-1} * x_t))
+      is computed from the one-step-ahead prior state, i.e. BEFORE the filter
+      sees y_t. Its predictive variance is ``innovation_variance``
+      (S_t = H_t P_{t|t-1} H_t' + R). This is the out-of-sample spread and the
+      one to use as a trading signal or z-score input.
+    - ``fitted_spread`` (alias ``in_sample_residual``) is computed from the
+      filtered state AFTER the update with y_t. It is an in-sample diagnostic:
+      the update pulls it toward zero by construction (it equals
+      e_t * R / S_t), so as a trading spread it is contemporaneous look-ahead.
+      It is kept unchanged for backward compatibility.
+
+    ``alpha_path`` / ``beta_path`` are the filtered (posterior) estimates as of
+    bar t; ``prior_alpha_path`` / ``prior_beta_path`` are the predicted
+    estimates used to form the innovation at bar t (under the random-walk
+    state model they equal the filtered estimates at t-1, and the initial
+    state at t=0).
+    """
+
     alpha_path: pd.Series
     beta_path: pd.Series
     fitted_spread: pd.Series
     observation_variance: float
     process_variance: float
     estimation_mode: str = "sequential_filtered_kalman"
+    predictive_innovation: pd.Series = field(default_factory=_empty_series)
+    innovation_variance: pd.Series = field(default_factory=_empty_series)
+    prior_alpha_path: pd.Series = field(default_factory=_empty_series)
+    prior_beta_path: pd.Series = field(default_factory=_empty_series)
+
+    @property
+    def in_sample_residual(self) -> pd.Series:
+        """Post-update residual (same values as ``fitted_spread``); diagnostic only."""
+        return self.fitted_spread
+
+    @property
+    def standardized_innovation(self) -> pd.Series:
+        """e_t / sqrt(S_t): the predictive innovation scaled by its own
+        one-step-ahead standard deviation."""
+        return (self.predictive_innovation / np.sqrt(self.innovation_variance)).rename(
+            "standardized_innovation_t"
+        )
 
 
 @dataclass(frozen=True)
@@ -121,6 +164,10 @@ def fit_dynamic_kalman_hedge_ratio(
     alpha_path: List[float] = []
     beta_path: List[float] = []
     residuals: List[float] = []
+    innovations: List[float] = []
+    innovation_variances: List[float] = []
+    prior_alpha_path: List[float] = []
+    prior_beta_path: List[float] = []
 
     for t in range(len(y_series)):
         predicted_state = state.copy()
@@ -130,11 +177,17 @@ def fit_dynamic_kalman_hedge_ratio(
         innovation_variance = float(
             observation @ predicted_covariance @ observation.T + observation_variance
         )
+        # One-step-ahead quantities, recorded before the state sees y_t.
+        prior_alpha_path.append(float(predicted_state[0]))
+        prior_beta_path.append(float(predicted_state[1]))
+        innovations.append(innovation)
+        innovation_variances.append(innovation_variance)
         kalman_gain = predicted_covariance @ observation.T / innovation_variance
         state = predicted_state + kalman_gain * innovation
         covariance = (np.eye(2) - np.outer(kalman_gain, observation)) @ predicted_covariance
         alpha_path.append(float(state[0]))
         beta_path.append(float(state[1]))
+        # Post-update residual: in-sample diagnostic (uses y_t via the state).
         residuals.append(float(y_series.iloc[t] - (state[0] + state[1] * x_series.iloc[t])))
 
     return DynamicKalmanResult(
@@ -143,6 +196,12 @@ def fit_dynamic_kalman_hedge_ratio(
         fitted_spread=pd.Series(residuals, index=index, name="spread_t"),
         observation_variance=observation_variance,
         process_variance=process_variance,
+        predictive_innovation=pd.Series(innovations, index=index, name="innovation_t"),
+        innovation_variance=pd.Series(
+            innovation_variances, index=index, name="innovation_variance_t"
+        ),
+        prior_alpha_path=pd.Series(prior_alpha_path, index=index, name="alpha_t_given_t_minus_1"),
+        prior_beta_path=pd.Series(prior_beta_path, index=index, name="beta_t_given_t_minus_1"),
     )
 
 
@@ -383,7 +442,10 @@ def compare_hedge_models(
     return pd.DataFrame(
         {
             "static_spread": static_result.residual_spread.values,
+            # In-sample (post-update) residual; kept for backward compatibility.
             "dynamic_spread": dynamic_result.fitted_spread.values,
+            # Out-of-sample one-step-ahead innovation (pre-update).
+            "dynamic_predictive_innovation": dynamic_result.predictive_innovation.values,
             "dynamic_beta": dynamic_result.beta_path.values,
             "dynamic_alpha": dynamic_result.alpha_path.values,
             "static_estimation_mode": static_result.estimation_mode,

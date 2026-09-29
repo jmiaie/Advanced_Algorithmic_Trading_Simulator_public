@@ -64,6 +64,85 @@ def test_kalman_recovers_known_slope_without_future_smoothing() -> None:
     assert float(result.fitted_spread.abs().max()) < 1e-2
 
 
+def _toy_pair(n: int = 200, seed: int = 7) -> tuple[pd.Series, pd.Series]:
+    rng = np.random.default_rng(seed)
+    x = pd.Series(50.0 + np.cumsum(rng.normal(0.0, 1.0, n)))
+    y = 1.0 + 1.5 * x + pd.Series(rng.normal(0.0, 0.5, n))
+    return y, x
+
+
+def test_kalman_changing_next_observation_leaves_beta_and_innovation_at_t_unchanged() -> None:
+    y, x = _toy_pair()
+    t = 120
+    base = fit_dynamic_kalman_hedge_ratio(y, x)
+    y_shocked = y.copy()
+    y_shocked.iloc[t + 1] += 25.0
+    shocked = fit_dynamic_kalman_hedge_ratio(y_shocked, x)
+    for field_name in (
+        "beta_path",
+        "alpha_path",
+        "predictive_innovation",
+        "innovation_variance",
+        "prior_beta_path",
+    ):
+        before = getattr(base, field_name).iloc[: t + 1].to_numpy()
+        after = getattr(shocked, field_name).iloc[: t + 1].to_numpy()
+        np.testing.assert_array_equal(before, after)
+    # Sanity: the shock is actually visible from t+1 onward.
+    assert shocked.predictive_innovation.iloc[t + 1] != base.predictive_innovation.iloc[t + 1]
+    assert shocked.beta_path.iloc[t + 1] != base.beta_path.iloc[t + 1]
+
+
+def test_kalman_predictive_innovation_uses_prior_state_not_y_t() -> None:
+    y, x = _toy_pair()
+    t = 120
+    base = fit_dynamic_kalman_hedge_ratio(y, x)
+    # The innovation is built from the prior (pre-update) state.
+    expected = y - (base.prior_alpha_path + base.prior_beta_path * x)
+    np.testing.assert_allclose(base.predictive_innovation.to_numpy(), expected.to_numpy())
+    # Under the random-walk state model, the prior at t is the filtered state at t-1.
+    np.testing.assert_array_equal(
+        base.prior_beta_path.iloc[1:].to_numpy(), base.beta_path.iloc[:-1].to_numpy()
+    )
+
+    # Perturbing y_t moves the innovation at t one-for-one (no feedback from
+    # y_t into the state estimate used to form it) and leaves the prior state
+    # and predictive variance at t untouched.
+    bump = 3.0
+    y_bumped = y.copy()
+    y_bumped.iloc[t] += bump
+    bumped = fit_dynamic_kalman_hedge_ratio(y_bumped, x)
+    assert bumped.prior_alpha_path.iloc[t] == base.prior_alpha_path.iloc[t]
+    assert bumped.prior_beta_path.iloc[t] == base.prior_beta_path.iloc[t]
+    assert bumped.innovation_variance.iloc[t] == base.innovation_variance.iloc[t]
+    assert bumped.predictive_innovation.iloc[t] - base.predictive_innovation.iloc[t] == (
+        pytest.approx(bump, rel=1e-12)
+    )
+    # The post-update residual, by contrast, absorbs only part of the bump
+    # because the filtered state at t has already moved toward y_t.
+    residual_move = bumped.in_sample_residual.iloc[t] - base.in_sample_residual.iloc[t]
+    assert 0.0 < residual_move < bump
+
+
+def test_kalman_innovation_variance_exceeds_post_update_residual_variance() -> None:
+    y, x = _toy_pair()
+    result = fit_dynamic_kalman_hedge_ratio(y, x)
+    burn_in = 20
+    innovation = result.predictive_innovation.iloc[burn_in:]
+    residual = result.in_sample_residual.iloc[burn_in:]
+    assert float(innovation.var(ddof=1)) > float(residual.var(ddof=1))
+    # Post-update residual is the innovation scaled by R / S_t in (0, 1).
+    shrink = result.observation_variance / result.innovation_variance
+    np.testing.assert_allclose(
+        result.in_sample_residual.to_numpy(),
+        (result.predictive_innovation * shrink).to_numpy(),
+        rtol=1e-9,
+        atol=1e-9,
+    )
+    assert bool(result.innovation_variance.gt(result.observation_variance).all())
+    assert result.fitted_spread is result.in_sample_residual
+
+
 def test_bh_fdr_toy_example() -> None:
     result = benjamini_hochberg([0.001, 0.01, 0.04, 0.20], alpha=0.05)
     assert result.loc[0, "rejected"]
