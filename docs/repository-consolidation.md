@@ -1,5 +1,9 @@
 # Repository Consolidation Note
 
+For the four AATS-named repos (canonical public vs private legacy twins), see [POSITIONING.md](POSITIONING.md).
+
+This note covers the older *Statistical Arbitrage and Cointegration* public overlap only.
+
 Read-only audit performed against `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst`.
 
 ## Incorporated carefully
