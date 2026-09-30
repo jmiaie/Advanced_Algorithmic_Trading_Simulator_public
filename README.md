@@ -2,6 +2,12 @@
 
 **Cointegration • Dynamic Hedge Estimation • Walk-Forward Validation • Execution & TCA**
 
+> **Public portfolio build** for the Advanced Algorithmic Trading Simulator (AATS) family.
+> This is the **canonical public surface** — not a live trading product and not a private research twin.
+> Older private name variants (`Advanced_Algorithmic_Trading_Simulator`,
+> `Advanced_Algorithmic_Trading_Simulator_private`, `aats`) are legacy scaffolds / placeholders
+> slated for retirement; see [`docs/POSITIONING.md`](docs/POSITIONING.md).
+
 A statistical arbitrage research repository focused on **research validity, temporal discipline, execution-cost awareness, portfolio accounting, reproducibility, and truthful claims**. The repository preserves the original event-driven pairs prototype, but now positions it explicitly as a **research engine** rather than a finished production trading stack.
 
 ## Headline result
@@ -61,13 +67,34 @@ results/
 
 ## Setup
 
-Core research environment:
+Core research environment (Python **3.11+**):
 
 ```bash
 pip install -e ".[dev]"
 pytest -q
 ruff check .
 mypy
+```
+
+### Quickstart (synthetic offline demo)
+
+No market data or API keys required. After `pip install -e ".[dev]"`:
+
+```bash
+python scripts/main.py
+```
+
+This runs the event-driven pairs prototype on **synthetic** prices and prints a
+local equity-curve summary (NAV / PnL / Sharpe on the synthetic path only). It is a
+workflow smoke test, **not** an out-of-sample performance claim (see **Headline result**
+above — the 2025 walk-forward produced zero trades, so no OOS Sharpe / return /
+drawdown figure exists).
+
+Docker (optional; same synthetic entrypoint):
+
+```bash
+docker build -t aats-public .
+docker run --rm aats-public
 ```
 
 Optional live integration extras:
@@ -101,9 +128,17 @@ The executed historical study lives in `results/historical_oos/` and is document
 
 Directories without a committed run contain placeholder READMEs rather than fabricated metrics.
 
-## Consolidation note
+## Consolidation note / AATS family
 
-This repository is the maintained public stat-arb research repository. A read-only audit of `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` found broader unsupported public claims around institutional realism, factor-isolated alpha, and dynamic/OOS evidence. Consolidate future public claims here unless that overlapping repository is narrowed and brought to the same validation standard.
+This repository is the **canonical public** AATS / stat-arb research surface for portfolio
+use. Cluster map of the four AATS-named repos (and retirement guidance for private
+legacy twins): [`docs/POSITIONING.md`](docs/POSITIONING.md).
+
+A read-only audit of `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst`
+found broader unsupported public claims around institutional realism, factor-isolated
+alpha, and dynamic/OOS evidence. Consolidate future public claims **here** unless that
+overlapping repository is narrowed and brought to the same validation standard.
+See also [`docs/repository-consolidation.md`](docs/repository-consolidation.md).
 
 ## Live trading safety
 

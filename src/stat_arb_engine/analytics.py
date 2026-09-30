@@ -126,4 +126,9 @@ class PerformanceMonitor:
         plt.title("Portfolio Equity Curve")
         plt.legend()
         plt.grid(True)
-        plt.show()
+        # Headless-safe: Agg (CI / Docker / no DISPLAY) cannot show a GUI window.
+        backend = (plt.get_backend() or "").lower()
+        if "agg" in backend:
+            plt.close()
+        else:
+            plt.show()

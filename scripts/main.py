@@ -23,6 +23,10 @@ def generate_synthetic_data(length: int = 500):
 
 if __name__ == "__main__":
     print("Generating Synthetic Data...")
+    print(
+        "Note: synthetic offline demo only — printed NAV/Sharpe are NOT "
+        "out-of-sample claims (2025 walk-forward had zero trades)."
+    )
     data_map = generate_synthetic_data()
     streamer = DataStreamer(data_map)
     lob = LimitOrderBook()
