@@ -1,7 +1,7 @@
 # Statistical Arbitrage Validation Report
 
 ## Objective
-Harden the repository into a recruiter-facing **Statistical Arbitrage & Execution Research Engine** with temporal discipline, accounting correctness, execution-cost awareness, and truthful public claims.
+Harden the repository into a public-facing **Statistical Arbitrage & Execution Research Engine** with temporal discipline, accounting correctness, execution-cost awareness, and truthful public claims.
 
 ## Defects verified before remediation
 - README claimed a dynamic hedge ratio while the implementation used a fixed full-history `np.polyfit` estimate.
@@ -49,9 +49,9 @@ Harden the repository into a recruiter-facing **Statistical Arbitrage & Executio
 - Walk-forward helpers are present, but the repository does not yet ship precomputed public OOS result packs.
 - Read-only audit note: `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` currently makes broader public claims than this validated engine supports; recommended path is consolidation or claim narrowing rather than parallel divergence.
 
-## Directive #3 release-gate verification
+## Release-gate verification
 
-Regression coverage for the D3 gate lives in `tests/test_directive3_gates.py`:
+Regression coverage for the release gate lives in `tests/test_research_gates.py`:
 
 1. **Same-timestamp pair signals** — strategy waits for both legs; incomplete `MARKET_BATCH` payloads are rejected.
 2. **Marked-to-market NAV** — ledger `nav` equals cash + net market value and moves with marks without new fills.
@@ -61,11 +61,11 @@ Regression coverage for the D3 gate lives in `tests/test_directive3_gates.py`:
 
 Qualified claim: this verifies research-engine invariants on synthetic/unit fixtures. It does **not** assert empirical out-of-sample trading performance.
 
-## Directive #9 D9-B status (corrective note)
+## ETF walk-forward study status (corrective note)
 
 - **v1** (`statarb_hist_oos_v1_*`, `configs/experiments/statarb_historical_oos_study_v1.yaml`):
   exploratory sector-equity study, universe = `PairFinder.SECTOR_PAIRS`.
-  **SUPERSEDED / EXPLORATORY / NON-CONFORMING** to the authoritative D9-B spec
+  **SUPERSEDED / EXPLORATORY / NON-CONFORMING** to the authoritative ETF-study spec
   (wrong universe). Preserved unmodified in the ledger and results tree.
 - **v2** (`statarb_hist_etf_wf_v2`, `configs/experiments/statarb_historical_etf_wf_v2.yaml`):
   **INVALIDATED BEFORE HOLDOUT**. A tracker comment previously recorded this
@@ -139,7 +139,7 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   update, plus a dedicated regression test for defect 4 reproducing a
   single-executed-bar loss that the old formula always reported as exactly
   0% drawdown. The full repo suite (78 tests, including the unaffected
-  pre-existing v3/Directive-3-gate tests) passes, along with a clean
+  pre-existing v3/release-gate tests) passes, along with a clean
   ruff/mypy run.
 
   **Run against the real acquired dataset** (DEV 2015-2023 + 2024
@@ -188,8 +188,8 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
 
   **FINAL 2025 WALK-FORWARD EVALUATION** (executed once, 2026-09-17,
   immediately after the freeze commit above -- not "UNTOUCHED 2025
-  HOLDOUT," per Directive #9 Addendum 12: 5 of the 19 symbols overlap
-  FDM's already-executed D9-A universe; see `research/holdout-audit.md`
+  HOLDOUT," per the study protocol: 5 of the 19 symbols overlap
+  FDM's already-executed regime-study universe; see `research/holdout-audit.md`
   for the full cross-program exposure disclosure). Config sha256 at
   execution time: `5768fd10b63c0436f3ff5aa1863374b348cca5bf72ccfb7d1b01a7ae0d95376d`
   (post-freeze; the pre-freeze reviewed config was
@@ -229,7 +229,7 @@ Qualified claim: this verifies research-engine invariants on synthetic/unit fixt
   in this authoritative ETF universe did not persist into a tradeable
   2025 signal under this pre-registered design.
 
-  Per Directive #9 Addendum 11/20: this result and the freeze record
+  Per the study protocol: this result and the freeze record
   above are now committed. **STOPPING FOR INDEPENDENT POST-HOLDOUT
   REVIEW** -- no further code, parameter, or config change on this
-  experiment; no merge; D10 not started.
+  experiment.
