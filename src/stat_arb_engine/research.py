@@ -223,7 +223,9 @@ def benjamini_hochberg(p_values: Sequence[float], alpha: float = 0.05) -> pd.Dat
     m = len(ordered)
     adjusted = ordered * m / (np.arange(1, m + 1))
     adjusted = adjusted.iloc[::-1].cummin().iloc[::-1].clip(upper=1.0)
-    rejected = ordered <= (alpha * np.arange(1, m + 1) / m)
+    # Step-up: reject every rank up to the largest k with p_(k) <= alpha*k/m,
+    # which is exactly adjusted_p <= alpha. A per-rank comparison under-rejects.
+    rejected = adjusted <= alpha
     result = pd.DataFrame(
         {
             "raw_pvalue": ordered,
