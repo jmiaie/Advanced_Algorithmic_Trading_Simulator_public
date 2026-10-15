@@ -201,7 +201,7 @@ def funnel_svg(summaries: list[dict]) -> bytes:
         '<rect width="900" height="380" fill="#ffffff"/>',
         '<text x="16" y="24" font-family="monospace" font-size="13" '
         'font-weight="bold" fill="#111111">',
-        "D10-B stat-arb-study: selection funnel per walk-forward bucket "
+        "stat-arb-study: selection funnel per walk-forward bucket "
         "(accepted artifacts only)</text>",
         '<text x="16" y="42" font-family="monospace" font-size="10" fill="#333333">',
         "Source: results/historical_oos/statarb_hist_etf_wf_v4_"
