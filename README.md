@@ -76,6 +76,16 @@ ruff check .
 mypy
 ```
 
+### Reproducible install
+
+For an exact, fully pinned environment (targets Python 3.12):
+
+```bash
+pip install -r requirements-lock.txt && pip install -e . --no-deps
+```
+
+Regenerate with `uv pip compile pyproject.toml --extra dev --python-version 3.12 --no-header -o requirements-lock.txt` (the header comment in the lock file records the exact command).
+
 ### Quickstart (synthetic offline demo)
 
 No market data or API keys required. After `pip install -e ".[dev]"`:
