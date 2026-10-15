@@ -9,20 +9,17 @@ private scaffolds as the active product surface.
 | Repo | Visibility | Role |
 |------|------------|------|
 | `jmiaie/Advanced_Algorithmic_Trading_Simulator_public` | **public** | **Canonical portfolio build** — statistical arbitrage & execution research engine; walk-forward discipline; publication pack. Recruiting / courseware surface. |
-| `jmiaie/Advanced_Algorithmic_Trading_Simulator_private` | private | **Legacy placeholder** — thin README-only stub (Jan 2026). Retire when this public surface is confirmed as the sole AATS name. |
-| `jmiaie/Advanced_Algorithmic_Trading_Simulator` | private | **Legacy scaffold** — early event-driven backtester notes; superseded by the public research engine. Retire / archive after owner confirmation. |
-| `jmiaie/aats` | private | **Legacy short-name twin** — early upload scaffold; same intent as the long private names. Retire / archive after owner confirmation. |
+| Three non-public name variants | private | **Legacy placeholders / scaffolds** — README-only stubs and early backtester notes, superseded by this public research engine. Slated for retirement. |
 
-Private twins are linked **by repository name only** here (no private URLs required
-for portfolio readers). Collaborators who already have access know where they live.
+The non-public variants are intentionally not named or linked here.
 
 ## Recommendation
 
 - **Use this public repo** for all new AATS / stat-arb portfolio claims, demos, and
   documentation.
-- **Do not** dual-maintain features across the three private name variants.
+- **Do not** dual-maintain features across the non-public name variants.
 - When open diffs on this public tree are merged and Jeff confirms, **archive or
-  delete** the three private twins to cut inventory noise (they have no active code
+  delete** the non-public twins to cut inventory noise (they have no active code
   path beyond scaffolds / placeholders).
 
 ## Adjacent (not AATS-named)

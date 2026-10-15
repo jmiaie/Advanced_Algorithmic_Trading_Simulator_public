@@ -4,8 +4,7 @@
 
 > **Public portfolio build** for the Advanced Algorithmic Trading Simulator (AATS) family.
 > This is the **canonical public surface** — not a live trading product and not a private research twin.
-> Older private name variants (`Advanced_Algorithmic_Trading_Simulator`,
-> `Advanced_Algorithmic_Trading_Simulator_private`, `aats`) are legacy scaffolds / placeholders
+> Older non-public name variants are legacy scaffolds / placeholders
 > slated for retirement; see [`docs/POSITIONING.md`](docs/POSITIONING.md).
 
 A statistical arbitrage research repository focused on **research validity, temporal discipline, execution-cost awareness, portfolio accounting, reproducibility, and truthful claims**. The repository preserves the original event-driven pairs prototype, but now positions it explicitly as a **research engine** rather than a finished production trading stack.
