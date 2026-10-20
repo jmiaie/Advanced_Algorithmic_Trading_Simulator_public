@@ -49,7 +49,7 @@ Documented convenience universe from `pair_finder.PairFinder.SECTOR_PAIRS` (liqu
 
 ## Post-freeze holdout execution (v1, superseded universe)
 
-YAML status was set to `frozen-for-holdout` after formation+validation; calendar-2025 evaluation was then run once under frozen config `statarb_hist_oos_v1` (experiment `statarb_hist_oos_v1_holdout_2025`). Tracker confirmation: **FINAL CONFIGURATION FROZEN — Stat-Arb ETF-study** on Issue #3 (https://github.com/jmiaie/quant-research-portfolio/issues/3#issuecomment-5691711387). Formation-time BH/FDR still selected **0** pairs, so holdout trading metrics are **null** (reported honestly). No retune after freeze.
+YAML status was set to `frozen-for-holdout` after formation+validation; calendar-2025 evaluation was then run once under frozen config `statarb_hist_oos_v1` (experiment `statarb_hist_oos_v1_holdout_2025`). Tracker confirmation: **FINAL CONFIGURATION FROZEN — Stat-Arb ETF-study**, recorded in the private research log (not publicly accessible). Formation-time BH/FDR still selected **0** pairs, so holdout trading metrics are **null** (reported honestly). No retune after freeze.
 
 **This section covers only v1's `PairFinder.SECTOR_PAIRS` universe** (individual equities: energy/bank/tech/retail/airline/miner/utility/REIT/pharma names). It does **not** cover the v3 authoritative ETF universe below.
 
