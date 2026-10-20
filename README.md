@@ -155,6 +155,10 @@ Research/backtesting is the default path.
 
 Live order submission is intentionally secondary and requires `--live` explicit opt-in. The Alpaca paper account is the default; `--no-paper` selects the live account, and the selected account and order mode are logged at startup. Even then, this repository should be treated as a research environment with stylized execution assumptions rather than production deployment evidence.
 
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE). © 2026 Micap AI LLC.
+
 ## Author
 
 Jeff Milam | [github.com/jmiaie](https://github.com/jmiaie)
