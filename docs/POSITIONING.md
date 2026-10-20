@@ -23,7 +23,7 @@ The non-public variants are intentionally not named or linked here.
 
 | Repo | Note |
 |------|------|
-| `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` | Older public overlap. Consolidation policy: keep future verified public claims **here**; see [repository-consolidation.md](repository-consolidation.md). |
+| `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst` | Older, overlapping exploratory repository; superseded by this one. |
 | `jmiaie/quant-research-portfolio-public` | Broader quant portfolio hub that may cite this study; not an AATS twin. |
 
 ## Explicit non-goals
