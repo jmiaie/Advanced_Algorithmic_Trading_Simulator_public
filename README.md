@@ -143,11 +143,7 @@ This repository is the **canonical public** AATS / stat-arb research surface for
 use. Cluster map of the four AATS-named repos (and retirement guidance for private
 legacy twins): [`docs/POSITIONING.md`](docs/POSITIONING.md).
 
-A read-only audit of `jmiaie/Statistical_Arbitrage_and_Conintegration_Strategic_Analyst`
-found broader unsupported public claims around institutional realism, factor-isolated
-alpha, and dynamic/OOS evidence. Consolidate future public claims **here** unless that
-overlapping repository is narrowed and brought to the same validation standard.
-See also [`docs/repository-consolidation.md`](docs/repository-consolidation.md).
+This repository supersedes earlier exploratory statistical-arbitrage repositories.
 
 ## Live trading safety
 
@@ -155,6 +151,10 @@ Research/backtesting is the default path.
 
 Live order submission is intentionally secondary and requires `--live` explicit opt-in. The Alpaca paper account is the default; `--no-paper` selects the live account, and the selected account and order mode are logged at startup. Even then, this repository should be treated as a research environment with stylized execution assumptions rather than production deployment evidence.
 
+## License
+
+Apache-2.0 — see [LICENSE](LICENSE). © 2026 Micap AI LLC.
+
 ## Author
 
-Jeff Milam | [github.com/jmiaie](https://github.com/jmiaie)
+Micap AI LLC · contact@micap.pro · https://github.com/jmiaie
