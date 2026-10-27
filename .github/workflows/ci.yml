@@ -35,5 +35,14 @@ jobs:
           python-version: "3.12"
       - name: Install from lock
         run: pip install -r requirements-lock.txt && pip install -e . --no-deps
+      - name: Ruff
+        run: ruff check .
+      - name: Mypy
+        run: mypy
       - name: Pytest
         run: pytest -q
+      - name: Publication pack
+        run: |
+          python3 publication/stat-arb-study/scripts/publication_pack.py check
+          python3 publication/stat-arb-study/scripts/publication_pack.py hashcheck
+          python3 publication/stat-arb-study/scripts/claim_crosscheck.py
