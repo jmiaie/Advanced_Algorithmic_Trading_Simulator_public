@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # hashcheck re-measures the config blob at the freeze commit's parent
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
