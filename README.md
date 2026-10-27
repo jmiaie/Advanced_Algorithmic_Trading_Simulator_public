@@ -13,7 +13,9 @@ A statistical arbitrage research repository focused on **research validity, temp
 
 The pre-registered 2025 walk-forward evaluation (`statarb_hist_etf_wf_v4`, 19 US ETFs in four within-group buckets) ran once over **three pure-2025 test windows** (2025-01-08 → 2025-10-09). Each window tested **55 candidate pairs** (165 in total); **zero survived Benjamini-Hochberg FDR control**, so **zero pairs qualified and zero trades were placed**.
 
-This is the intended behavior of multiple-testing control, not a pipeline failure: the same screen admitted four pairs in the earlier development windows, and in 2025 it declined to trade rather than admit pairs that did not clear the pre-specified threshold. Because no positions were taken, **no 2025 Sharpe ratio, drawdown, return or turnover figure exists**, and none is estimated or implied.
+This is the intended behavior of multiple-testing control, not a pipeline failure: the same screen admitted four pairs in the earlier development windows. In 2025, no candidate met the pre-specified threshold, so the strategy rules generated no position. Because no positions were taken, **no 2025 Sharpe ratio, drawdown, return or turnover figure exists**, and none is estimated or implied.
+
+> **Post-publication correction.** Current `main` includes the corrected Benjamini-Hochberg step-up implementation merged through PR #13. The accepted study artifacts remain frozen to their recorded producing lineage and were not regenerated. The corrected rule leaves the 2025 zero-survivor / zero-trade result unchanged; possible changes to pre-2024 selected-pair identities require a separately named impact run against the original hash-matching frozen data. See [`docs/post-publication-bh-correction.md`](docs/post-publication-bh-correction.md).
 
 - Technical write-up: [`publication/stat-arb-study/TECHNICAL-PAPER.md`](publication/stat-arb-study/TECHNICAL-PAPER.md) (short version: [`CASE-STUDY.md`](publication/stat-arb-study/CASE-STUDY.md))
 - Result artifacts: [`results/historical_oos/`](results/historical_oos/) (primary: `statarb_hist_etf_wf_v4_holdout_2025.json`)
