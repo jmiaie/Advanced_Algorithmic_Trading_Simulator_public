@@ -16,6 +16,14 @@ The pre-registered 2025 walk-forward evaluation (`statarb_hist_etf_wf_v4`, 19 US
 This is the intended behavior of multiple-testing control, not a pipeline failure: the same screen admitted four pairs in the earlier development windows. In 2025, no candidate met the pre-specified threshold, so the strategy rules generated no position. Because no positions were taken, **no 2025 Sharpe ratio, drawdown, return or turnover figure exists**, and none is estimated or implied.
 
 > **Post-publication correction.** Current `main` includes the corrected Benjamini-Hochberg step-up implementation merged through PR #13. The accepted study artifacts remain frozen to their recorded producing lineage and were not regenerated. The corrected rule leaves the 2025 zero-survivor / zero-trade result unchanged; possible changes to pre-2024 selected-pair identities require a separately named impact run against the original hash-matching frozen data. See [`docs/post-publication-bh-correction.md`](docs/post-publication-bh-correction.md).
+>
+> **Known defects and unreported results (2026-11-14).** The position-sizing code does not trade the
+> tested spread, and the four development windows that traded have out-of-sample results the write-up
+> did not report. Neither affects the 2025 zero-trade result. See
+> [`docs/known-defects-and-unreported-results.md`](docs/known-defects-and-unreported-results.md).
+
+> **Disclaimer.** Research and educational material only. Nothing here is investment advice or a
+> recommendation to trade. The live-order scripts under `scripts/` are unsupported examples.
 
 - Technical write-up: [`publication/stat-arb-study/TECHNICAL-PAPER.md`](publication/stat-arb-study/TECHNICAL-PAPER.md) (short version: [`CASE-STUDY.md`](publication/stat-arb-study/CASE-STUDY.md))
 - Result artifacts: [`results/historical_oos/`](results/historical_oos/) (primary: `statarb_hist_etf_wf_v4_holdout_2025.json`)
