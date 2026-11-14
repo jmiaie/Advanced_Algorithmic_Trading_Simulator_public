@@ -1,7 +1,7 @@
 # Resolved, pinned dependency lock for stat-arb-engine (runtime + [dev] extras).
-# Target: Python 3.12 (resolved with --python-version 3.12). Generated 2026-10-15.
-# No hashes (platform-independent). Loose requirements.txt and pyproject.toml are unchanged.
-# Note: pytest==8.3.3 is pinned by pyproject.toml [dev]; pip-audit flags PYSEC-2026-1845 (fixed in 9.0.3). Left as-is to match pyproject.
+# Target: Python 3.12 (resolved with --python-version 3.12). Generated 2026-10-15; vulnerable pins upgraded 2026-10-27 (uv 0.11.32).
+# No hashes (platform-independent). Loose requirements.txt is unchanged; pyproject.toml changes only the pytest pin.
+# pytest is pinned to 9.0.3 in pyproject.toml [dev] (fixes PYSEC-2026-1845).
 # Regenerate (from repo root):
 #   uv pip compile pyproject.toml --extra dev --python-version 3.12 --no-header -o requirements-lock.txt
 #   (then re-add this header)
@@ -44,13 +44,15 @@ pandas==2.2.3
     #   statsmodels
 patsy==1.0.3
     # via statsmodels
-pillow==12.3.0
+pillow==13.0.0
     # via matplotlib
 pluggy==1.6.0
     # via pytest
+pygments==2.21.0
+    # via pytest
 pyparsing==3.3.3
     # via matplotlib
-pytest==8.3.3
+pytest==9.0.3
     # via stat-arb-engine (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via

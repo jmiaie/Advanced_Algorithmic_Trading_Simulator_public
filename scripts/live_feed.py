@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 ALPACA_PAPER_URL = "https://paper-api.alpaca.markets"
 ALPACA_LIVE_URL = "https://api.alpaca.markets"
 ALPACA_DATA_URL = "https://data.alpaca.markets"
+REQUEST_TIMEOUT_SECONDS = 30
 
 
 class AlpacaDataFeed:
@@ -30,7 +31,9 @@ class AlpacaDataFeed:
         }
 
     def get_account(self) -> Dict:
-        resp = requests.get(f"{self.base_url}/v2/account", headers=self.headers)
+        resp = requests.get(
+            f"{self.base_url}/v2/account", headers=self.headers, timeout=REQUEST_TIMEOUT_SECONDS
+        )
         resp.raise_for_status()
         return resp.json()
 
@@ -52,6 +55,7 @@ class AlpacaDataFeed:
             f"{self.data_url}/v2/stocks/{symbol}/bars",
             headers=self.headers,
             params=params,
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
         resp.raise_for_status()
         data = resp.json()
@@ -113,16 +117,21 @@ class AlpacaDataFeed:
             f"{self.base_url}/v2/orders",
             headers=self.headers,
             json=order,
+            timeout=REQUEST_TIMEOUT_SECONDS,
         )
         resp.raise_for_status()
         return resp.json()
 
     def get_positions(self) -> List[Dict]:
-        resp = requests.get(f"{self.base_url}/v2/positions", headers=self.headers)
+        resp = requests.get(
+            f"{self.base_url}/v2/positions", headers=self.headers, timeout=REQUEST_TIMEOUT_SECONDS
+        )
         resp.raise_for_status()
         return resp.json()
 
     def close_all_positions(self) -> Dict:
-        resp = requests.delete(f"{self.base_url}/v2/positions", headers=self.headers)
+        resp = requests.delete(
+            f"{self.base_url}/v2/positions", headers=self.headers, timeout=REQUEST_TIMEOUT_SECONDS
+        )
         resp.raise_for_status()
         return resp.json()
