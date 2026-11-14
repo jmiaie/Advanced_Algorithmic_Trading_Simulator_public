@@ -52,7 +52,7 @@ pygments==2.21.0
     # via pytest
 pyparsing==3.3.3
     # via matplotlib
-pytest==9.0.3
+pytest==9.2.0
     # via stat-arb-engine (pyproject.toml)
 python-dateutil==2.9.0.post0
     # via
