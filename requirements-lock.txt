@@ -38,7 +38,7 @@ packaging==26.3
     #   patsy
     #   pytest
     #   statsmodels
-pandas==2.2.3
+pandas==3.1.1
     # via
     #   stat-arb-engine (pyproject.toml)
     #   statsmodels
