@@ -21,6 +21,11 @@ This is the intended behavior of multiple-testing control, not a pipeline failur
 > tested spread, and the four development windows that traded have out-of-sample results the write-up
 > did not report. Neither affects the 2025 zero-trade result. See
 > [`docs/known-defects-and-unreported-results.md`](docs/known-defects-and-unreported-results.md).
+>
+> **What the 2025 null could have detected.** A power study of the frozen screen
+> ([`research/power/REPORT.md`](research/power/REPORT.md)) found it detects a truly cointegrated pair
+> 98% of the time at a 5-day spread half-life, 51% at 10 days and 4% at 20 days. The 2025 result
+> therefore rules out week-scale mean reversion only; it does not rule out slower mean reversion.
 
 > **Disclaimer.** Research and educational material only. Nothing here is investment advice or a
 > recommendation to trade. The live-order scripts under `scripts/` are unsupported examples.

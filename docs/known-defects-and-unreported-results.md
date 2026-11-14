@@ -63,5 +63,19 @@ true, but ADF can **veto** a pair, so the survivor counts are counts of pairs pa
 - Each pair's history is cut to the dates on which both tickers have prices, and a pair whose test
   raises an error is skipped. Both reduce the number of hypotheses the FDR control sees (46 in the
   earliest windows, 55 later).
-- Power: a separate calibration (open pull request "power / null-calibration study for the stat-arb
-  screen") shows the screen reliably detects only fast mean reversion (half-life of about a week).
+- Power: a separate calibration ([`research/power/REPORT.md`](../research/power/REPORT.md)) shows the
+  screen reliably detects only fast mean reversion (half-life of about a week).
+
+## 6. Claim C-33: the validation Sharpe fields are null by construction in holdout mode
+
+Claim C-33 reports that `validation_ols_sharpe` and `validation_kalman_sharpe` are null in the 2025
+windows. That outcome could not have been different. When the study runs with `--allow-holdout`,
+`scripts/run_statarb_wf_v4_study.py` passes frozen signal parameters, and
+`src/stat_arb_engine/wf_v4_orch.py` (lines 345-353 at the reviewed commit) then sets both fields to
+`None` without calling the validation grid search.
+
+The power study confirmed this on a synthetic panel: a planted pair was selected and traded in all
+three holdout windows, and both fields were still null in 3 of 3. So the pre-specified Static-OLS
+versus Kalman comparison cannot be evidenced from holdout windows, whatever the data. In the
+development windows the grid search does run and can populate the field.
+
