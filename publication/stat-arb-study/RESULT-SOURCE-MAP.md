@@ -15,7 +15,7 @@ Canonical artifact references used throughout:
 - **CFG** = `configs/experiments/statarb_historical_etf_wf_v4.yaml` (sha256 `5768fd10b63c0436f3ff5aa1863374b348cca5bf72ccfb7d1b01a7ae0d95376d`)
 - **MAN** = `data/manifests/yf_stat_arb_etfs_daily_2015_2025_v1.json` (sha256 `b2557499091cd87e412365db2a4a32eac7134995bf641e35e5676114f6cc2e30`)
 - **LED** = `research/experiment-ledger.csv` (sha256 `cb4b7b0f461a0ed3f42e0798752552ca43ba2eb56277aac45930ef398e973211`)
-- **AUD** = `research/holdout-audit.md` (sha256 `bb074fc3626fad9a8e430b6b9f62abe972266d0311332d1d84d7f5c2aa8634af`)
+- **AUD** = `research/holdout-audit.md` (sha256 `f8c4808904e5c2f034833e3bd25447bafc65343c57d9de460cfcdccd049b9eb4`)
 - **VALDOC** = `research/statistical-arbitrage-validation.md` (sha256 `6a1da84092cd6574c3691e1d3323a587b6325c1809a97034ce36e37ad0baa97d`)
 
 ---
